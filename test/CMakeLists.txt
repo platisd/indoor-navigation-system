@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 2.8.8)
 project (arduino_mock_sample)
+find_package (Threads)
 
 add_subdirectory(arduino_mock)
 
