@@ -4,20 +4,38 @@
 #include "gtest/gtest.h"
 #include "arduino-mock/Arduino.h"
 #include "arduino-mock/Serial.h"
+#include "Smartcar.h"
 
 #include "../DigitalReadSerial.ino"
 
 using ::testing::Return;
-TEST(loop, pushed) {
-  ArduinoMock* arduinoMock = arduinoMockInstance();
-  SerialMock* serialMock = serialMockInstance();
+
+class SmartcarTestFixture : public ::testing::Test
+{
+   public:
+     ArduinoMock* arduinoMock;
+     SerialMock* serialMock;
+    // Run this before the tests
+    virtual void SetUp()
+    {
+      arduinoMock = arduinoMockInstance();
+      serialMock = serialMockInstance();
+    }
+    // Run this after the tests
+    virtual void TearDown()
+    {
+      releaseSerialMock();
+      releaseArduinoMock();
+    }
+};
+
+
+TEST_F(SmartcarTestFixture, pushed) {
   EXPECT_CALL(*arduinoMock, digitalRead(2))
     .WillOnce(Return(1));
   EXPECT_CALL(*serialMock, println(1, 10));
   EXPECT_CALL(*arduinoMock, delay(1));
   loop();
-  releaseSerialMock();
-  releaseArduinoMock();
 }
 
 int main(int argc, char* argv[]) {
