@@ -9,85 +9,87 @@
 
 class CarMock {
   public:
-    MOCK_METHOD0(getWriteError, int());
-    MOCK_METHOD0(clearWriteError, void());
-    MOCK_METHOD1(write, size_t(uint8_t));
-    MOCK_METHOD1(write, size_t(const char *str));
-    MOCK_METHOD2(write, size_t(const uint8_t *buffer, size_t size));
-
-    MOCK_METHOD1(print, size_t(const char[]));
-    MOCK_METHOD1(print, size_t(char));
-    MOCK_METHOD2(print, size_t(unsigned char, int));
-    MOCK_METHOD2(print, size_t(int, int));
-    MOCK_METHOD2(print, size_t(unsigned int, int));
-    MOCK_METHOD2(print, size_t(long, int));
-    MOCK_METHOD2(print, size_t(unsigned long, int));
-    MOCK_METHOD2(print, size_t(double, int));
-
-    MOCK_METHOD1(println, size_t(const char[]));
-    MOCK_METHOD1(println, size_t(char));
-    MOCK_METHOD2(println, size_t(int, int));
-    MOCK_METHOD0(println, size_t(void));
-
-    MOCK_METHOD1(begin, uint8_t(uint16_t));
-
-    MOCK_METHOD0(available, uint8_t());
-    MOCK_METHOD0(read, uint8_t());
-
-    MOCK_METHOD0(flush, void());
-
-    /* Not implemented yet
-    MOCK_METHOD2(println, size_t(unsigned char, int));
-    MOCK_METHOD2(println, size_t(unsigned int, int));
-    MOCK_METHOD2(println, size_t(long, int));
-    MOCK_METHOD2(println, size_t(unsigned long, int));
-    MOCK_METHOD2(println, size_t(double, int));
-    */
+    MOCK_METHOD0(begin, void());
+    MOCK_METHOD1(setSpeed, void(float));
+    MOCK_METHOD1(setAngle, void(int));
+    MOCK_METHOD0(getSpeed, float());
+    MOCK_METHOD0(getAngle, int());
+    MOCK_METHOD0(stop, void());
+    MOCK_METHOD4(enableCruiseControl, void(float, float, float, unsigned short));
+    MOCK_METHOD0(disableCruiseControl, void());
+    MOCK_METHOD0(updateMotors, void());
+    MOCK_METHOD1(go, void(int));
+    MOCK_METHOD1(rotate, void(int));
+    MOCK_METHOD2(setMotorSpeed, void(int, int));
+    MOCK_METHOD0(cruiseControlEnabled, boolean());
 };
+
+/* Methods for instantiating and deleting the mock */
+static CarMock* carMock = NULL;
+CarMock* carMockInstance() {
+  if(!carMock) {
+    carMock = new CarMock();
+  }
+  return carMock;
+}
+
+void releaseCarMock() {
+  if(carMock) {
+    delete carMock;
+    carMock = NULL;
+  }
+}
+/* ------------------------------------------------ */
 
 class Car {
-
-  private:
-    static bool printToCout;
-
   public:
-    static void setPrintToCout(bool flag);
-
-  public:
-    static size_t print(const char[]);
-    static size_t print(char);
-    static size_t print(unsigned char, int = DEC);
-    static size_t print(int, int = DEC);
-    static size_t print(unsigned int, int = DEC);
-    static size_t print(long, int = DEC);
-    static size_t print(unsigned long, int = DEC);
-    static size_t print(double, int = 2);
-
-    static size_t println(const char[]);
-    static size_t println(char);
-    static size_t println(unsigned char, int = DEC);
-    static size_t println(int, int = DEC);
-    static size_t println(unsigned int, int = DEC);
-    static size_t println(long, int = DEC);
-    static size_t println(unsigned long, int = DEC);
-    static size_t println(double, int = 2);
-    static size_t println(void);
-
-    size_t write(uint8_t);
-    size_t write(const char *str);
-    size_t write(const uint8_t *buffer, size_t size);
-
-    uint8_t begin(uint32_t);
-
-    uint8_t available();
-    uint8_t read();
-
-    static void flush();
+//    Car(unsigned short shieldOrientation = 0);
+//    Car(SteeringMotor *steering, ThrottleMotor *throttle);
+    void begin(){
+      carMock->begin();
+    };
+    // void begin(Odometer &encoder);
+    // void begin(HeadingSensor &heading);
+    // void begin(Odometer &encoder, HeadingSensor &heading);
+    // void begin(Odometer &encoder1, Odometer &encoder2);
+    // void begin(Odometer &encoder1, Odometer &encoder2, HeadingSensor &heading);
+    void setSpeed(float speed){
+      carMock->setSpeed(speed);
+    };
+    void setAngle(int degrees){
+      carMock->setAngle(degrees);
+    };
+    float getSpeed(){
+      carMock->getSpeed();
+    };
+    int getAngle(){
+      carMock->getAngle();
+    };
+    void stop(){
+      carMock->stop();
+    };
+    void enableCruiseControl(float Kp = 0, float Ki = 0, float Kd = 0, unsigned short frequency = 80){
+      carMock->enableCruiseControl(Kp, Ki, Kd, frequency);
+    };
+    void disableCruiseControl(){
+      carMock->disableCruiseControl();
+    };
+    void updateMotors(){
+      carMock->updateMotors();
+    };
+    void go(int centimeters){
+      carMock->go(centimeters);
+    };
+    void rotate(int degrees){
+      carMock->rotate(degrees);
+    };
+    void setMotorSpeed(int leftMotorSpeed, int rightMotorSpeed){
+      carMock->setMotorSpeed(leftMotorSpeed, rightMotorSpeed);
+    };
+    boolean cruiseControlEnabled(){
+      carMock->cruiseControlEnabled();
+    };
 };
-extern Serial_ Serial;
-
-SerialMock* serialMockInstance();
-void releaseSerialMock();
 
 
 #endif // SMARTCAR_H
