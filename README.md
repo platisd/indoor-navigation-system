@@ -1,6 +1,7 @@
-arduino-gmock-sample
-====================
+# Smartcar-gmock [WIP]
+A testing and mocking framework for the [Smartcar](http://plat.is/smartcar) Arduino library.
 
-This is a unittest example using gmock and google test.
+## How to run
+`cd test`
 
-Regarding license, please refer to subfolders.
+`./build.sh`
