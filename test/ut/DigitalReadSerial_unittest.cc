@@ -6,7 +6,7 @@
 #include "arduino-mock/Serial.h"
 #include "Smartcar.h"
 
-#include "../DigitalReadSerial.ino"
+#include "../../src/DigitalReadSerial.ino"
 
 using ::testing::Return;
 
