@@ -12,17 +12,19 @@ include_directories(
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock/include
 )
 
-file(GLOB TESTS_SRC "ut/*.cc")
-add_executable(smartcar_test ${TESTS_SRC})
+file(GLOB TESTS_SRC ${CMAKE_SOURCE_DIR}ut/*)
 
-target_link_libraries(smartcar_test
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/libgtest.a
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock-build/libgmock.a
-    ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+foreach( testsourcefile ${TESTS_SRC} )
+    string( REPLACE ".cc" "" testname ${testsourcefile} )
+    add_executable( ${testname} ${testsourcefile} )
+    target_link_libraries(${testname}
+        ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/libgtest.a
+        ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock-build/libgmock.a
+        ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
+        ${CMAKE_THREAD_LIBS_INIT}
+    )
+    add_dependencies(${testname} arduino_mock)
 
-add_dependencies(smartcar_test arduino_mock)
-
-enable_testing()
-add_test(smartcar_test_1 smartcar_test)
+    enable_testing()
+    add_test(${testname} ${testname})
+endforeach( testsourcefile ${TESTS_SRC} )
