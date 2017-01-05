@@ -5,3 +5,4 @@
 *.o
 *.a
 /test/DigitalReadSerial_unittest
+/build/
