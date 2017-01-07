@@ -80,7 +80,7 @@ TEST_F(SmartcarManualControlFixture, receives_B_GoesForward) {
     loop();
 }
 
-TEST_F(SmartcarManualControlFixture, receives_AnythingElse_GoesForward) {
+TEST_F(SmartcarManualControlFixture, receives_AnythingElse_Stops) {
     EXPECT_CALL(*serialMock, available())
         .WillOnce(Return(1));
     EXPECT_CALL(*serialMock, read())

@@ -15,26 +15,25 @@ include_directories(
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock/include
 )
 
-# file(TESTS_SRC ut/manualControl_test.cc)
-add_executable(manualControlTest ${UT_DIR}/manualControl_test.cc)
-target_link_libraries(manualControlTest
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/libgtest.a
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock-build/libgmock.a
-    ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
-    ${CMAKE_THREAD_LIBS_INIT}
-)
-add_dependencies(manualControlTest arduino_mock)
-
-
-add_executable(digitalReadTest ${UT_DIR}/DigitalReadSerial_test.cc)
-target_link_libraries(digitalReadTest
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/libgtest.a
-    ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock-build/libgmock.a
-    ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
-    ${CMAKE_THREAD_LIBS_INIT}
-)
-add_dependencies(digitalReadTest arduino_mock)
-
-
-add_test(manual_control_test manualControlTest)
-add_test(digital_read_test digitalReadTest)
+# Include all files in ut/ ending with .cc as tests
+file(GLOB TESTS ${UT_DIR}/*.cc)
+# Iterate through the files inside the unit tests folder
+foreach(test ${TESTS})
+    # Print the included path
+    MESSAGE(STATUS "Included test file: " ${test})
+    # Remove the file ending and the path, leaving just the file name
+    string(REPLACE ".cc" "" testname ${test})
+    string(REPLACE ${UT_DIR}/ "" testname ${testname})
+    # Add the test source file to an executable with the same name
+    add_executable(${testname} ${test})
+    target_link_libraries(
+        ${testname}
+        ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest-build/libgtest.a
+        ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock-build/libgmock.a
+        ${ARDUINO_MOCK_LIBS_DIR}/dist/lib/libarduino_mock.a
+        ${CMAKE_THREAD_LIBS_INIT}
+    )
+    add_dependencies(${testname} arduino_mock)
+    # Add it as a separate test
+    add_test(${testname} ${testname})
+endforeach(test ${TESTS})
