@@ -10,7 +10,7 @@
 
 using ::testing::Return;
 
-class SmartcarTestFixture : public ::testing::Test
+class DigitalReadTestFixture : public ::testing::Test
 {
    public:
      ArduinoMock* arduinoMock;
@@ -30,7 +30,7 @@ class SmartcarTestFixture : public ::testing::Test
 };
 
 
-TEST_F(SmartcarTestFixture, pushed) {
+TEST_F(DigitalReadTestFixture, pushed) {
   EXPECT_CALL(*arduinoMock, digitalRead(2))
     .WillOnce(Return(1));
   EXPECT_CALL(*serialMock, println(1, 10));
