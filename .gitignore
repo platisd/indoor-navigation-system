@@ -4,5 +4,4 @@
 .DS_Store
 *.o
 *.a
-/test/DigitalReadSerial_unittest
-/build/
+/test/build/
