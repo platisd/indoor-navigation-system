@@ -12,5 +12,6 @@
 #include "InfraredSensors.h"
 #include "HeadingSensors.h"
 #include "Odometer.h"
+#include "HelperMethods.h"
 
 #endif // SMARTCAR_H
