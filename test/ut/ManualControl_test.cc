@@ -1,26 +1,22 @@
-// Copyright 2014 http://switchdevice.com
-// This example code is in the public domain.
 
 #include "gtest/gtest.h"
-#include "arduino-mock/Arduino.h"
+#include "arduino-mock/Arduino.h" // Necessary to include for Serial
 #include "arduino-mock/Serial.h"
-#include "Smartcar.h"
+#include "Smartcar.h" // The Smartcar library mocks
 
-#include "../../src/manualControl.ino"
+#include "../../src/manualControl.ino" // Our production code
 
-using ::testing::Return;
-using ::testing::_;
+using ::testing::Return; // Neededto use "Return"
+using ::testing::_; // Needed to use the "anything matcher"
 
 class SmartcarManualControlFixture : public ::testing::Test
 {
    public:
-     ArduinoMock* arduinoMock;
      SerialMock* serialMock;
      CarMock* carMock;
     // Run this before the tests
     virtual void SetUp()
     {
-      arduinoMock = arduinoMockInstance();
       serialMock = serialMockInstance();
       carMock = carMockInstance();
     }
@@ -28,7 +24,6 @@ class SmartcarManualControlFixture : public ::testing::Test
     virtual void TearDown()
     {
       releaseSerialMock();
-      releaseArduinoMock();
       releaseCarMock();
     }
 };

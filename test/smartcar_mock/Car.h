@@ -48,16 +48,16 @@ public:
     }
 //    Car(SteeringMotor *steering, ThrottleMotor *throttle);
     void begin(){
-      carMock->begin();
+        carMock->begin();
     };
     // void begin(Odometer &encoder){
     //     encoderAttached = true;
     //     headingAttached = false;
     // };
-    //  void begin(HeadingSensor &heading){
-    //      encoderAttached = false;
-    //      headingAttached = true;
-    //  };
+    void begin(HeadingSensor &heading){
+        encoderAttached = false;
+        headingAttached = true;
+    };
     //  void begin(Odometer &encoder, HeadingSensor &heading){
     //      encoderAttached = true;
     //      headingAttached = true;
