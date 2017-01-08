@@ -1,0 +1,4 @@
+#ifndef INFRARED_SENSORS_H
+#define INFRARED_SENSORS_H
+
+#endif // INFRARED_SENSORS_H

@@ -1,7 +1,7 @@
 #ifndef CARMOCK_H
 #define CARMOCK_H
 
-#include "HeadingSensor.h"
+#include "HeadingSensors.h"
 #include "Odometer.h"
 #include "SteeringMotor.h"
 #include "ThrottleMotor.h"
@@ -50,26 +50,26 @@ public:
     void begin(){
       carMock->begin();
     };
-    void begin(Odometer &encoder){
-        encoderAttached = true;
-        headingAttached = false;
-    };
-     void begin(HeadingSensor &heading){
-         encoderAttached = false;
-         headingAttached = true;
-     };
-     void begin(Odometer &encoder, HeadingSensor &heading){
-         encoderAttached = true;
-         headingAttached = true;
-     };
-     void begin(Odometer &encoder1, Odometer &encoder2){
-         encoderAttached = true;
-         headingAttached = false;
-     };
-     void begin(Odometer &encoder1, Odometer &encoder2, HeadingSensor &heading){
-         encoderAttached = true;
-         headingAttached = true;
-     };
+    // void begin(Odometer &encoder){
+    //     encoderAttached = true;
+    //     headingAttached = false;
+    // };
+    //  void begin(HeadingSensor &heading){
+    //      encoderAttached = false;
+    //      headingAttached = true;
+    //  };
+    //  void begin(Odometer &encoder, HeadingSensor &heading){
+    //      encoderAttached = true;
+    //      headingAttached = true;
+    //  };
+    //  void begin(Odometer &encoder1, Odometer &encoder2){
+    //      encoderAttached = true;
+    //      headingAttached = false;
+    //  };
+    //  void begin(Odometer &encoder1, Odometer &encoder2, HeadingSensor &heading){
+    //      encoderAttached = true;
+    //      headingAttached = true;
+    //  };
     void setSpeed(float speed){
       carMock->setSpeed(speed);
     };
@@ -107,7 +107,7 @@ public:
       carMock->cruiseControlEnabled();
     };
 private:
-    bool encoderAttached;
+    bool encoderAttached, headingAttached;
 };
 
 #endif // CARMOCK_H

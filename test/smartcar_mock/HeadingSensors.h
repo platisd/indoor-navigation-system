@@ -1,0 +1,4 @@
+#ifndef HEADING_SENSORS_H
+#define HEADING_SENSORS_H
+
+#endif // HEADING_SENSORS_H

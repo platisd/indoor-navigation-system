@@ -1,0 +1,4 @@
+#ifndef THROTTLE_MOTOR_H
+#define THROTTLE_MOTOR_H
+
+#endif // THROTTLE_MOTOR_H
