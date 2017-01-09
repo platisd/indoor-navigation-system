@@ -76,41 +76,65 @@ void releaseGP2Y0A21Mock() {
 /* -------------------------------------------- */
 class GP2D120 {
 public:
+    GP2D120(){
+        GP2D120attached = false;
+    };
     void attach(unsigned short pin){
+        GP2D120attached = true;
         GP2D120_mock->attach(pin);
     };
     unsigned int getDistance(){
+        assert(GP2D120attached); // GP2D120 not attached!
         GP2D120_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations = 5){
+        assert(GP2D120attached); // GP2D120 not attached!
         GP2D120_mock->getMedianDistance(iterations);
     };
+private:
+    bool GP2D120attached;
 };
 
 class GP2Y0A02 {
 public:
+    GP2Y0A02(){
+        GP2Y0A02attached = false;
+    };
     void attach(unsigned short pin){
+        GP2Y0A02attached = true;
         GP2Y0A02_mock->attach(pin);
     };
     unsigned int getDistance(){
+        assert(GP2Y0A02attached); // GP2Y0A02 not attached!
         GP2Y0A02_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations){
+        assert(GP2Y0A02attached); // GP2Y0A02 not attached!
         GP2Y0A02_mock->getMedianDistance(iterations);
     };
+private:
+    bool GP2Y0A02attached;
 };
 
 class GP2Y0A21 {
 public:
+    GP2Y0A21(){
+        GP2Y0A21attached = false;
+    };
     void attach(unsigned short pin){
+        GP2Y0A21attached = true;
         GP2Y0A21_mock->attach(pin);
     };
     unsigned int getDistance(){
+        assert(GP2Y0A21attached); // GP2Y0A21 not attached!
         GP2Y0A21_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations){
+        assert(GP2Y0A21attached); // GP2Y0A21 not attached!
         GP2Y0A21_mock->getMedianDistance(iterations);
     };
+private:
+    bool GP2Y0A21attached;
 };
 
 #endif // INFRARED_SENSORS_H

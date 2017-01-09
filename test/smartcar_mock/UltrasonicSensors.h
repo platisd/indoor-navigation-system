@@ -55,46 +55,66 @@ void releaseSRF08Mock() {
 /* -------------------------------------------- */
 class SR04 {
 public:
-    SR04(unsigned int maxDistance = 100){};
+    SR04(unsigned int maxDistance = 100){
+        SR04attached = false;
+    };
     void attach(unsigned short triggerPin, unsigned short echoPin){
+        SR04attached = true;
         SR04_mock->attach(triggerPin, echoPin);
     };
     unsigned int getDistance(){
+        assert(SR04attached); // SR04 not attached!
         SR04_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations = 5){
+        assert(SR04attached); // SR04 not attached!
         SR04_mock->getMedianDistance(iterations);
     };
+private:
+    bool SR04attached;
 };
 
 class SRF08 {
 public:
+    SRF08(){
+        SRF08attached = false;
+    }
     void attach(unsigned short address = 112){
         // Verify first that address is in the correct range
         assert((address >= 112) && (address <= 127)); // Wrong address!
+        SRF08attached = true;
         SRF08_mock->attach(address);
     };
     unsigned int getDistance(){
+        assert(SRF08attached); // SRF08 not attached!
         SRF08_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations = 5){
+        assert(SRF08attached); // SRF08 not attached!
         SRF08_mock->getMedianDistance(iterations);
     };
     void setGain(unsigned short gainValue){
+        assert(SRF08attached); // SRF08 not attached!
         SRF08_mock->setGain(gainValue);
     };
     void setRange(unsigned short rangeValue){
+        assert(SRF08attached); // SRF08 not attached!
         SRF08_mock->setRange(rangeValue);
     };
     void setPingDelay(unsigned short milliseconds = 70){
+        assert(SRF08attached); // SRF08 not attached!
         SRF08_mock->setPingDelay(milliseconds);
     };
     void changeAddress(unsigned short newAddress){
+        assert(SRF08attached); // SRF08 not attached!
         SRF08_mock->changeAddress(newAddress);
     };
     unsigned short getLightReading(){
+        assert(SRF08attached); // SRF08 not attached!
         SRF08_mock->getLightReading();
     };
+private:
+    bool SRF08attached;
 };
 
 #endif // ULTRASONIC_SENSORS_H
