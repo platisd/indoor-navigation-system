@@ -20,7 +20,7 @@ public:
     MOCK_METHOD1(go, void(int));
     MOCK_METHOD1(rotate, void(int));
     MOCK_METHOD2(setMotorSpeed, void(int, int));
-    MOCK_METHOD0(cruiseControlEnabled, boolean());
+    MOCK_METHOD0(cruiseControlEnabled, bool());
 };
 
 /* Methods for instantiating and deleting the mock */
@@ -134,7 +134,7 @@ public:
         assert(carHasBegun); // Car has not begun!
         carMock->setMotorSpeed(leftMotorSpeed, rightMotorSpeed);
     };
-    boolean cruiseControlEnabled(){
+    bool cruiseControlEnabled(){
         assert(carHasBegun); // Car has not begun!
         carMock->cruiseControlEnabled();
     };

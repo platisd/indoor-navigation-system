@@ -1,6 +1,8 @@
 #ifndef HEADING_SENSORS_H
 #define HEADING_SENSORS_H
 
+#include "gmock/gmock.h"
+
 class GyroscopeMock {
 public:
     MOCK_METHOD0(attach, void());

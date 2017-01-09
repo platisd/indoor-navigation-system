@@ -1,6 +1,8 @@
 #ifndef ULTRASONIC_SENSORS_H
 #define ULTRASONIC_SENSORS_H
 
+#include "gmock/gmock.h"
+
 class SR04Mock {
 public:
     MOCK_METHOD2(attach, void(unsigned short, unsigned short));

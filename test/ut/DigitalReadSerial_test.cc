@@ -2,6 +2,7 @@
 // This example code is in the public domain.
 
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 #include "arduino-mock/Arduino.h"
 #include "arduino-mock/Serial.h"
 

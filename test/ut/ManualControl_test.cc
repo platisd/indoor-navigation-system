@@ -1,6 +1,6 @@
 
 #include "gtest/gtest.h"
-#include "arduino-mock/Arduino.h" // Necessary to include for Serial
+#include "gmock/gmock.h"
 #include "arduino-mock/Serial.h"
 #include "Smartcar.h" // The Smartcar library mocks
 

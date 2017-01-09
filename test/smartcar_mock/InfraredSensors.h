@@ -1,6 +1,8 @@
 #ifndef INFRARED_SENSORS_H
 #define INFRARED_SENSORS_H
 
+#include "gmock/gmock.h"
+
 /* GP2D120 SHARP infrared sensor (5-25cm) */
 class GP2D120Mock {
 public:

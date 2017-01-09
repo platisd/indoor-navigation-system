@@ -1,6 +1,8 @@
 #ifndef STEERING_MOTOR_H
 #define STEERING_MOTOR_H
 
+#include "gmock/gmock.h"
+
 class SteeringMotorMock {
 public:
     MOCK_METHOD1(setAngle, void(int));

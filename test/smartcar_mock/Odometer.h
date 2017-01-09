@@ -1,6 +1,8 @@
 #ifndef ODOMETER_H
 #define ODOMETER_H
 
+#include "gmock/gmock.h"
+
 class OdometerMock {
 public:
     MOCK_METHOD1(attach, void(unsigned short));

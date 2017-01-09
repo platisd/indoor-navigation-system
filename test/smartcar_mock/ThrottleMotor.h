@@ -1,6 +1,8 @@
 #ifndef THROTTLE_MOTOR_H
 #define THROTTLE_MOTOR_H
 
+#include "gmock/gmock.h"
+
 class ThrottleMotorMock {
 public:
     MOCK_METHOD1(setSpeed, void(int));

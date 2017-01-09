@@ -1,6 +1,7 @@
 #ifndef HELPER_METHODS_H
 #define HELPER_METHODS_H
 
+#include "gmock/gmock.h"
 #include "ThrottleMotor.h"
 #include "SteeringMotor.h"
 

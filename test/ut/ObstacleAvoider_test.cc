@@ -1,6 +1,5 @@
-
 #include "gtest/gtest.h"
-#include "arduino-mock/Arduino.h"
+#include "gmock/gmock.h"
 #include "Smartcar.h" // The Smartcar library mocks
 
 #include "../../src/obstacleAvoider.ino" // Our production code
