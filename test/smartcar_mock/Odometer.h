@@ -28,19 +28,27 @@ void releaseOdometerMock() {
 /* -------------------------------------------- */
 class Odometer {
 public:
-    Odometer(unsigned int pulsesPerMeter = 100){};
+    Odometer(unsigned int pulsesPerMeter = 100){
+        encoderAttached = false;
+    };
     int attach(unsigned short pin){
+        encoderAttached = true;
         odometerMock->attach(pin);
     };
     void begin(){
+        assert(encoderAttached); // Encoder not attached!
         odometerMock->begin();
     };
     unsigned long getDistance(){
+        assert(encoderAttached); // Encoder not attached!
         odometerMock->getDistance();
     };
     float getSpeed(){
+        assert(encoderAttached); // Encoder not attached!
         odometerMock->getSpeed();
     };
+private:
+    bool encoderAttached;
 };
 
 #endif // ODOMETER_H

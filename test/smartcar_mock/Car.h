@@ -7,7 +7,7 @@
 #include "ThrottleMotor.h"
 
 class CarMock {
-  public:
+public:
     MOCK_METHOD0(begin, void());
     MOCK_METHOD1(setSpeed, void(float));
     MOCK_METHOD1(setAngle, void(int));
@@ -26,17 +26,17 @@ class CarMock {
 /* Methods for instantiating and deleting the mock */
 static CarMock* carMock = NULL;
 CarMock* carMockInstance() {
-  if(!carMock) {
-    carMock = new CarMock();
-  }
-  return carMock;
+    if(!carMock) {
+        carMock = new CarMock();
+    }
+    return carMock;
 }
 
 void releaseCarMock() {
-  if(carMock) {
-    delete carMock;
-    carMock = NULL;
-  }
+    if(carMock) {
+        delete carMock;
+        carMock = NULL;
+    }
 }
 /* ------------------------------------------------ */
 
@@ -45,69 +45,101 @@ public:
     Car(unsigned short shieldOrientation = 0){
         encoderAttached = false;
         headingAttached = false;
+        carHasBegun = false;
     }
-//    Car(SteeringMotor *steering, ThrottleMotor *throttle);
+    Car(SteeringMotor *steering, ThrottleMotor *throttle){
+        encoderAttached = false;
+        headingAttached = false;
+        carHasBegun = false;
+    };
     void begin(){
+        carHasBegun = true;
         carMock->begin();
     };
-    // void begin(Odometer &encoder){
-    //     encoderAttached = true;
-    //     headingAttached = false;
-    // };
+    void begin(Odometer &encoder){
+        carHasBegun = true;
+        encoderAttached = true;
+        headingAttached = false;
+        carMock->begin();
+    };
     void begin(HeadingSensor &heading){
+        carHasBegun = true;
         encoderAttached = false;
         headingAttached = true;
+        carMock->begin();
     };
-    //  void begin(Odometer &encoder, HeadingSensor &heading){
-    //      encoderAttached = true;
-    //      headingAttached = true;
-    //  };
-    //  void begin(Odometer &encoder1, Odometer &encoder2){
-    //      encoderAttached = true;
-    //      headingAttached = false;
-    //  };
-    //  void begin(Odometer &encoder1, Odometer &encoder2, HeadingSensor &heading){
-    //      encoderAttached = true;
-    //      headingAttached = true;
-    //  };
+    void begin(Odometer &encoder, HeadingSensor &heading){
+        carHasBegun = true;
+        encoderAttached = true;
+        headingAttached = true;
+        carMock->begin();
+    };
+    void begin(Odometer &encoder1, Odometer &encoder2){
+        carHasBegun = true;
+        encoderAttached = true;
+        headingAttached = false;
+        carMock->begin();
+    };
+    void begin(Odometer &encoder1, Odometer &encoder2, HeadingSensor &heading){
+        carHasBegun = true;
+        encoderAttached = true;
+        headingAttached = true;
+        carMock->begin();
+    };
     void setSpeed(float speed){
-      carMock->setSpeed(speed);
+        assert(carHasBegun); // Car has not begun!
+        carMock->setSpeed(speed);
     };
     void setAngle(int degrees){
-      carMock->setAngle(degrees);
+        assert(carHasBegun); // Car has not begun!
+        carMock->setAngle(degrees);
     };
     float getSpeed(){
-      carMock->getSpeed();
+        assert(carHasBegun); // Car has not begun!
+        carMock->getSpeed();
     };
     int getAngle(){
-      carMock->getAngle();
+        assert(carHasBegun); // Car has not begun!
+        carMock->getAngle();
     };
     void stop(){
-      carMock->stop();
+        assert(carHasBegun); // Car has not begun!
+        carMock->stop();
     };
     void enableCruiseControl(float Kp = 0, float Ki = 0, float Kd = 0, unsigned short frequency = 80){
-      carMock->enableCruiseControl(Kp, Ki, Kd, frequency);
+        assert(carHasBegun); // Car has not begun!
+        assert(encoderAttached); // No odometer attached!
+        carMock->enableCruiseControl(Kp, Ki, Kd, frequency);
     };
     void disableCruiseControl(){
-      carMock->disableCruiseControl();
+        assert(carHasBegun); // Car has not begun!
+        carMock->disableCruiseControl();
     };
     void updateMotors(){
-      carMock->updateMotors();
+        assert(carHasBegun); // Car has not begun!
+        assert(encoderAttached); // No odometer attached!
+        carMock->updateMotors();
     };
     void go(int centimeters){
-      carMock->go(centimeters);
+        assert(carHasBegun); // Car has not begun!
+        assert(encoderAttached); // No odometer attached!
+        carMock->go(centimeters);
     };
     void rotate(int degrees){
-      carMock->rotate(degrees);
+        assert(carHasBegun); // Car has not begun!
+        assert(headingAttached); // No heading sensor attached!
+        carMock->rotate(degrees);
     };
     void setMotorSpeed(int leftMotorSpeed, int rightMotorSpeed){
-      carMock->setMotorSpeed(leftMotorSpeed, rightMotorSpeed);
+        assert(carHasBegun); // Car has not begun!
+        carMock->setMotorSpeed(leftMotorSpeed, rightMotorSpeed);
     };
     boolean cruiseControlEnabled(){
-      carMock->cruiseControlEnabled();
+        assert(carHasBegun); // Car has not begun!
+        carMock->cruiseControlEnabled();
     };
 private:
-    bool encoderAttached, headingAttached;
+    bool encoderAttached, headingAttached, carHasBegun;
 };
 
 #endif // CARMOCK_H

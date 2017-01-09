@@ -32,7 +32,6 @@ public:
 
 TEST_F(GyroscopeFixture, initsAreCalled) {
     EXPECT_CALL(*serialMock, begin(_));
-    EXPECT_CALL(*gyroscopeMock, attach());
     EXPECT_CALL(*gyroscopeMock, begin(_));
     setup();
 }

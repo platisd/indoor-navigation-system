@@ -37,22 +37,31 @@ public:
 
 class Gyroscope : public HeadingSensor {
 public:
-    Gyroscope(int offset = 0){};
+    Gyroscope(int offset = 0){
+        gyroscopeAttached = false;
+    };
     void attach(){
+        gyroscopeAttached = true;
         gyroscopeMock->attach();
     };
     void begin(unsigned short samplingPeriod = 0){
+        assert(gyroscopeAttached); // Gyroscope not attached!
         gyroscopeMock->begin(samplingPeriod);
     };
     void update(){
+        assert(gyroscopeAttached); // Gyroscope not attached!
         gyroscopeMock->update();
     };
     int calibrate(int measurements = 100){
+        assert(gyroscopeAttached); // Gyroscope not attached!
         gyroscopeMock->calibrate(measurements);
     };
     unsigned int getAngularDisplacement(){
+        assert(gyroscopeAttached); // Gyroscope not attached!
         gyroscopeMock->getAngularDisplacement();
     };
+private:
+    bool gyroscopeAttached;
 };
 
 #endif // HEADING_SENSORS_H

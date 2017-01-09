@@ -6,7 +6,7 @@
 
 #include "../../src/manualControl.ino" // Our production code
 
-using ::testing::Return; // Neededto use "Return"
+using ::testing::Return; // Needed to use "Return"
 using ::testing::_; // Needed to use the "anything matcher"
 
 class SmartcarManualControlFixture : public ::testing::Test
