@@ -66,11 +66,11 @@ public:
     };
     unsigned int getDistance(){
         assert(SR04attached); // SR04 not attached!
-        SR04_mock->getDistance();
+        return SR04_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations = 5){
         assert(SR04attached); // SR04 not attached!
-        SR04_mock->getMedianDistance(iterations);
+        return SR04_mock->getMedianDistance(iterations);
     };
 private:
     bool SR04attached;
@@ -89,11 +89,11 @@ public:
     };
     unsigned int getDistance(){
         assert(SRF08attached); // SRF08 not attached!
-        SRF08_mock->getDistance();
+        return SRF08_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations = 5){
         assert(SRF08attached); // SRF08 not attached!
-        SRF08_mock->getMedianDistance(iterations);
+        return SRF08_mock->getMedianDistance(iterations);
     };
     void setGain(unsigned short gainValue){
         assert(SRF08attached); // SRF08 not attached!
@@ -113,7 +113,7 @@ public:
     };
     unsigned short getLightReading(){
         assert(SRF08attached); // SRF08 not attached!
-        SRF08_mock->getLightReading();
+        return SRF08_mock->getLightReading();
     };
 private:
     bool SRF08attached;

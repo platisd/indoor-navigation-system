@@ -35,10 +35,10 @@ public:
         steeringMotorMock->setAngle(degrees);
     };
     int getMaxRightAngle(){
-        steeringMotorMock->getMaxRightAngle();
+        return steeringMotorMock->getMaxRightAngle();
     };
     int getMaxLeftAngle(){
-        steeringMotorMock->getMaxLeftAngle();
+        return steeringMotorMock->getMaxLeftAngle();
     };
 };
 

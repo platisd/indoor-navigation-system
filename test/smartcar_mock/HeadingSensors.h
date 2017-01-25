@@ -56,11 +56,11 @@ public:
     };
     int calibrate(int measurements = 100){
         assert(gyroscopeAttached); // Gyroscope not attached!
-        gyroscopeMock->calibrate(measurements);
+        return gyroscopeMock->calibrate(measurements);
     };
     unsigned int getAngularDisplacement(){
         assert(gyroscopeAttached); // Gyroscope not attached!
-        gyroscopeMock->getAngularDisplacement();
+        return gyroscopeMock->getAngularDisplacement();
     };
 private:
     bool gyroscopeAttached;

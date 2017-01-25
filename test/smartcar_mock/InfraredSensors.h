@@ -87,11 +87,11 @@ public:
     };
     unsigned int getDistance(){
         assert(GP2D120attached); // GP2D120 not attached!
-        GP2D120_mock->getDistance();
+        return GP2D120_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations = 5){
         assert(GP2D120attached); // GP2D120 not attached!
-        GP2D120_mock->getMedianDistance(iterations);
+        return GP2D120_mock->getMedianDistance(iterations);
     };
 private:
     bool GP2D120attached;
@@ -108,11 +108,11 @@ public:
     };
     unsigned int getDistance(){
         assert(GP2Y0A02attached); // GP2Y0A02 not attached!
-        GP2Y0A02_mock->getDistance();
+        return GP2Y0A02_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations){
         assert(GP2Y0A02attached); // GP2Y0A02 not attached!
-        GP2Y0A02_mock->getMedianDistance(iterations);
+        return GP2Y0A02_mock->getMedianDistance(iterations);
     };
 private:
     bool GP2Y0A02attached;
@@ -129,11 +129,11 @@ public:
     };
     unsigned int getDistance(){
         assert(GP2Y0A21attached); // GP2Y0A21 not attached!
-        GP2Y0A21_mock->getDistance();
+        return GP2Y0A21_mock->getDistance();
     };
     unsigned int getMedianDistance(short iterations){
         assert(GP2Y0A21attached); // GP2Y0A21 not attached!
-        GP2Y0A21_mock->getMedianDistance(iterations);
+        return GP2Y0A21_mock->getMedianDistance(iterations);
     };
 private:
     bool GP2Y0A21attached;

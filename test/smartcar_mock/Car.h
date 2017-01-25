@@ -96,11 +96,11 @@ public:
     };
     float getSpeed(){
         assert(carHasBegun); // Car has not begun!
-        carMock->getSpeed();
+        return carMock->getSpeed();
     };
     int getAngle(){
         assert(carHasBegun); // Car has not begun!
-        carMock->getAngle();
+        return carMock->getAngle();
     };
     void stop(){
         assert(carHasBegun); // Car has not begun!
@@ -136,7 +136,7 @@ public:
     };
     bool cruiseControlEnabled(){
         assert(carHasBegun); // Car has not begun!
-        carMock->cruiseControlEnabled();
+        return carMock->cruiseControlEnabled();
     };
 private:
     bool encoderAttached, headingAttached, carHasBegun;
