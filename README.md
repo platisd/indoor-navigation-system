@@ -9,7 +9,15 @@ The repository contains a [src/](src/) directory where the user is expected to m
 * [Introduction to GoogleTest](https://github.com/google/googletest/blob/master/googletest/docs/Primer.md)
 * [Introduction to GoogleMock](https://github.com/google/googletest/blob/master/googlemock/docs/ForDummies.md)
 
-## How to get started
+## How to clone, build and run
+* Clone the project
+`git clone https://github.com/platisd/smartcar-gmock.git`
+* Inialize the smartcar_mock submodule
+`git submodule update --init`
+* Build and run the unit tests
+`./build_and_run_ut.sh`
+
+## How to get started with unit testing
 The simplest way to getting started with the Smartcar Mock framework is by using the examples already included with this repository. For instance, let's have a look at a simple obstacle avoider sketch that can be found in [src/examples/obstacleAvoider.ino](src/examples/obstacleAvoider.ino). Its unit tests can be found at [test/ut/examples/ObstacleAvoider_test.cc](test/ut/examples/ObstacleAvoider_test.cc).
 
 ```arduino
@@ -43,7 +51,7 @@ In order to test this sketch, we first need to make sure that all the components
 
 To ensure that, we make use of the following unit test found in [test/ut/examples/ObstacleAvoider_test.cc](test/ut/examples/ObstacleAvoider_test.cc):
 
-```
+```C++
 TEST_F(SmartcarObstacleAvoiderFixture, initsAreCalled) {
     EXPECT_CALL(*carMock, begin());
     EXPECT_CALL(*gyroscopeMock, attach());
@@ -59,7 +67,7 @@ That being said, the test would fail (or more accurately would not compile) if y
 
 Next, we need to test the loop function, where we can identify two separate cases depending on the distance that is detected. If the detected distance is smaller than 20 centimeters, the car's speed should be set to 100% and it to rotate once 90 degrees clockwise.
 
-```arduino
+```C++
 TEST_F(SmartcarObstacleAvoiderFixture, givenObstacleFound_rotates) {
     EXPECT_CALL(*SR04_mock, getDistance())
     .WillOnce(Return(5));
@@ -72,7 +80,7 @@ By running `loop()` one time, this unit test expects the SR04's `getDistance` me
 
 Once we have ensured that our car performs as expected in this scenario, we need to also test the alternative case, according to which the ultrasonic sensor's reading is larger than 20 centimeters, with the unit test that can be found right below. Can you read it and explain the code yourself?
 
-```arduino
+```C++
 TEST_F(SmartcarObstacleAvoiderFixture, noObstacleFound_slowsDown) {
     EXPECT_CALL(*SR04_mock, getDistance())
     .WillOnce(Return(70));
@@ -89,10 +97,8 @@ Then simply run `./build_and_run_ut.sh` to get the test results.
 
 ![Test results](http://i.imgur.com/w2vkllp.png)
 
-## How to run
-`./build_and_run_ut.sh`
-
 ## Dependencies
+* git
 * make
 * cmake
 * C++ compiler
