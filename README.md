@@ -1,18 +1,25 @@
 # Smartcar Mock
 A testing and mocking framework for the [Smartcar](http://plat.is/smartcar) Arduino library. You can use this to unit test your Smartcar sketches.
 
-It is based on [GoogleTest]https://github.com/google/googletest/tree/master/googletest) and [GoogleMock](https://github.com/google/googletest/tree/master/googlemock) which are some easy-to-use C++ testing and mocking frameworks. It builds upon the [Arduino-Mock](https://github.com/ikeyasu/arduino-mock) project by Anders Arnholm and Yasuki Ikeuchi.
+It is based on [GoogleTest](https://github.com/google/googletest/tree/master/googletest) and [GoogleMock](https://github.com/google/googletest/tree/master/googlemock) which are some easy-to-use C++ testing and mocking frameworks. It builds upon the [Arduino-Mock](https://github.com/ikeyasu/arduino-mock) project by Anders Arnholm and Yasuki Ikeuchi.
 
-The repository contains a [src/](src/) directory where the user is expected to maintain their production code and the [test/ut/](test/ut/) directory where the respective unit tests (\*.cc files) have to be placed. Inside each of them, you will find examples ([1(src/examples/)], [2(test/ut/examples/)]) folders with some ready to use production code and unit tests.
+The repository contains a [src/](src/) directory where the user is expected to maintain their production code and the [test/ut/](test/ut/) directory where the respective unit tests (\*.cc files) have to be placed. Inside each of them, you will find examples ([1](src/examples/), [2](test/ut/examples/)) folders with some ready to use production code and unit tests.
 
 ## Useful reading
 * [Introduction to GoogleTest](https://github.com/google/googletest/blob/master/googletest/docs/Primer.md)
 * [Introduction to GoogleMock](https://github.com/google/googletest/blob/master/googlemock/docs/ForDummies.md)
+* [Smartcar API Reference](https://github.com/platisd/smartcar_shield/wiki/API-documentation)
+
+## Dependencies
+* git
+* make
+* cmake
+* C++ compiler
 
 ## How to clone, build and run
 * Clone the project
 `git clone https://github.com/platisd/smartcar-gmock.git`
-* Inialize the smartcar_mock submodule
+* Inialize the `smartcar_mock` submodule
 `git submodule update --init`
 * Build and run the unit tests
 `./build_and_run_ut.sh`
@@ -97,8 +104,53 @@ Then simply run `./build_and_run_ut.sh` to get the test results.
 
 ![Test results](http://i.imgur.com/w2vkllp.png)
 
-## Dependencies
-* git
-* make
-* cmake
-* C++ compiler
+## Proposed workflow
+Ideally, you should use this repository to develop your code in this already set up testing environment. It is strongly suggested that you do not delete the version controlled history of the files that are found here, so you can make changes and receive updates (through the smartcar_mock submodule) in the future easier, if the need arises.
+
+Depending on whether you are starting from scratch or already have a repository set up, you should follow [Method A](#method-a-mirroring-the-smartcar-gmock-repository) or [Method B](#method-b-merging-with-the-smartcar-gmock-repository) respectively, which are outlined below. After you are done with either of the two methods, do not forget to initialize the submodule with `git submodule update --init` before starting to test.
+
+### Method A: Mirroring the smartcar-gmock repository
+**Warning:** Mirror pushing to an already existing repository will overwrite your previous work. If that is the case, please follow [Method B](#method-b-merging-with-the-smartcar-gmock-repository) instead.
+
+If you are starting from scratch, you can create a duplicate of this repository and move on with your development. To do this, you will need to run the following steps adopted from GitHub's "[Duplicating a repository](https://help.github.com/articles/duplicating-a-repository/#mirroring-a-repository)":
+* Create a bare clone of the repository
+
+`git clone --bare https://github.com/platisd/smartcar-gmock.git`
+* Mirror-push to the new repository
+
+`cd old-repository.git`
+
+`git push --mirror https://github.com/exampleuser/my-smartcar-project.git`
+* Remove the temporary local repository you previously created
+`cd ..`
+
+`rm -rf smartcar-gmock.git`
+
+### Method B: Merging with the smartcar-gmock repository
+Follow these instructions if you have set up a working repository, which you do not want to overwrite and lose.
+
+* Add the smartcar-gmock repository as a remote into your already existing repository
+
+If for example your repository is [DIT524-V17/group-99](https://github.com/DIT524-V17/group-99) then you should do the following:
+
+`git clone https://github.com/DIT524-V17/group-99.git`
+
+`cd group-99`
+
+`git remote add -f smartcar-gmock https://github.com/platisd/smartcar-gmock.git`
+* Merge the smartcar-gmock repository with your already existing work
+
+`git merge smartcar-gmock/master --allow-unrelated-histories`
+
+Or if you are using an old git version and the command above does not work, simply run the same without the flag:
+
+`git merge smartcar-gmock/master`
+* Resolve possible merge conflicts
+E.g. on the README or LICENSE files
+
+* Add the resolved files when you are done and commit the merge
+
+## How to update to the latest mock classes
+An effort will be made to keep this repository stable, with as little (substantial) changes as possible. So after you clone this, you should not need to pull again. This is done to enable the ones who have cloned it in the past, to seamlessly develop and maintain their production code in the `src/` directory. Whatever important changes that could be introduced will be through the `smartcar_mock` submodule that can be independently updated by running without having a dependency to this repository, by running:
+
+`git submodule foreach git pull --rebase origin master`
