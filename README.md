@@ -31,7 +31,9 @@ If you get a `GIT_DICOVERY_ACROSS_FILESYSTEM not set` error, then run `git init`
 
 `./build_and_run_ut.sh`
 
-During your first run, there will be no tests found. Do not worry, that is normal. Keep reading to find out how you can run your first test.
+During your first run, there will be no tests found. Do not worry, that is normal. Keep reading to find out how you can run your first test. Once you have production code and tests added, run the `build_and_run_ut.sh` script again. If you want to make a clean build and remove previous artifacts, run the build script with the `--clean` or `-c` flag:
+
+`./build_and_run_ut.sh --clean`
 
 ## How to get started with unit testing
 The simplest way to getting started with the Smartcar Mock framework is by using the examples already included with this repository. For instance, let's have a look at a simple obstacle avoider sketch that can be found in [src/examples/obstacleAvoider.ino](src/examples/obstacleAvoider.ino). Its unit tests can be found at [test/ut/examples/ObstacleAvoider_test.cc](test/ut/examples/ObstacleAvoider_test.cc).
