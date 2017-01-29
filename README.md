@@ -22,7 +22,7 @@ The repository contains a [src/](src/) directory where the user is expected to m
 `git clone https://github.com/platisd/smartcar-gmock.git`
 
 `cd smartcar-gmock`
-* Inialize the `smartcar_mock` submodule
+* Initialize the `smartcar_mock` submodule
 
 `git submodule update --init`
 
