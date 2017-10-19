@@ -1,0 +1,19 @@
+dist: trusty
+sudo: required
+language:
+    - cpp
+
+compiler:
+    - g++
+
+notifications:
+    email: false
+
+# Install project dependencies
+install:
+    - bash get_dependencies.sh
+
+# Build the project
+script:
+    # Build INS server
+    - bash server/build.sh
