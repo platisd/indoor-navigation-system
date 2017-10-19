@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.2)
 project(ins_server)
 
 set(CMAKE_CXX_STANDARD 11)
