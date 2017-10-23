@@ -5,14 +5,9 @@
 ## Dependencies
 * [Pistache](http://pistache.io/)
 * [Sqlite3](https://www.sqlite.org/)
-* [spdlog](https://github.com/gabime/spdlog)
 
 ### How To Fetch Dependencies
-#### Ubuntu
-* Do update
-    * `sudo apt-get update`
-* Install spdlog
-    * `sudo apt-get install libspdlog-dev -y`  
+#### Ubuntu 
 * Install SQLite3
     * `sudo apt-get install sqlite3 libsqlite3-dev -y`
 * Install Pistache
