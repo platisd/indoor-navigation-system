@@ -5,6 +5,7 @@
 ## Dependencies
 * [Pistache](http://pistache.io/)
 * [Sqlite3](https://www.sqlite.org/)
+* [spdlog](https://github.com/gabime/spdlog)
 
 ### How To Fetch Dependencies
 #### Ubuntu 
