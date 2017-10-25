@@ -94,9 +94,10 @@ void DataStore::InsertRSSIReadings(const std::string &device_id, std::vector<std
     console_->debug("- DataStore::InsertRSSIReadings");
 }
 
-Position DataStore::GetPosition(const std::string &id, QueryT query_by) {
+bool DataStore::GetPosition(const std::string &id, QueryT query_by, Position &pos) {
     console_->debug("+ DataStore::GetPosition");
 
+    bool result =  false;
     std::string sql;
 
     if (query_by == QueryT::DEVICE)
@@ -104,7 +105,6 @@ Position DataStore::GetPosition(const std::string &id, QueryT query_by) {
     else
         sql = "SELECT loc_x, loc_y, loc_z from location WHERE employee_id=" + id;
 
-    Position pos;
     sqlite3_stmt *selectStmt;
     sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
     while (1) {
@@ -113,6 +113,7 @@ Position DataStore::GetPosition(const std::string &id, QueryT query_by) {
             pos.x = sqlite3_column_double(selectStmt, 0);
             pos.y = sqlite3_column_double(selectStmt, 1);
             pos.z = sqlite3_column_double(selectStmt, 2);
+            result = true;
         } else if (state == SQLITE_DONE) {
             break;
         } else {
@@ -123,7 +124,7 @@ Position DataStore::GetPosition(const std::string &id, QueryT query_by) {
     sqlite3_finalize(selectStmt);
 
     console_->debug("- DataStore::GetPosition");
-    return pos;
+    return result;
 }
 
 void DataStore::RunQuery(const std::string &sql) {

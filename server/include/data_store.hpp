@@ -25,7 +25,7 @@ class DataStore {
     void InsertRSSIReadings(const std::string &device_id, std::vector<std::string> ssid_list,
                             std::vector<double> rssi_list);
 
-    Position GetPosition(const std::string &device_id, QueryT queryby);
+    bool GetPosition(const std::string &device_id, QueryT queryby, Position &pos);
 
     void CreateDeviceTable(const std::string &device_id);
 

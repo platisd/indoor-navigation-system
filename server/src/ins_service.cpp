@@ -12,7 +12,7 @@ int IndoorNavigationService::Init(int thread_count) {
     data_store_ = std::make_shared<DataStore>();
     data_store_->Init("../ins.db");
 
-    localization_  = std::make_shared<Localization>();
+    localization_ = std::make_shared<Localization>();
 
     auto opts = Pistache::Http::Endpoint::options()
                     .threads(thread_count)
@@ -110,11 +110,16 @@ void IndoorNavigationService::GetDevicePosition(const Pistache::Rest::Request &r
     console_->debug("+ IndoorNavigationService::GetDevicePosition");
 
     std::string device_id = request.param(":device_id").as<std::string>();
-    auto pos = data_store_->GetPosition(device_id, QueryT::DEVICE);
-    response.send(Pistache::Http::Code::Ok, "device_id:" + device_id + " {loc_x:" + std::to_string(pos.x) +
-                                                ",loc_y:" + std::to_string(pos.y) + ",loc_z:" +
-                                                std::to_string(pos.z) + "}");
-    console_->info("X-{:03.3}, Y-{:03.3}, Z-{:03.3}, ", pos.x, pos.y, pos.z);
+
+    Position pos;
+    if (data_store_->GetPosition(device_id, QueryT::DEVICE, pos)) {
+        response.send(Pistache::Http::Code::Ok, "device_id:" + device_id + " {loc_x:" + std::to_string(pos.x) +
+                                                    ",loc_y:" + std::to_string(pos.y) + ",loc_z:" +
+                                                    std::to_string(pos.z) + "}");
+        console_->info("X-{:03.3}, Y-{:03.3}, Z-{:03.3}, ", pos.x, pos.y, pos.z);
+    } else {
+        response.send(Pistache::Http::Code::Ok, "{error: device_id not found}");
+    }
 
     console_->debug("- IndoorNavigationService::GetDevicePosition");
 }
@@ -124,11 +129,16 @@ void IndoorNavigationService::GetEmployeePosition(const Pistache::Rest::Request 
     console_->debug("+ IndoorNavigationService::GetEmployeePosition");
 
     std::string employee_id = request.param(":employee_id").as<std::string>();
-    auto pos = data_store_->GetPosition(employee_id, QueryT::EMPLOYEE);
-    response.send(Pistache::Http::Code::Ok, "employee_id:" + employee_id + " {loc_x:" + std::to_string(pos.x) +
-                                                ",loc_y:" + std::to_string(pos.y) + ",loc_z:" +
-                                                std::to_string(pos.z) + "}");
-    console_->info("X-{:03.3}, Y-{:03.3}, Z-{:03.3}, ", pos.x, pos.y, pos.z);
+
+    Position pos;
+    if(data_store_->GetPosition(employee_id, QueryT::EMPLOYEE, pos)){
+        response.send(Pistache::Http::Code::Ok, "employee_id:" + employee_id + " {loc_x:" + std::to_string(pos.x) +
+                                                    ",loc_y:" + std::to_string(pos.y) + ",loc_z:" +
+                                                    std::to_string(pos.z) + "}");
+        console_->info("X-{:03.3}, Y-{:03.3}, Z-{:03.3}, ", pos.x, pos.y, pos.z);
+    }else{
+        response.send(Pistache::Http::Code::Ok, "{error: employee_id not found}");
+    }
 
     console_->debug("- IndoorNavigationService::GetEmployeePosition");
 }
