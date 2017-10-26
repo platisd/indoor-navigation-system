@@ -17,3 +17,4 @@ install:
 script:
     # Build INS server
     - bash server/build.sh
+    - bash ins-node/build_and_run_ut.sh

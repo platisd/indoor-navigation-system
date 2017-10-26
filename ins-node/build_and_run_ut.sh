@@ -1,9 +1,12 @@
 #!/bin/bash
+caller_dir=$PWD
+# Move to the current script directory
+cd "${0%/*}"
+
 set -eu
 export GTEST_COLOR=1
 
 cd test
-cd -- "$(dirname -- "$0")"
 arg=${1:-n}
 if [ "$arg" = "--clean" ] || [ "$arg" = "-c" ]; then
     rm -rf build
@@ -13,4 +16,6 @@ cd build
 cmake ..
 make
 ctest -V
-cd ..
+
+# Go back to the initial directory when you are done
+cd $caller_dir
