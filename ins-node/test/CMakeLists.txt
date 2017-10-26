@@ -1,16 +1,16 @@
 cmake_minimum_required (VERSION 2.8.8)
-project (Smartcar_Test_Suite)
+project (INS_Node_Test_Suite)
 find_package (Threads)
 
 add_subdirectory(arduino_mock)
-set(SMARTCAR_MOCK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/smartcar_mock)
+set(INS_MOCK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ins_mock)
 set(UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ut)
 
 enable_testing()
 
 include_directories(
     ${ARDUINO_MOCK_INCLUDE_DIRS}
-    ${SMARTCAR_MOCK_DIR}
+    ${INS_MOCK_DIR}
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/include
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock/include
 )

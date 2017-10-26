@@ -1,3 +1,0 @@
-[submodule "test/smartcar_mock"]
-	path = ins-node/test/smartcar_mock
-	url = https://github.com/platisd/smartcar_mock
