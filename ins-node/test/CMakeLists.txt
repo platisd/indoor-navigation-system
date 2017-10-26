@@ -4,15 +4,17 @@ find_package (Threads)
 
 add_subdirectory(arduino_mock)
 set(INS_MOCK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ins_mock)
+set(TEST_UTILS ${CMAKE_CURRENT_SOURCE_DIR}/helpers)
 set(UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ut)
 
 enable_testing()
 
 include_directories(
     ${ARDUINO_MOCK_INCLUDE_DIRS}
-    ${INS_MOCK_DIR}
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/include
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock/include
+    ${INS_MOCK_DIR}
+    ${TEST_UTILS}
 )
 
 # Include all files in ut/ ending with .cc as tests
