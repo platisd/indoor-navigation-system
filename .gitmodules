@@ -1,0 +1,3 @@
+[submodule "test/smartcar_mock"]
+	path = test/smartcar_mock
+	url = https://github.com/platisd/smartcar_mock

@@ -1,0 +1,7 @@
+*.swp
+.*.un~
+*~
+.DS_Store
+*.o
+*.a
+/test/build/

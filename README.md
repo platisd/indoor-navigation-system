@@ -8,7 +8,7 @@
 * [spdlog](https://github.com/gabime/spdlog)
 
 ### How To Fetch Dependencies
-#### Ubuntu 
+#### Ubuntu
 * Install SQLite3
     * `sudo apt-get install sqlite3 libsqlite3-dev -y`
 * Install Pistache
