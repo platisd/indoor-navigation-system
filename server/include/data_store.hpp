@@ -2,47 +2,64 @@
 // Created by samueli on 2017-10-10.
 //
 
-#ifndef INS_SERVER_INS_DATA_STORE_HPP
-#define INS_SERVER_INS_DATA_STORE_HPP
+#ifndef INS_SERVER_INS_INCLUDE_DATA_STORE_HPP
+#define INS_SERVER_INS_INCLUDE_DATA_STORE_HPP
 
+#include <iostream>
 #include <spdlog/spdlog.h>
 #include <sqlite3.h>
-#include <iostream>
+#include <string>
 #include <vector>
 
 #include "types.hpp"
 
-namespace ins_service {
+namespace ins_service
+{
 
-class DataStore {
-   public:
-    explicit DataStore() : database_(nullptr), console_(spdlog::stdout_logger_mt("DataStore")) {}
+#ifdef ENABLE_TESTS
+class DataStoreFixture;
+#endif // ENABLE_TESTS
 
-    void Init(const std::string &db_filename);
+class DataStore
+{
+public:
+#ifdef ENABLE_TESTS
+    friend class DataStoreFixture;
+#endif // ENABLE_TESTS
 
-    void UpdateDeviceLocation(const std::string &device_id, Position pos);
+    explicit DataStore()
+        : database_(nullptr)
+        , console_(spdlog::get(LOGGER_NAME))
+    {
+        if (console_ == nullptr)
+            console_ = spdlog::stdout_logger_mt(LOGGER_NAME);
+    }
 
-    void InsertRSSIReadings(const std::string &device_id, std::vector<std::string> ssid_list,
-                            std::vector<double> rssi_list);
+    void Init(const std::string& db_filename);
 
-    bool GetPosition(const std::string &device_id, QueryT queryby, Position &pos);
+    void UpdateDeviceLocation(const std::string& device_id, Position pos);
 
-    void CreateDeviceTable(const std::string &device_id);
+    void
+    InsertRSSIReadings(const std::string& device_id, std::vector<std::string> ssid_list, std::vector<double> rssi_list);
 
-    void ClearDeviceTable(const std::string &device_id);
+    bool GetPosition(const std::string& device_id, QueryT queryby, Position& pos);
 
-   private:
+    void CreateDeviceTable(const std::string& device_id);
+
+    void ClearDeviceTable(const std::string& device_id);
+
+private:
     void CreateLocationTable();
 
-    void RunQuery(const std::string &sql);
+    void RunQuery(const std::string& sql);
 
-    static int DbCallback(void *not_used, int argc, char **argv, char **azColName);  // Not used
+    static int DbCallback(void* not_used, int argc, char** argv, char** azColName); // Not used
 
-    sqlite3 *database_;
-    std::mutex database_lock_;
+    sqlite3*                        database_;
+    std::mutex                      database_lock_;
     std::shared_ptr<spdlog::logger> console_;
 };
 
-}  // namespace ins_service
+} // namespace ins_service
 
-#endif  // INS_SERVER_INS_DATA_STORE_HPP
+#endif // INS_SERVER_INS_INCLUDE_DATA_STORE_HPP
