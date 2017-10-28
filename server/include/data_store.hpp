@@ -8,7 +8,6 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <sqlite3.h>
-#include <string>
 #include <vector>
 
 #include "types.hpp"
