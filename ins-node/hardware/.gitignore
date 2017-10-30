@@ -1,0 +1,7 @@
+# Ignore everything
+*
+# Except the following:
+!.gitignore
+!ins_node.brd
+!ins_node.sch
+!README.md
