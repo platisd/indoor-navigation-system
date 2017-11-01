@@ -1,5 +1,5 @@
-#ifndef TEST_UTILS_H
-#define TEST_UTILS_H
+#ifndef POWER_CONTROLLER_UTILS_H
+#define POWER_CONTROLLER_UTILS_H
 
 // ATtiny85 pinout according to https://github.com/SpenceKonde/ATTinyCore
 
