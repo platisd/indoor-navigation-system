@@ -4,25 +4,24 @@ The INS server provides a backend RESTful service for INS-node and front-end web
 ## API
 * Send RSSI value to INS server (INS node)
 
-  INS node is required to send RSSI reading per wifi AP's mac address to INS service. In a bid to handle outliers, the server supports sending multiple data points from INS node.
+  INS node is required to send RSSI reading per wifi AP's MAC address to INS service. In a bid to handle outliers, the server supports sending multiple data points from INS node.
 
   HTTP Method - `POST`
 
-  Request Url -  `/set_rss/:device_id/:ssid1/:rssi1/:ssid2/:rssi2/:ssid3/:rssi3/:ssid4/:rssi4/:end?`
+  Request Url -  `/set_rss/device_id/mac_addr1/rssi1/mac_addr2/rssi2/mac_addr3/rssi3/mac_addr4/rssi4/:end?`
 
   Response - `{result:success}` or `{result:error}`
 
   #### Examples
-  * Device `1000` sending a one-time RSSI reading from SSIDs `aa`, `bb`, `cc` and `dd`.
+  * Device `1000` sending a one-time RSSI reading for MAC addresses `aa`, `bb`, `cc` and `dd`.
 
     `http://localhost:9080/set_rss/1000/aa/12.323/bb/44.3434/cc/1.223/dd/54.43/end`
 
-  * Device `5239` sending multiple RSSI readings from SSIDs `aa`, `bb`, `cc` and `dd`.
+  * Device `5239` sending multiple RSSI readings for MAC addresses `aa`, `bb`, `cc` and `dd`.
 
     `http://localhost:9080/set_rss/5239/aa/12.323/bb/44.3434/cc/1.223/dd/54.43`
     `http://localhost:9080/set_rss/5239/aa/12.323/bb/44.3434/cc/1.223/dd/54.43`
     `http://localhost:9080/set_rss/5239/aa/12.323/bb/44.3434/cc/1.223/dd/54.43/end`
-
 
 * Retrieve employee position (Frontend application)
 
@@ -50,12 +49,6 @@ The INS server provides a backend RESTful service for INS-node and front-end web
   * Get position of device with id = 2020
 
     `http://localhost:5300/get_device_position/2020`
-
-
-
-
-
-
 
 
 ## Dependencies
