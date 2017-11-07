@@ -97,7 +97,7 @@ Ensure all needed libraries are installed.
 * `cd build`
 * `cmake ..`
 * `make`
-* To run use `./ins_server [port]`
+* To run use `./ins_server`
 
 ## Testing
 This component is tested using [GoogleTest](https://github.com/google/googletest/tree/master/googletest) and [GoogleMock](https://github.com/google/googletest/tree/master/googlemock) which are C++ testing and mocking frameworks.
