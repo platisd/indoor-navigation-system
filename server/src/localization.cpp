@@ -7,9 +7,7 @@
 namespace ins_service
 {
 
-Position Localization::ProcessRSSIDataSet(const std::string&       device_id,
-                                          std::vector<std::string> ssid_list,
-                                          std::vector<double>      rssi_list)
+Position Localization::ProcessRSSIDataSet(const std::string& device_id)
 {
     console_->debug("+ Localization::ProcessRSSIDataSet");
 

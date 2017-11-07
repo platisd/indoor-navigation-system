@@ -4,58 +4,73 @@ The INS server provides a backend RESTful service for INS-node and front-end web
 ## API
 * Send RSSI value to INS server (INS node)
 
-  INS node is required to send RSSI reading per wifi AP's mac address to INS service. In a bid to handle outliers, the server supports sending multiple data points from INS node.
+  INS-nodes are required to send RSSI readings per wifi AP's mac address to INS-service. In a bid to have accurate readings and handle outliers, the INS-server supports sending multiple data points from INS-nodes. A minimum of 1 data point and maximum of 10 data points can be sent in one http request, while unlimited number of requests can be used in sending readings.
 
-  HTTP Method - `POST`
+  * HTTP Method - `POST`
+  * Request Url -  `/set_rssi/:device_id/:mac_addr1/:rssi1/:mac_addr2?/:rssi2?/:mac_addr3?/:rssi3? ... /:mac_addr10?/:rssi10/?`
+  * Response - `{result:success}` or `{result:error}`
 
-  Request Url -  `/set_rss/:device_id/:ssid1/:rssi1/:ssid2/:rssi2/:ssid3/:rssi3/:ssid4/:rssi4/:end?`
+    #### Examples
+  * INS-node with device id 1000 sends a one-time RSSI reading for MAC addresses 23:43:3d:3e:5e:f5 and  5a:4e:44:ff:5a:6e.
 
-  Response - `{result:success}` or `{result:error}`
+    `http://localhost:9080/set_rssi/1000/23:43:3d:3e:5e:f5/12.323/5a:4e:44:ff:5a:6e/44.3434`
 
-  #### Examples
-  * Device `1000` sending a one-time RSSI reading from SSIDs `aa`, `bb`, `cc` and `dd`.
+  * INS-node with device id 5239 sends multiple RSSI readings from MAC addresses 23:43:3d:3e:5e:f5, `5a:4e:44:ff:5a:6e with different requests at different times.
 
-    `http://localhost:9080/set_rss/1000/aa/12.323/bb/44.3434/cc/1.223/dd/54.43/end`
+    `http://localhost:9080/set_rssi/5239/23:43:3d:3e:5e:f5/13/5a:4e:44:ff:5a:6e/40`
+    `http://localhost:9080/set_rssi/5239/23:43:3d:3e:5e:f5/11.3/5a:4e:44:ff:5a:6e/44.3`
+    `http://localhost:9080/set_rssi/5239/23:43:3d:3e:5e:f5/15.6/5a:4e:44:ff:5a:6e/44.4`
 
-  * Device `5239` sending multiple RSSI readings from SSIDs `aa`, `bb`, `cc` and `dd`.
+* Trigger position calculation for device.
 
-    `http://localhost:9080/set_rss/5239/aa/12.323/bb/44.3434/cc/1.223/dd/54.43`
-    `http://localhost:9080/set_rss/5239/aa/12.323/bb/44.3434/cc/1.223/dd/54.43`
-    `http://localhost:9080/set_rss/5239/aa/12.323/bb/44.3434/cc/1.223/dd/54.43/end`
+  Since INS-service supports data submission in batches, calculation of the INS-node position from RSSI readings is only done when the device prompts the server.
+  * HTTP Method - `POST`
+  * Request url - `/resolve_pos/:device_id`
+  * Response - `{result:success}` or `{result:error}`
+
+    #### Example
+  * INS-node with device id 1000 triggers device position computation after sending several RSSI readings.
+
+    `http://localhost:9080/resolve_pos/1000`
 
 
-* Retrieve employee position (Frontend application)
+* Clear stored RSSI data for a device.
 
-  HTTP Method - `GET`
+  In a scenario when an INS-node is moved from one place to the other, it becomes needed to promt the server to clear all previously stored data readings which automatically becomes invalid due to the move.
+  * HTTP Method - 'POST'
+  * Request url - `/reset_pos/:device_id`
+  * Response - `{result:success}` or `{result:error}`
 
-  Request Url - `/get_employee_position/:employee_id`
+    #### Example
 
-  Response - `employee_id:<id> {loc_x:<val>, loc_y:<val>, loc_z:<val>}`
+  * INS-node with device id '3331' resets its position.
 
-  #### Example
+    `http://localhost:5300/reset_pos/3331`
+
+* Retrieve employee position (Frontend).
+
+  This is for user facing applications interested in fetching employee's position.
+  * HTTP Method - `GET`
+  * Request Url - `/get_employee_position/:employee_id`
+  * Response - `employee_id:<id> {loc_x:<val>, loc_y:<val>, loc_z:<val>}`
+
+    #### Example
   * Get position of employee with id = 8923
 
     `http://localhost:5300/get_employee_position/8923`
 
+* Retrieve device position (Frontend).
 
-* Retrieve device position (Frontend application)
+  This is for user facing applications interested in fetching position of an INS-node devicce.
+  * HTTP Method - `GET`
+  * Request Url - `/get_device_position/:device_id`
+  * Response - `device_id:<id> {loc_x:<val>, loc_y:<val>, loc_z:<val>}`
 
-  HTTP Method - `GET`
+    #### Example
 
-  Request Url - `/get_device_position/:device_id`
-
-  Response - `device_id:<id> {loc_x:<val>, loc_y:<val>, loc_z:<val>}`
-
-  #### Example
   * Get position of device with id = 2020
 
     `http://localhost:5300/get_device_position/2020`
-
-
-
-
-
-
 
 
 ## Dependencies
