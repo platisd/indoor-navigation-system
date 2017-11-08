@@ -5,3 +5,5 @@
 *.o
 *.a
 build/
+.vscode/
+*.db
