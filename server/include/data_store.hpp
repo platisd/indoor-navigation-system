@@ -9,6 +9,7 @@
 #include <spdlog/spdlog.h>
 #include <sqlite3.h>
 #include <vector>
+#include <string>
 
 #include "types.hpp"
 
@@ -54,7 +55,9 @@ private:
 
     bool RunQuery(const std::string& sql);
 
-    static int DbCallback(void* not_used, int argc, char** argv, char** azColName); // Not used
+    static int DbCallback(void* not_used, int argc, char** argv, char** azColName);
+
+    bool ReadDistinctMacAddrs(const std::string& device_id, std:vector<std::string> mac_addrs);
 
     sqlite3*                        database_;
     std::mutex                      database_lock_;

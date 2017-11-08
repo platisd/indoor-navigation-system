@@ -29,11 +29,11 @@ void DataStore::Init(const std::string& db_filename)
     return;
 }
 
-void DataStore::Close(){
+void DataStore::Close()
+{
     sqlite3_close(database_);
     database_ = nullptr;
 }
-
 
 bool DataStore::CreateLocationTable()
 {
@@ -159,7 +159,7 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
         else
         {
             console_->error("Failed to read from database");
-            exit(1);
+            return false;
         }
     }
     sqlite3_finalize(selectStmt);
@@ -188,7 +188,9 @@ bool DataStore::RunQuery(const std::string& sql)
 
 int DataStore::DbCallback(void* not_used, int argc, char** argv, char** azColName)
 {
-    std::shared_ptr<spdlog::logger> logger;
+    auto logger = spdlog::get(LOGGER_NAME);
+    if (logger == nullptr)
+        logger = spdlog::stdout_logger_mt(LOGGER_NAME);
     logger->debug("+ DataStore::DbCallback");
     for (int i = 0; i < argc; i++)
     {
@@ -196,6 +198,40 @@ int DataStore::DbCallback(void* not_used, int argc, char** argv, char** azColNam
     }
     logger->debug("- DataStore::DbCallback");
     return 0;
+}
+
+bool DataStore::ReadDistinctMacAddrs(const std::string& device_id, std::vector<std::string> mac_addrs)
+{
+    console_->debug("+ DataStore::GetRSSIDataStream");
+
+    bool        result = false;
+    std::string sql    = "SELECT DISTINCT mac_addr FROM  dev_" + device_id + ";";
+
+    sqlite3_stmt*            selectStmt;
+    sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
+    while (1)
+    {
+        int state = sqlite3_step(selectStmt);
+        if (state == SQLITE_ROW)
+        {
+            std::string mac_addr = reinterpret_cast<const char*>(sqlite3_column_text(selectStmt, 0));
+            mac_addrs.push_back(mac_addr);
+            result = true;
+        }
+        else if (state == SQLITE_DONE)
+        {
+            break;
+        }
+        else
+        {
+            console_->error("Failed to read from database");
+            return false;
+        }
+    }
+    sqlite3_finalize(selectStmt);
+
+    console_->debug("- DataStore::GetRSSIDataStream");
+    return result;
 }
 
 } // namespace ins_service
