@@ -14,10 +14,10 @@ INS-node board schematics and layout designed with Eagle CAD.
 ## 2D board renders
 * Top view
 
-![ins board TOP](https://i.imgur.com/SnwID4r.png)
+![ins board TOP](https://i.imgur.com/3Lgqjdc.png)
 * Bottom view
 
-![ins board BOTTOM](https://i.imgur.com/bkEoMhn.png)
+![ins board BOTTOM](https://i.imgur.com/1SmWzNF.png)
 
 
 ## List of materials
