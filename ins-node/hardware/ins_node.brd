@@ -821,11 +821,11 @@ design rules under a new name.</description>
 <attribute name="NAME" x="56.515" y="46.355" size="0.8128" layer="25" font="vector" ratio="20"/>
 <attribute name="VALUE" x="50.8" y="46.355" size="0.4064" layer="27" ratio="10" rot="R270"/>
 </element>
-<element name="BT2" library="SparkFun-Batteries" library_urn="urn:adsk.eagle:library:508" package="BATTERY-AAA" package3d_urn="urn:adsk.eagle:package:37212/1" value="" x="49.53" y="34.29" smashed="yes" rot="MR0">
-<attribute name="NAME" x="30.099" y="34.29" size="0.8128" layer="26" font="vector" ratio="20" rot="MR90" align="bottom-center"/>
-<attribute name="PROD_ID" value="BATT-08571" x="49.53" y="34.29" size="1.778" layer="28" rot="MR0" display="off"/>
-<attribute name="SF_SKU" value="PRT-12718" x="49.53" y="34.29" size="1.778" layer="28" rot="MR0" display="off"/>
-<attribute name="VALUE" x="68.58" y="34.29" size="0.6096" layer="28" font="vector" ratio="20" rot="MR90" align="top-center"/>
+<element name="BT2" library="SparkFun-Batteries" library_urn="urn:adsk.eagle:library:508" package="BATTERY-AAA" package3d_urn="urn:adsk.eagle:package:37212/1" value="" x="49.53" y="34.29" smashed="yes" rot="MR180">
+<attribute name="NAME" x="30.861" y="34.29" size="0.8128" layer="26" font="vector" ratio="20" rot="MR270" align="bottom-center"/>
+<attribute name="PROD_ID" value="BATT-08571" x="49.53" y="34.29" size="1.778" layer="28" rot="MR180" display="off"/>
+<attribute name="SF_SKU" value="PRT-12718" x="49.53" y="34.29" size="1.778" layer="28" rot="MR180" display="off"/>
+<attribute name="VALUE" x="30.48" y="34.29" size="0.6096" layer="28" font="vector" ratio="20" rot="MR270" align="top-center"/>
 </element>
 <element name="BT1" library="SparkFun-Batteries" library_urn="urn:adsk.eagle:library:508" package="BATTERY-AAA" package3d_urn="urn:adsk.eagle:package:37212/1" value="" x="49.53" y="69.85" smashed="yes" rot="MR180">
 <attribute name="NAME" x="30.861" y="69.85" size="0.8128" layer="26" font="vector" ratio="20" rot="MR270" align="bottom-center"/>
@@ -865,9 +865,11 @@ design rules under a new name.</description>
 <element name="C1" library="SparkFun-Capacitors" library_urn="urn:adsk.eagle:library:510" package="CAP-PTH-SMALL-KIT" package3d_urn="urn:adsk.eagle:package:37428/1" value="0.1uF" x="60.0075" y="60.96" smashed="yes" rot="R90">
 <attribute name="PROD_ID" value="CAP-08370" x="60.0075" y="60.96" size="1.27" layer="27" ratio="15" rot="R90" display="off"/>
 </element>
-<element name="BT3" library="SparkFun-Batteries" library_urn="urn:adsk.eagle:library:508" package="BATTERY-AAA" package3d_urn="urn:adsk.eagle:package:37212/1" value="" x="49.53" y="52.07" rot="MR0">
+<element name="BT3" library="SparkFun-Batteries" library_urn="urn:adsk.eagle:library:508" package="BATTERY-AAA" package3d_urn="urn:adsk.eagle:package:37212/1" value="" x="49.53" y="52.07" smashed="yes" rot="MR0">
+<attribute name="NAME" x="30.099" y="52.07" size="0.8128" layer="26" font="vector" ratio="20" rot="MR90" align="bottom-center"/>
 <attribute name="PROD_ID" value="BATT-08571" x="49.53" y="52.07" size="1.778" layer="28" rot="MR0" display="off"/>
 <attribute name="SF_SKU" value="PRT-12718" x="49.53" y="52.07" size="1.778" layer="28" rot="MR0" display="off"/>
+<attribute name="VALUE" x="68.58" y="52.07" size="0.6096" layer="28" font="vector" ratio="20" rot="MR90" align="top-center"/>
 </element>
 <element name="Q1" library="SparkFun-DiscreteSemi" package="TO-92" value="MOSFET-2N7000" x="54.61" y="59.69" smashed="yes" rot="R180">
 <attribute name="NAME" x="52.07" y="58.42" size="0.8128" layer="25" font="vector" ratio="20" rot="R180"/>
@@ -881,11 +883,17 @@ design rules under a new name.</description>
 <signal name="N$1">
 <contactref element="BT1" pad="PWR@1"/>
 <contactref element="BT2" pad="GND@1"/>
-<wire x1="27.94" y1="34.29" x2="27.94" y2="48.26" width="0.508" layer="1"/>
-<wire x1="27.94" y1="48.26" x2="26.035" y2="50.165" width="0.508" layer="1"/>
-<wire x1="26.035" y1="50.165" x2="26.035" y2="53.34" width="0.508" layer="1"/>
-<wire x1="26.035" y1="53.34" x2="27.94" y2="55.245" width="0.508" layer="1"/>
 <wire x1="27.94" y1="55.245" x2="27.94" y2="69.85" width="0.508" layer="1"/>
+<wire x1="71.12" y1="34.29" x2="67.31" y2="34.29" width="0.508" layer="1"/>
+<wire x1="67.31" y1="34.29" x2="64.77" y2="31.75" width="0.508" layer="1"/>
+<wire x1="64.77" y1="31.75" x2="63.5" y2="31.75" width="0.508" layer="1"/>
+<via x="63.5" y="31.75" extent="1-16" drill="0.65"/>
+<wire x1="63.5" y1="31.75" x2="35.56" y2="31.75" width="0.508" layer="16"/>
+<via x="35.56" y="31.75" extent="1-16" drill="0.65"/>
+<wire x1="35.56" y1="31.75" x2="34.29" y2="31.75" width="0.508" layer="1"/>
+<wire x1="34.29" y1="31.75" x2="30.48" y2="35.56" width="0.508" layer="1"/>
+<wire x1="30.48" y1="35.56" x2="30.48" y2="52.705" width="0.508" layer="1"/>
+<wire x1="30.48" y1="52.705" x2="27.94" y2="55.245" width="0.508" layer="1"/>
 </signal>
 <signal name="GND">
 <contactref element="BT1" pad="GND@1"/>
@@ -951,11 +959,9 @@ design rules under a new name.</description>
 <contactref element="R1" pad="P$1"/>
 <contactref element="C1" pad="1"/>
 <contactref element="BT3" pad="PWR@1"/>
-<wire x1="71.12" y1="48.26" x2="71.12" y2="52.07" width="0.508" layer="1"/>
 <wire x1="73.025" y1="46.355" x2="71.12" y2="48.26" width="0.508" layer="1"/>
 <wire x1="53.34" y1="38.1" x2="59.69" y2="38.1" width="0.508" layer="1"/>
 <wire x1="53.34" y1="38.1" x2="50.8" y2="40.64" width="0.508" layer="1"/>
-<wire x1="71.12" y1="52.07" x2="67.945" y2="52.07" width="0.508" layer="1"/>
 <wire x1="67.945" y1="52.07" x2="64.135" y2="48.26" width="0.508" layer="1"/>
 <wire x1="64.135" y1="48.26" x2="62.23" y2="48.26" width="0.508" layer="1"/>
 <wire x1="60.0075" y1="50.4825" x2="60.0075" y2="59.563" width="0.508" layer="1"/>
@@ -973,6 +979,10 @@ design rules under a new name.</description>
 <wire x1="69.215" y1="36.83" x2="71.12" y2="36.83" width="0.508" layer="1"/>
 <wire x1="71.12" y1="36.83" x2="73.025" y2="38.735" width="0.508" layer="1"/>
 <wire x1="73.025" y1="38.735" x2="73.025" y2="46.355" width="0.508" layer="1"/>
+<wire x1="71.10336875" y1="52.07" x2="71.12" y2="52.07" width="0.508" layer="1"/>
+<wire x1="71.10336875" y1="52.07" x2="67.945" y2="52.07" width="0.508" layer="1"/>
+<wire x1="71.12" y1="48.26" x2="71.12" y2="52.05336875" width="0.508" layer="1"/>
+<wire x1="71.12" y1="52.05336875" x2="71.10336875" y2="52.07" width="0.508" layer="1"/>
 </signal>
 <signal name="TX">
 <contactref element="U1" pad="5"/>
@@ -1091,15 +1101,7 @@ design rules under a new name.</description>
 <signal name="N$5">
 <contactref element="BT2" pad="PWR@1"/>
 <contactref element="BT3" pad="GND@1"/>
-<wire x1="29.845" y1="50.165" x2="29.845" y2="38.735" width="0.508" layer="1"/>
-<wire x1="29.845" y1="50.165" x2="27.94" y2="52.07" width="0.508" layer="1"/>
-<wire x1="29.845" y1="38.735" x2="31.75" y2="36.83" width="0.508" layer="1"/>
-<wire x1="31.75" y1="36.83" x2="31.75" y2="33.655" width="0.508" layer="1"/>
-<wire x1="31.75" y1="33.655" x2="32.385" y2="33.02" width="0.508" layer="1"/>
-<via x="32.385" y="33.02" extent="1-16" drill="0.65"/>
-<wire x1="32.385" y1="33.02" x2="33.655" y2="31.75" width="0.508" layer="16"/>
-<wire x1="33.655" y1="31.75" x2="68.58" y2="31.75" width="0.508" layer="16"/>
-<wire x1="68.58" y1="31.75" x2="71.12" y2="34.29" width="0.508" layer="16"/>
+<wire x1="27.94" y1="34.29" x2="27.94" y2="52.07" width="0.508" layer="1"/>
 </signal>
 <signal name="N$6">
 <polygon width="0.508" layer="1">
