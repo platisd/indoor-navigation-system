@@ -2,6 +2,7 @@
 #include <avr/sleep.h>
 #include <avr/power.h>
 #include <avr/wdt.h>
+#include <avr/interrupt.h>
 
 enum WatchDogTimeout {
   WDT_16ms = 0,
@@ -92,7 +93,7 @@ void triggerWatchDogIn(WatchDogTimeout wdt) {
 void goToSleep() {
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   ADCSRA = 0; // Turn off ADC
-  power_all_disable (); // Power off ADC, Timer 0 and 1, serial interface
+  power_all_disable(); // Power off ADC, Timer 0 and 1, serial interface
   sleep_enable();
   sleep_cpu(); // Sleep here and wait for an interrupt or watchdog bark
   sleep_disable();
