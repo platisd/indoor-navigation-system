@@ -3507,7 +3507,7 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <parts>
 <part name="WEMOS1" library="esp8266modules" deviceset="WEMOS-D1-MINI" device=""/>
 <part name="U1" library="SparkFun-Retired" library_urn="urn:adsk.eagle:library:533" deviceset="ATTINY45" device="TINY85-20-DIP" value="TINY85-20-DIP"/>
-<part name="Q3" library="SparkFun-DiscreteSemi" deviceset="MOSFET-NCHANNEL" device="2N7000" value="MOSFET-2N7000"/>
+<part name="Q2" library="SparkFun-DiscreteSemi" deviceset="MOSFET-NCHANNEL" device="2N7000" value="MOSFET-2N7000"/>
 <part name="BT2" library="SparkFun-Batteries" library_urn="urn:adsk.eagle:library:508" deviceset="BATTERY" device="-AAA" package3d_urn="urn:adsk.eagle:package:37212/1"/>
 <part name="BT1" library="SparkFun-Batteries" library_urn="urn:adsk.eagle:library:508" deviceset="BATTERY" device="-AAA" package3d_urn="urn:adsk.eagle:package:37212/1"/>
 <part name="GND1" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="GND" device=""/>
@@ -3528,6 +3528,11 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <part name="C1" library="SparkFun-Capacitors" library_urn="urn:adsk.eagle:library:510" deviceset="0.1UF" device="-KIT-EZ-50V-20%" package3d_urn="urn:adsk.eagle:package:37428/1" value="0.1uF"/>
 <part name="GND6" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="GND" device=""/>
 <part name="SUPPLY5" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VCC" device=""/>
+<part name="BT3" library="SparkFun-Batteries" library_urn="urn:adsk.eagle:library:508" deviceset="BATTERY" device="-AAA" package3d_urn="urn:adsk.eagle:package:37212/1"/>
+<part name="Q1" library="SparkFun-DiscreteSemi" deviceset="MOSFET-NCHANNEL" device="2N7000" value="MOSFET-2N7000"/>
+<part name="GND7" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="GND" device=""/>
+<part name="C2" library="SparkFun-Capacitors" library_urn="urn:adsk.eagle:library:510" deviceset="0.1UF" device="-KIT-EZ-50V-20%" package3d_urn="urn:adsk.eagle:package:37428/1" value="0.1uF"/>
+<part name="SUPPLY6" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="VCC" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -3536,13 +3541,13 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <instances>
 <instance part="WEMOS1" gate="D1" x="43.18" y="50.8"/>
 <instance part="U1" gate="G$1" x="104.14" y="43.18"/>
-<instance part="Q3" gate="G$1" x="76.2" y="71.12"/>
-<instance part="BT2" gate="G$1" x="38.1" y="30.48"/>
-<instance part="BT1" gate="G$1" x="48.26" y="30.48"/>
-<instance part="GND1" gate="1" x="55.88" y="30.48" rot="R90"/>
+<instance part="Q2" gate="G$1" x="76.2" y="71.12"/>
+<instance part="BT2" gate="G$1" x="38.1" y="27.94"/>
+<instance part="BT1" gate="G$1" x="48.26" y="27.94"/>
+<instance part="GND1" gate="1" x="55.88" y="27.94" rot="R90"/>
 <instance part="GND2" gate="1" x="76.2" y="63.5"/>
 <instance part="GND3" gate="1" x="86.36" y="38.1" rot="R270"/>
-<instance part="SUPPLY1" gate="G$1" x="33.02" y="30.48" rot="R90"/>
+<instance part="SUPPLY1" gate="G$1" x="22.86" y="27.94" rot="R90"/>
 <instance part="SUPPLY2" gate="G$1" x="27.94" y="43.18" rot="R90"/>
 <instance part="SUPPLY3" gate="G$1" x="88.9" y="50.8" rot="R90"/>
 <instance part="S1" gate="G$1" x="127" y="38.1" smashed="yes">
@@ -3559,6 +3564,11 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <instance part="C1" gate="G$1" x="73.66" y="35.56" rot="R180"/>
 <instance part="GND6" gate="1" x="73.66" y="40.64" rot="R180"/>
 <instance part="SUPPLY5" gate="G$1" x="73.66" y="30.48" rot="R180"/>
+<instance part="BT3" gate="G$1" x="27.94" y="27.94"/>
+<instance part="Q1" gate="G$1" x="22.86" y="71.12"/>
+<instance part="GND7" gate="1" x="22.86" y="63.5"/>
+<instance part="C2" gate="G$1" x="15.24" y="53.34" rot="R180"/>
+<instance part="SUPPLY6" gate="G$1" x="15.24" y="48.26" rot="R180"/>
 </instances>
 <busses>
 </busses>
@@ -3579,7 +3589,7 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <pinref part="GND3" gate="1" pin="GND"/>
 </segment>
 <segment>
-<pinref part="Q3" gate="G$1" pin="S"/>
+<pinref part="Q2" gate="G$1" pin="S"/>
 <pinref part="GND2" gate="1" pin="GND"/>
 </segment>
 <segment>
@@ -3596,12 +3606,12 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <pinref part="C1" gate="G$1" pin="2"/>
 <pinref part="GND6" gate="1" pin="GND"/>
 </segment>
+<segment>
+<pinref part="Q1" gate="G$1" pin="S"/>
+<pinref part="GND7" gate="1" pin="GND"/>
+</segment>
 </net>
 <net name="VCC" class="0">
-<segment>
-<pinref part="BT2" gate="G$1" pin="+"/>
-<pinref part="SUPPLY1" gate="G$1" pin="VCC"/>
-</segment>
 <segment>
 <pinref part="WEMOS1" gate="D1" pin="3V3"/>
 <pinref part="SUPPLY2" gate="G$1" pin="VCC"/>
@@ -3617,6 +3627,14 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <segment>
 <pinref part="C1" gate="G$1" pin="1"/>
 <pinref part="SUPPLY5" gate="G$1" pin="VCC"/>
+</segment>
+<segment>
+<pinref part="SUPPLY1" gate="G$1" pin="VCC"/>
+<pinref part="BT3" gate="G$1" pin="+"/>
+</segment>
+<segment>
+<pinref part="C2" gate="G$1" pin="1"/>
+<pinref part="SUPPLY6" gate="G$1" pin="VCC"/>
 </segment>
 </net>
 <net name="TX" class="0">
@@ -3650,9 +3668,14 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <label x="121.92" y="43.18" size="1.778" layer="95"/>
 </segment>
 <segment>
-<pinref part="Q3" gate="G$1" pin="G"/>
+<pinref part="Q2" gate="G$1" pin="G"/>
 <wire x1="68.58" y1="71.12" x2="63.5" y2="71.12" width="0.1524" layer="91"/>
 <label x="50.8" y="71.12" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="Q1" gate="G$1" pin="G"/>
+<wire x1="15.24" y1="71.12" x2="10.16" y2="71.12" width="0.1524" layer="91"/>
+<label x="17.78" y="73.66" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="ATTINY_LED" class="0">
@@ -3669,7 +3692,7 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 </net>
 <net name="WEMOS_GND" class="0">
 <segment>
-<pinref part="Q3" gate="G$1" pin="D"/>
+<pinref part="Q2" gate="G$1" pin="D"/>
 <wire x1="76.2" y1="76.2" x2="76.2" y2="81.28" width="0.1524" layer="91"/>
 <label x="76.2" y="81.28" size="1.778" layer="95"/>
 </segment>
@@ -3682,6 +3705,16 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <pinref part="D1" gate="G$1" pin="C"/>
 <wire x1="121.92" y1="66.04" x2="127" y2="66.04" width="0.1524" layer="91"/>
 <label x="124.46" y="66.04" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="Q1" gate="G$1" pin="D"/>
+<wire x1="22.86" y1="76.2" x2="22.86" y2="81.28" width="0.1524" layer="91"/>
+<label x="22.86" y="81.28" size="1.778" layer="95"/>
+</segment>
+<segment>
+<pinref part="C2" gate="G$1" pin="2"/>
+<wire x1="15.24" y1="55.88" x2="15.24" y2="60.96" width="0.1524" layer="91"/>
+<label x="15.24" y="60.96" size="1.778" layer="95" rot="R180"/>
 </segment>
 </net>
 <net name="N$2" class="0">
@@ -3696,9 +3729,9 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 </net>
 <net name="WEMOS_LED" class="0">
 <segment>
-<pinref part="WEMOS1" gate="D1" pin="D4"/>
-<wire x1="60.96" y1="48.26" x2="66.04" y2="48.26" width="0.1524" layer="91"/>
-<label x="66.04" y="48.26" size="1.778" layer="95"/>
+<label x="66.04" y="50.8" size="1.778" layer="95"/>
+<pinref part="WEMOS1" gate="D1" pin="D3"/>
+<wire x1="60.96" y1="50.8" x2="66.04" y2="50.8" width="0.1524" layer="91"/>
 </segment>
 <segment>
 <pinref part="R3" gate="G$1" pin="2"/>
@@ -3716,6 +3749,12 @@ Warning: This is the KIT version of this package. This package has a smaller dia
 <segment>
 <pinref part="R2" gate="G$1" pin="1"/>
 <pinref part="D2" gate="G$1" pin="A"/>
+</segment>
+</net>
+<net name="N$5" class="0">
+<segment>
+<pinref part="BT2" gate="G$1" pin="+"/>
+<pinref part="BT3" gate="G$1" pin="-"/>
 </segment>
 </net>
 </nets>

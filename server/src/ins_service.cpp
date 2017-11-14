@@ -3,6 +3,7 @@
 //
 
 #include "ins_service.hpp"
+#include <sstream>
 
 namespace ins_service
 {
@@ -52,19 +53,25 @@ void IndoorNavigationService::SetupRoutes()
 
     Pistache::Rest::Routes::Post(
         router_,
-        "/set_rss/:device_id/:ssid1/:rssi1/:ssid2/:rssi2/:ssid3/:rssi3/:ssid4/:rssi4/:end?",
+        "/set_rssi/:device_id/:mac_addr1/:rssi1/:mac_addr2?/:rssi2?/:mac_addr3?/:rssi3?/:mac_addr4?/:rssi4?/"
+        ":mac_addr5?/:rssi5?/:mac_addr6?/:rssi6?/:mac_addr7?/:rssi7?/:mac_addr8?/:rssi8?/:mac_addr9?/:rssi9?/"
+        ":mac_addr10?/:rssi10?",
         Pistache::Rest::Routes::bind(&IndoorNavigationService::SetReceivedSignalStrengths, this));
 
     Pistache::Rest::Routes::Post(router_,
-                                 "/reset_device_location/:device_id",
-                                 Pistache::Rest::Routes::bind(&IndoorNavigationService::ResetDeviceLocation, this));
+                                 "/resolve_pos/:device_id",
+                                 Pistache::Rest::Routes::bind(&IndoorNavigationService::ResolveDevicePosition, this));
+
+    Pistache::Rest::Routes::Post(router_,
+                                 "/reset_pos/:device_id",
+                                 Pistache::Rest::Routes::bind(&IndoorNavigationService::ResetDevicePosition, this));
 
     Pistache::Rest::Routes::Get(router_,
-                                "/get_device_position/:device_id",
+                                "/get_device_pos/:device_id",
                                 Pistache::Rest::Routes::bind(&IndoorNavigationService::GetDevicePosition, this));
 
     Pistache::Rest::Routes::Get(router_,
-                                "/get_employee_position/:employee_id",
+                                "/get_employee_pos/:employee_id",
                                 Pistache::Rest::Routes::bind(&IndoorNavigationService::GetEmployeePosition, this));
 
     Pistache::Rest::Routes::Get(
@@ -82,41 +89,70 @@ void IndoorNavigationService::SetReceivedSignalStrengths(const Pistache::Rest::R
 
     std::string device_id = request.param(":device_id").as<std::string>();
 
-    std::vector<std::string> ssid_list = { request.param(":ssid1").as<std::string>(),
-                                           request.param(":ssid2").as<std::string>(),
-                                           request.param(":ssid3").as<std::string>(),
-                                           request.param(":ssid4").as<std::string>() };
+    std::vector<std::string> mac_address_list = { request.param(":mac_addr1").as<std::string>() };
+    std::vector<double>      rssi_list        = { request.param(":rssi1").as<double>() };
 
-    std::vector<double> rssi_list = { request.param(":rssi1").as<double>(),
-                                      request.param(":rssi1").as<double>(),
-                                      request.param(":rssi1").as<double>(),
-                                      request.param(":rssi1").as<double>() };
-
-    console_->debug("ssids: {0}, {1}, {2}, {3}", ssid_list[0], ssid_list[1], ssid_list[2], ssid_list[3]);
-    console_->debug(
-        "rssis: {:03.3}, {:03.3}, {:03.3}, {:03.3}", rssi_list[0], rssi_list[1], rssi_list[2], rssi_list[3]);
+    for (int i = 2; i <= 10; ++i)
+    {
+        std::stringstream mac_addr_key, rssi_key;
+        mac_addr_key << ":mac_addr" << i;
+        rssi_key << ":rssi" << i;
+        if (request.hasParam(mac_addr_key.str()) && request.hasParam(rssi_key.str()))
+        {
+            mac_address_list.push_back(request.param(mac_addr_key.str()).as<std::string>());
+            rssi_list.push_back(request.param(rssi_key.str()).as<double>());
+        }
+        else
+        {
+            break;
+        }
+    }
 
     // @TODO Keep class aware of created device tables to avoid always calling this function.
-    data_store_->CreateDeviceTable(device_id);
-    data_store_->InsertRSSIReadings(device_id, ssid_list, rssi_list);
-
-    if (request.hasParam(":end") && request.param(":end").as<std::string>() == "end")
+    if (!data_store_->CreateDeviceTable(device_id))
     {
-        Position pos = localization_->ProcessRSSIDataSet(device_id, ssid_list, rssi_list);
-        data_store_->UpdateDeviceLocation(device_id, pos);
+        response.send(Pistache::Http::Code::Internal_Server_Error, "{result:error}");
+        return;
     }
-    response.send(Pistache::Http::Code::Ok, "{result:success}");
+    if (data_store_->InsertRSSIReadings(device_id, mac_address_list, rssi_list))
+    {
+        response.send(Pistache::Http::Code::Internal_Server_Error, "{result:error}");
+        return;
+    }
 
     console_->debug("- IndoorNavigationService::SetReceivedSignalStrengths");
+
+    response.send(Pistache::Http::Code::Ok, "{result:success}");
 }
 
-void IndoorNavigationService::ResetDeviceLocation(const Pistache::Rest::Request& request,
+void IndoorNavigationService::ResolveDevicePosition(const Pistache::Rest::Request& request,
+                                                    Pistache::Http::ResponseWriter response)
+{
+    console_->debug("+ IndoorNavigationService::ResolveDevicePosition");
+
+    std::string device_id = request.param(":device_id").as<std::string>();
+
+    Position pos = localization_->ProcessRSSIDataSet(device_id);
+    if (!data_store_->UpdateDeviceLocation(device_id, pos))
+    {
+        response.send(Pistache::Http::Code::Internal_Server_Error, "{result:error}");
+        return;
+    }
+
+    response.send(Pistache::Http::Code::Ok, "{result:success}");
+
+    console_->debug("- IndoorNavigationService::ResolveDevicePosition");
+}
+void IndoorNavigationService::ResetDevicePosition(const Pistache::Rest::Request& request,
                                                   Pistache::Http::ResponseWriter response)
 {
     console_->debug("+ IndoorNavigationService::ResetDeviceLocation");
 
     std::string device_id = request.param(":device_id").as<std::string>();
-    data_store_->ClearDeviceTable(device_id);
+    if (!data_store_->ClearDeviceTable(device_id))
+    {
+        response.send(Pistache::Http::Code::Internal_Server_Error, "{result:error}");
+    }
     response.send(Pistache::Http::Code::Ok, "{result:success}");
 
     console_->debug("- IndoorNavigationService::ResetDeviceLocation");
@@ -133,15 +169,15 @@ void IndoorNavigationService::GetDevicePosition(const Pistache::Rest::Request& r
     if (data_store_->GetPosition(device_id, QueryT::DEVICE, pos))
     {
         response.send(Pistache::Http::Code::Ok,
-                      "device_id:" + device_id + " {loc_x:" + std::to_string(pos.x) + ",loc_y:" + std::to_string(pos.y)
-                          + ",loc_z:"
+                      "device_id:" + device_id + " {pos_x:" + std::to_string(pos.x) + ",pos_y:" + std::to_string(pos.y)
+                          + ",pos_z:"
                           + std::to_string(pos.z)
                           + "}");
         console_->info("X-{:03.3}, Y-{:03.3}, Z-{:03.3}, ", pos.x, pos.y, pos.z);
     }
     else
     {
-        response.send(Pistache::Http::Code::Ok, "{error: device_id not found}");
+        response.send(Pistache::Http::Code::Internal_Server_Error, "{error: device_id not found}");
     }
 
     console_->debug("- IndoorNavigationService::GetDevicePosition");
@@ -158,16 +194,16 @@ void IndoorNavigationService::GetEmployeePosition(const Pistache::Rest::Request&
     if (data_store_->GetPosition(employee_id, QueryT::EMPLOYEE, pos))
     {
         response.send(Pistache::Http::Code::Ok,
-                      "employee_id:" + employee_id + " {loc_x:" + std::to_string(pos.x) + ",loc_y:"
+                      "employee_id:" + employee_id + " {pos_x:" + std::to_string(pos.x) + ",pos_y:"
                           + std::to_string(pos.y)
-                          + ",loc_z:"
+                          + ",pos_z:"
                           + std::to_string(pos.z)
                           + "}");
         console_->info("X-{:03.3}, Y-{:03.3}, Z-{:03.3}, ", pos.x, pos.y, pos.z);
     }
     else
     {
-        response.send(Pistache::Http::Code::Ok, "{error: employee_id not found}");
+        response.send(Pistache::Http::Code::Internal_Server_Error, "{error: employee_id not found}");
     }
 
     console_->debug("- IndoorNavigationService::GetEmployeePosition");

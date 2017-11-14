@@ -2,6 +2,8 @@
 // Created by samueli on 2017-10-10.
 //
 
+#include <sstream>
+
 #include "data_store.hpp"
 
 namespace ins_service
@@ -18,85 +20,112 @@ void DataStore::Init(const std::string& db_filename)
         return;
     }
     console_->info("Opened database successfully");
-    CreateLocationTable();
+    if (!CreateLocationTable())
+    {
+        console_->error("Cannot create location table");
+    }
 
     console_->debug("- DataStore::Init");
     return;
 }
 
-void DataStore::CreateLocationTable()
+void DataStore::Close(){
+    sqlite3_close(database_);
+    database_ = nullptr;
+}
+
+
+bool DataStore::CreateLocationTable()
 {
     console_->debug("+ DataStore::CreateLocationTable");
 
     std::string sql = "CREATE TABLE IF NOT EXISTS location(device_id INTEGER PRIMARY KEY,"
                       "employee_id TEXT,"
-                      "loc_x REAL,"
-                      "loc_y REAL,"
-                      "loc_z REAL,"
+                      "pos_x REAL,"
+                      "pos_y REAL,"
+                      "pos_z REAL,"
                       "timestamp datatime default current_timestamp);";
     console_->debug(sql);
-    RunQuery(sql);
+    bool res = RunQuery(sql);
 
     console_->debug("- DataStore::CreateLocationTable");
+    return res;
 }
 
-void DataStore::CreateDeviceTable(const std::string& device_id)
+bool DataStore::CreateDeviceTable(const std::string& device_id)
 {
     console_->debug("+ DataStore::CreateDeviceTable");
 
     std::string sql = "CREATE TABLE IF NOT EXISTS dev_" + device_id + "(id INTEGER PRIMARY KEY,"
-                                                                      "ssid1 TEXT, rss1 REAL,"
-                                                                      "ssid2 TEXT, rss2 REAL,"
-                                                                      "ssid3 TEXT, rss3 REAL,"
-                                                                      "ssid4 TEXT, rss4 REAL,"
-                                                                      "ssid5 TEXT, rss5 REAL,"
+                                                                      "mac_addr TEXT, rssi REAL,"
                                                                       "timestamp datatime default current_timestamp);";
     console_->debug(sql);
-    RunQuery(sql);
+    bool res = RunQuery(sql);
 
     console_->debug("- DataStore::CreateDeviceTable");
+    return res;
 }
 
-void DataStore::ClearDeviceTable(const std::string& device_id)
+bool DataStore::ClearDeviceTable(const std::string& device_id)
 {
     console_->debug("+ DataStore::ClearDeviceTable");
 
     std::string sql = "DELETE from dev_" + device_id;
     console_->info(sql);
-    RunQuery(sql);
+    bool res = RunQuery(sql);
 
     console_->debug("- DataStore::ClearDeviceTable");
+    return res;
 }
 
-void DataStore::UpdateDeviceLocation(const std::string& device_id, Position pos)
+bool DataStore::UpdateDeviceLocation(const std::string& device_id, Position pos)
 {
     console_->debug("+ DataStore::UpdateDeviceLocation");
 
-    std::string sql = "INSERT OR REPLACE INTO location (device_id, employee_id, loc_x, loc_y, "
-                      "loc_z) VALUES ('"
-                      + device_id + "', 'employee_id', " + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", "
+    std::string sql = "INSERT OR REPLACE INTO location (device_id, pos_x, pos_y, "
+                      "pos_z) VALUES ('"
+                      + device_id + "'," + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", "
                       + std::to_string(pos.z) + ");";
     console_->debug(sql);
-    RunQuery(sql);
+    bool res = RunQuery(sql);
 
     console_->debug("- DataStore::UpdateDeviceLocation");
+    return res;
 }
 
-void DataStore::InsertRSSIReadings(const std::string&       device_id,
-                                   std::vector<std::string> ssid_list,
+bool DataStore::InsertRSSIReadings(const std::string&       device_id,
+                                   std::vector<std::string> mac_address_list,
                                    std::vector<double>      rssi_list)
 {
     console_->debug("+ DataStore::InsertRSSIReadings");
 
-    std::string sql = "INSERT INTO dev_" + device_id + " (ssid1, ssid2, ssid3, ssid4, rss1, rss2, rss3, rss4) "
-                                                       "VALUES ('"
-                      + ssid_list[0] + "','" + ssid_list[1] + "','" + ssid_list[2] + "','" + ssid_list[3] + "',"
-                      + std::to_string(rssi_list[0]) + "," + std::to_string(rssi_list[1]) + ","
-                      + std::to_string(rssi_list[2]) + "," + std::to_string(rssi_list[3]) + ");";
-    console_->debug(sql);
-    RunQuery(sql);
+    if (mac_address_list.size() != rssi_list.size())
+    {
+        console_->error("Invalid mac address, rssi count");
+        return false;
+    }
+
+    // Construct multi-record insert sql
+    std::stringstream sql;
+    sql << "INSERT INTO ";
+    sql << "dev_" << device_id << " (";
+    sql << "mac_addr, rssi) ";
+    sql << "VALUES";
+    for (int i = 0; i < mac_address_list.size(); ++i)
+    {
+        sql << "('" << mac_address_list[i] << "'," << rssi_list[i] << ")";
+        if (i < (mac_address_list.size() - 1))
+        {
+            sql << ",";
+        }
+    }
+    sql << ";";
+
+    console_->debug(sql.str());
+    bool res = RunQuery(sql.str());
 
     console_->debug("- DataStore::InsertRSSIReadings");
+    return res;
 }
 
 bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& pos)
@@ -107,9 +136,9 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
     std::string sql;
 
     if (query_by == QueryT::DEVICE)
-        sql = "SELECT loc_x, loc_y, loc_z from location WHERE device_id=" + id;
+        sql = "SELECT pos_x, pos_y, pos_z from location WHERE device_id=" + id;
     else
-        sql = "SELECT loc_x, loc_y, loc_z from location WHERE employee_id=" + id;
+        sql = "SELECT pos_x, pos_y, pos_z from location WHERE employee_id=" + id;
 
     sqlite3_stmt* selectStmt;
     sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
@@ -139,7 +168,7 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
     return result;
 }
 
-void DataStore::RunQuery(const std::string& sql)
+bool DataStore::RunQuery(const std::string& sql)
 {
     std::lock_guard<std::mutex> guard(database_lock_);
     char*                       error_msg;
@@ -148,10 +177,12 @@ void DataStore::RunQuery(const std::string& sql)
     {
         console_->error("SQL error: {0}", error_msg);
         sqlite3_free(error_msg);
+        return false;
     }
     else
     {
         console_->info("SQL executed successfully");
+        return true;
     }
 }
 
@@ -166,4 +197,5 @@ int DataStore::DbCallback(void* not_used, int argc, char** argv, char** azColNam
     logger->debug("- DataStore::DbCallback");
     return 0;
 }
+
 } // namespace ins_service

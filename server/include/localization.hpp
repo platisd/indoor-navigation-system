@@ -33,7 +33,7 @@ public:
     }
 
     Position
-    ProcessRSSIDataSet(const std::string& device_id, std::vector<std::string> ssid_list, std::vector<double> rssi_list);
+    ProcessRSSIDataSet(const std::string& device_id);
 
 private:
     std::shared_ptr<spdlog::logger> console_;

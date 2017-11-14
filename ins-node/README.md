@@ -1,6 +1,9 @@
 # INS-node
 The INS-node is the device that will allow us to pinpoint the location of our colleagues' desks.
 
+## Setup your IDE
+Follow the instructions found [here](https://wiki.wemos.cc/tutorials:get_started:get_started_in_arduino#using_git_version) to setup your Arduino IDE and enable it to compile and upload sketches for Wemos Mini D1.
+
 ## Testing
 To test the INS-node code we base our work on the [Smartcar-gmock](https://github.com/platisd/smartcar-gmock) framework.
 
