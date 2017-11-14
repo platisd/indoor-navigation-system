@@ -3,10 +3,10 @@ INS-node board schematics and layout designed with Eagle CAD.
 
 ## Features
 * UART connection between power controller MCU and WiFi module
-* N-channel MOSFET to control the power
+* N-channel MOSFETs to control the power
 * 1 LED for power controller MCU
 * 1 LED for WiFi module
-* Decoupling capacitor
+* Decoupling capacitors
 * Reset button for power controller MCU
 * Drawing area for node id
 * Mounting holes for M3 screws
@@ -22,9 +22,9 @@ INS-node board schematics and layout designed with Eagle CAD.
 
 ## List of materials
 * Wemos D1 Mini
-* ATtiny25
+* ATtiny85
 * 2 x AAA battery holders
-* 2N7000 N-channel MOSFET
+* 2 x 2N7000 N-channel MOSFET
 * 2 x 220 Ohm resistors
 * 0.1 uF capacitor
 * 2 x 5mm LED
