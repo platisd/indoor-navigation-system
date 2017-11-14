@@ -51,7 +51,9 @@ private:
 
     void SetReceivedSignalStrengths(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
-    void ResetDeviceLocation(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+    void ResolveDevicePosition(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
+
+    void ResetDevicePosition(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 
     void GetDevicePosition(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response);
 

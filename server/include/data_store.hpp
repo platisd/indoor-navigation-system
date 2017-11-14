@@ -36,21 +36,23 @@ public:
 
     void Init(const std::string& db_filename);
 
-    void UpdateDeviceLocation(const std::string& device_id, Position pos);
+    void Close();
 
-    void
-    InsertRSSIReadings(const std::string& device_id, std::vector<std::string> ssid_list, std::vector<double> rssi_list);
+    bool UpdateDeviceLocation(const std::string& device_id, Position pos);
+
+    bool
+    InsertRSSIReadings(const std::string& device_id, std::vector<std::string> mac_addr_list, std::vector<double> rssi_list);
 
     bool GetPosition(const std::string& device_id, QueryT queryby, Position& pos);
 
-    void CreateDeviceTable(const std::string& device_id);
+    bool CreateDeviceTable(const std::string& device_id);
 
-    void ClearDeviceTable(const std::string& device_id);
+    bool ClearDeviceTable(const std::string& device_id);
 
 private:
-    void CreateLocationTable();
+    bool CreateLocationTable();
 
-    void RunQuery(const std::string& sql);
+    bool RunQuery(const std::string& sql);
 
     static int DbCallback(void* not_used, int argc, char** argv, char** azColName); // Not used
 
