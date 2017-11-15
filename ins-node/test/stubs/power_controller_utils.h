@@ -28,5 +28,8 @@ unsigned int _BV(unsigned int toBit) {
     return toBit;
 }
 
+void interrupts(){}
+
+void noInterrupts(){}
 
 #endif
