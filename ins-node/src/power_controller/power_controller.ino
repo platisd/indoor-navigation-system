@@ -44,6 +44,7 @@ bool watchDogEnabled = false;
 
 const unsigned long WIFI_OFF_SLEEP_DURATION = 16000UL; // TO-DO: Change this to something larger
 const unsigned long WIFI_ON_SLEEP_DURATION = 16000UL; // TO-DO: Change this to something larger
+const unsigned long WIFI_PREPARE_SHUTDOWN_DURATION = 10000UL;
 
 volatile bool signalFromWifiModule = false; // Flag to determine if WiFi module has signaled us
 
@@ -146,8 +147,8 @@ bool stayAsleepFor(const unsigned long totalSleepDuration) {
       timeWeHaveSlept = 0;
       return true;
     }
-    return false;
   }
+  return false;
 }
 
 /**
@@ -194,12 +195,23 @@ void loop() {
           signalFromWifiModule = false;
           timeWeHaveSlept = 0; // Reset this in case sleep was prematurely halted by an interrupt
         }
+        break;
       }
-      break;
     case PREPARE_SHUTDOWN:
       {
-        currentState = SLEEP_WIFI_OFF; // TO-DO: Implement some logic here to prevent shutdown
-        digitalWrite(WIFI_MODULE_PIN, LOW); // Turn WiFi module off
+        bool timeToChangeState = stayAsleepFor(WIFI_PREPARE_SHUTDOWN_DURATION);
+        // Since the timeout and the interrupt have different results we must
+        // guard the sensitive area.
+        noInterrupts();
+        if (timeToChangeState) {
+          currentState = SLEEP_WIFI_OFF;
+          digitalWrite(WIFI_MODULE_PIN, LOW); // Turn WiFi module off
+        } else if (signalFromWifiModule) {
+          currentState = SLEEP_WIFI_ON; // Give it more time before turnign off
+          timeWeHaveSlept = 0; // Reset since sleep was halted by an interrupt
+        }
+        signalFromWifiModule = false;
+        interrupts();
         break;
       }
     default:
