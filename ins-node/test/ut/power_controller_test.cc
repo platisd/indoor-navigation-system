@@ -96,7 +96,7 @@ TEST_F(PowerControllerFixture, stayAsleep_whenWatchdogIsDisabled_willEnableIt)
     stayAsleepFor(sleepDuration);
 }
 
-TEST_F(PowerControllerFixture, stayAsleep_whenTimeHasNotPassed_willReturnFalse)
+TEST_F(PowerControllerFixture, stayAsleep_whenNotElapsed_willReturnFalse)
 {
     const unsigned long sleepDuration = WIFI_OFF_SLEEP_DURATION;
     timeWeHaveSlept = 0; // It is already 0, just making it obvious
@@ -117,7 +117,7 @@ TEST_F(PowerControllerFixture, stayAsleep_whenWatchDogDidNotBark_willReturnFalse
     ASSERT_FALSE(stayAsleepFor(sleepDuration));
 }
 
-TEST_F(PowerControllerFixture, stayAsleep_whenTimeHasPassed_willReturnTrue)
+TEST_F(PowerControllerFixture, stayAsleep_whenElapsed_willReturnTrue)
 {
     const unsigned long sleepDuration = WIFI_OFF_SLEEP_DURATION;
     timeWeHaveSlept = sleepDuration; // We have slept as much as we should
@@ -128,7 +128,7 @@ TEST_F(PowerControllerFixture, stayAsleep_whenTimeHasPassed_willReturnTrue)
     ASSERT_TRUE(stayAsleepFor(sleepDuration));
 }
 
-TEST_F(PowerControllerFixture, loop_whenWifiOffAndNotTimeToWake_willRemainInSleepWifiOff)
+TEST_F(PowerControllerFixture, loop_whenWifiOffNotElapsed_willRemainInSleepWifiOff)
 {
     timeWeHaveSlept = 0;
     currentState = SLEEP_WIFI_OFF;
@@ -144,7 +144,7 @@ TEST_F(PowerControllerFixture, loop_whenWifiOffAndNotTimeToWake_willRemainInSlee
     ASSERT_EQ(currentState, SLEEP_WIFI_OFF);
 }
 
-TEST_F(PowerControllerFixture, loop_whenWifiOffAndTimeToWake_willTurnWifiOn)
+TEST_F(PowerControllerFixture, loop_whenWifiOffElapsed_willTurnWifiOn)
 {
     timeWeHaveSlept = WIFI_OFF_SLEEP_DURATION;
     currentState = SLEEP_WIFI_OFF;
@@ -160,7 +160,7 @@ TEST_F(PowerControllerFixture, loop_whenWifiOffAndTimeToWake_willTurnWifiOn)
     ASSERT_EQ(currentState, SLEEP_WIFI_ON);
 }
 
-TEST_F(PowerControllerFixture, loop_whenWifiOnAndNotTimeToSleep_willRemainWifiOn)
+TEST_F(PowerControllerFixture, loop_whenWifiOnNotElapsed_willRemainWifiOn)
 {
     timeWeHaveSlept = 0;
     currentState = SLEEP_WIFI_ON;
@@ -176,7 +176,7 @@ TEST_F(PowerControllerFixture, loop_whenWifiOnAndNotTimeToSleep_willRemainWifiOn
     ASSERT_EQ(currentState, SLEEP_WIFI_ON);
 }
 
-TEST_F(PowerControllerFixture, loop_whenWifiOnAndTimeToSleep_willNotifyShutdown)
+TEST_F(PowerControllerFixture, loop_whenWifiOnElapsed_willNotifyShutdown)
 {
     timeWeHaveSlept = WIFI_ON_SLEEP_DURATION; // Have slept as much as we should
     currentState = SLEEP_WIFI_ON;
