@@ -43,6 +43,7 @@ void IndoorNavigationService::Shutdown()
 
     console_->info("Indoor Navigation Service is shutting down ...");
     http_end_point_->shutdown();
+    data_store_->Close();
 
     console_->debug("- IndoorNavigationService::Shutdown");
 }

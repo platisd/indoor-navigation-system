@@ -16,11 +16,18 @@ enum QueryT
     EMPLOYEE
 };
 
-struct Position
+class Position
 {
+public:
     double x;
     double y;
     double z;
+
+    bool operator==(const Position& rhs) const
+    {
+        return (this->x == rhs.x && this->y == rhs.y && this->z == rhs.z);
+    }
+
 };
 
 } // namespace ins_service

@@ -41,6 +41,8 @@ public:
 
     bool UpdateDeviceLocation(const std::string& device_id, Position pos);
 
+    bool AssignDeviceToEmployee(const std::string& device_id, const std::string& employee_id);
+
     bool
     InsertRSSIReadings(const std::string& device_id, std::vector<std::string> mac_addr_list, std::vector<double> rssi_list);
 
@@ -57,11 +59,14 @@ private:
 
     static int DbCallback(void* not_used, int argc, char** argv, char** azColName);
 
-    bool ReadDistinctMacAddrs(const std::string& device_id, std:vector<std::string> mac_addrs);
+    bool ReadDistinctMacAddrs(const std::string& device_id, std::vector<std::string>& mac_addrs);
 
     sqlite3*                        database_;
     std::mutex                      database_lock_;
     std::shared_ptr<spdlog::logger> console_;
+
+    //For tests only
+    std::string executing_sql_;
 };
 
 } // namespace ins_service

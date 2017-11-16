@@ -83,13 +83,29 @@ bool DataStore::UpdateDeviceLocation(const std::string& device_id, Position pos)
     console_->debug("+ DataStore::UpdateDeviceLocation");
 
     std::string sql = "INSERT OR REPLACE INTO location (device_id, pos_x, pos_y, "
-                      "pos_z) VALUES ('"
-                      + device_id + "'," + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", "
-                      + std::to_string(pos.z) + ");";
+                      "pos_z, employee_id) VALUES ("
+                      + device_id + "," + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", "
+                      + std::to_string(pos.z) + ", (SELECT employee_id FROM location WHERE device_id=" + device_id
+                      + "));";
     console_->debug(sql);
     bool res = RunQuery(sql);
 
     console_->debug("- DataStore::UpdateDeviceLocation");
+    return res;
+}
+
+bool DataStore::AssignDeviceToEmployee(const std::string& device_id, const std::string& employee_id)
+{
+    console_->debug("+ DataStore::AssignDeviceToEmployee");
+
+    std::string sql = "INSERT OR REPLACE INTO location (device_id, employee_id, pos_x, pos_y, pos_z) VALUES ("
+                      + device_id + ",'" + employee_id + "',(SELECT pos_x FROM location WHERE device_id=" + device_id
+                      + "),(SELECT pos_y FROM location WHERE device_id=" + device_id
+                      + "),(SELECT pos_z FROM location WHERE device_id=" + device_id + "));";
+    console_->debug(sql);
+    bool res = RunQuery(sql);
+
+    console_->debug("- DataStore::AssignDeviceToEmployee");
     return res;
 }
 
@@ -137,9 +153,13 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
 
     if (query_by == QueryT::DEVICE)
         sql = "SELECT pos_x, pos_y, pos_z from location WHERE device_id=" + id;
+    else if (query_by == QueryT::EMPLOYEE)
+        sql = "SELECT pos_x, pos_y, pos_z from location WHERE employee_id='" + id+"'";
     else
-        sql = "SELECT pos_x, pos_y, pos_z from location WHERE employee_id=" + id;
-
+    {
+        console_->error("Invalid Query. Device or Employee is expected");
+        return false;
+    }
     sqlite3_stmt* selectStmt;
     sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
     while (1)
@@ -170,6 +190,10 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
 
 bool DataStore::RunQuery(const std::string& sql)
 {
+#ifdef ENABLE_TESTS
+    executing_sql_ = sql;
+#endif // ENABLE_TESTS
+
     std::lock_guard<std::mutex> guard(database_lock_);
     char*                       error_msg;
     auto                        result = sqlite3_exec(database_, sql.c_str(), DbCallback, 0, &error_msg);
@@ -200,14 +224,14 @@ int DataStore::DbCallback(void* not_used, int argc, char** argv, char** azColNam
     return 0;
 }
 
-bool DataStore::ReadDistinctMacAddrs(const std::string& device_id, std::vector<std::string> mac_addrs)
+bool DataStore::ReadDistinctMacAddrs(const std::string& device_id, std::vector<std::string>& mac_addrs)
 {
     console_->debug("+ DataStore::GetRSSIDataStream");
 
     bool        result = false;
     std::string sql    = "SELECT DISTINCT mac_addr FROM  dev_" + device_id + ";";
 
-    sqlite3_stmt*            selectStmt;
+    sqlite3_stmt* selectStmt;
     sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
     while (1)
     {
