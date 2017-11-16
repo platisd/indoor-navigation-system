@@ -1,72 +1,44 @@
-CREATE TABLE ins
-(
-  device_id INTEGER PRIMARY KEY,
-  loc_x REAL,
-  loc_y REAL,
-  loc_z REAL,
-  ssid1 TEXT,
-  rss1 REAL,
-  ssid2 TEXT,
-  rss2 REAL,
-  ssid3 TEXT,
-  rss3 REAL,
-  ssid4 TEXT,
-  rss4 REAL,
-  ssid5 TEXT,
-  rss5 REAL,
-  timestamp datatime default current_timestamp
-);
-CREATE TABLE dev_1000
-(
-  id INTEGER PRIMARY KEY,
-  ssid1 TEXT,
-  rss1 REAL,
-  ssid2 TEXT,
-  rss2 REAL,
-  ssid3 TEXT,
-  rss3 REAL,
-  ssid4 TEXT,
-  rss4 REAL,
-  ssid5 TEXT,
-  rss5 REAL,
-  timestamp datatime default current_timestamp
-);
 CREATE TABLE location
 (
   device_id INTEGER PRIMARY KEY,
   employee_id TEXT,
-  loc_x REAL,
-  loc_y REAL,
-  loc_z REAL,
+  pos_x REAL,
+  pos_y REAL,
+  pos_z REAL,
   timestamp datatime default current_timestamp
 );
-CREATE TABLE dev_1001
+
+
+CREATE TABLE sample_dev_10
 (
   id INTEGER PRIMARY KEY,
-  ssid1 TEXT,
-  rss1 REAL,
-  ssid2 TEXT,
-  rss2 REAL,
-  ssid3 TEXT,
-  rss3 REAL,
-  ssid4 TEXT,
-  rss4 REAL,
-  ssid5 TEXT,
-  rss5 REAL,
+  mac_addr TEXT,
+  rssi REAL,
   timestamp datatime default current_timestamp
 );
-CREATE TABLE dev_1300
+
+CREATE TABLE sample_dev_11
 (
   id INTEGER PRIMARY KEY,
-  ssid1 TEXT,
-  rss1 REAL,
-  ssid2 TEXT,
-  rss2 REAL,
-  ssid3 TEXT,
-  rss3 REAL,
-  ssid4 TEXT,
-  rss4 REAL,
-  ssid5 TEXT,
-  rss5 REAL,
+  mac_addr TEXT,
+  rssi REAL,
+  timestamp datatime default current_timestamp
+);
+
+
+CREATE TABLE sample_dev_1034
+(
+  id INTEGER PRIMARY KEY,
+  mac_addr TEXT,
+  rssi REAL,
+  timestamp datatime default current_timestamp
+);
+
+
+CREATE TABLE sample_dev_103
+(
+  id INTEGER PRIMARY KEY,
+  mac_addr TEXT,
+  rssi REAL,
   timestamp datatime default current_timestamp
 );

@@ -115,7 +115,7 @@ void IndoorNavigationService::SetReceivedSignalStrengths(const Pistache::Rest::R
         response.send(Pistache::Http::Code::Internal_Server_Error, "{result:error}");
         return;
     }
-    if (data_store_->InsertRSSIReadings(device_id, mac_address_list, rssi_list))
+    if (!data_store_->InsertRSSIReadings(device_id, mac_address_list, rssi_list))
     {
         response.send(Pistache::Http::Code::Internal_Server_Error, "{result:error}");
         return;
