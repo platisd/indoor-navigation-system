@@ -8,8 +8,8 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <sqlite3.h>
-#include <vector>
 #include <string>
+#include <vector>
 
 #include "types.hpp"
 
@@ -43,8 +43,9 @@ public:
 
     bool AssignDeviceToEmployee(const std::string& device_id, const std::string& employee_id);
 
-    bool
-    InsertRSSIReadings(const std::string& device_id, std::vector<std::string> mac_addr_list, std::vector<double> rssi_list);
+    bool InsertRSSIReadings(const std::string&       device_id,
+                            std::vector<std::string> mac_addr_list,
+                            std::vector<double>      rssi_list);
 
     bool GetPosition(const std::string& device_id, QueryT queryby, Position& pos);
 
@@ -65,7 +66,7 @@ private:
     std::mutex                      database_lock_;
     std::shared_ptr<spdlog::logger> console_;
 
-    //For tests only
+    // For tests only
     std::string executing_sql_;
 };
 

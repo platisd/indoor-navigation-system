@@ -53,6 +53,10 @@ add_executable(test_ins_service
     ${REPOSITORY_ROOT}/src/data_store.cpp  # TODO - replace with mock
     ${REPOSITORY_ROOT}/src/localization.cpp # TODO - replace  with mock
     suite_ins_service.cpp
+
+    #mocks
+    mocks/mock_data_store.hpp
+    mocks/mock_data_store.cpp
 )
 target_link_libraries(test_ins_service gtest gmock_main pistache.a sqlite3.a dl )
 
