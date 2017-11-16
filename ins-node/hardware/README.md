@@ -23,7 +23,7 @@ INS-node board schematics and layout designed with Eagle CAD.
 ## List of materials
 * Wemos D1 Mini
 * ATtiny85
-* 2 x AAA battery holders
+* 3 x AAA battery holders
 * 2 x 2N7000 N-channel MOSFET
 * 2 x 220 Ohm resistors
 * 0.1 uF capacitor
