@@ -5,7 +5,7 @@ language:
 
 compiler:
     - g++
-    
+
 addons:
   apt:
     sources:
@@ -14,6 +14,7 @@ addons:
     packages:
       - g++-6
       - clang-3.8
+      - lcov
 
 notifications:
     email: false
@@ -22,10 +23,13 @@ notifications:
 install:
     - "[ $CXX = g++ ] && export CXX=g++-6 || true"
     - "[ $CXX = clang++ ] && export CXX=clang++-3.8 || true"
-    - bash get_dependencies.sh 
+    - bash get_dependencies.sh
 
 # Build the project
 script:
     # Build INS server
     - bash server/build_and_run_ut.sh
     - bash ins-node/build_and_run_ut.sh
+
+after_success:
+    - bash run_coverage.sh
