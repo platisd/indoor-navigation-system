@@ -6,3 +6,4 @@
 *.a
 build/
 coverage.info
+pistache/
