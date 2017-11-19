@@ -8,7 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-sign-compare -Wno-mis
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-overloaded-virtual")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat=2 -g")
 
-#Include lcov for coverage reports
+# Include lcov for coverage reports
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../CmakeModules)
 include(CodeCoverage)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fprofile-arcs -ftest-coverage")
