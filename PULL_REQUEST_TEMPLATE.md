@@ -1,3 +1,3 @@
 ## Description
 
-## Solves issue(s)
+## Solved issue(s)
