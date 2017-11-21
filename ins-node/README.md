@@ -4,6 +4,21 @@ The INS-node is the device that will allow us to pinpoint the location of our co
 ## Setup your IDE
 Follow the instructions found [here](https://wiki.wemos.cc/tutorials:get_started:get_started_in_arduino#using_git_version) to setup your Arduino IDE and enable it to compile and upload sketches for Wemos Mini D1.
 
+To be able to compile for the ATtiny, please follow the instructions [here](http://highlowtech.org/?p=1695).
+
+## Power Controller :left_right_arrow: WiFi Module interaction
+The Power Controller MCU is in charge of managing when the WiFi module is to be turned on. That being said, the WiFi module occasionally has some saying on what needs to be done.
+
+There are two signals connecting the two components which additionally happen to be UART-capable. On the Power Controller these are `PB0` as `TX` and `PB1` as RX. On the WiFi module the standard `RX` and `TX` pins are utilized. Currently the two modules interact through sending signals as short (few microseconds) pulses.
+
+The following table describes the protocol in the different states.
+
+| Power Controller state | Source | Destination | Description |
+| :----:|:----:|:----:|:----:|
+| `SLEEP_WIFI_ON`          | Power Controller | WiFi Module  | Notifies WiFi Module to shutdown, transits to `PREPARE_SHUTDOWN` state where it will turn off after `WIFI_PREPARE_SHUTDOWN_DURATION`. |
+| `SLEEP_WIFI_ON`          |  WiFi Module | Power Controller | Notifies Power Controller that it wants to shutdown and Power Controller transits to `PREPARE_SHUTDOWN` state where it will turn off after `WIFI_PREPARE_SHUTDOWN_DURATION`. |
+| `PREPARE_SHUTDOWN`       |  WiFi Module | Power Controller | Notifies Power Controller to prevent shutdown and go back to `SLEEP_WIFI_ON` state. |
+
 ## Testing
 To test the INS-node code we base our work on the [Smartcar-gmock](https://github.com/platisd/smartcar-gmock) framework.
 

@@ -4,8 +4,14 @@ find_package (Threads)
 
 add_subdirectory(arduino_mock)
 set(INS_MOCK_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ins_mock)
-set(TEST_UTILS ${CMAKE_CURRENT_SOURCE_DIR}/helpers)
+set(STUBS ${CMAKE_CURRENT_SOURCE_DIR}/stubs)
 set(UT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/ut)
+set(GTEST_RUN_FLAGS --gtest_color=yes --gtest_repeat=5 --gtest_shuffle)
+
+# Include lcov for coverage reports
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../CmakeModules)
+include(CodeCoverage)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fprofile-arcs -ftest-coverage")
 
 enable_testing()
 
@@ -14,7 +20,7 @@ include_directories(
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gtest/gtest/src/gtest/include
     ${ARDUINO_MOCK_LIBS_DIR}/lib/gmock/gmock/src/gmock/include
     ${INS_MOCK_DIR}
-    ${TEST_UTILS}
+    ${STUBS}
 )
 
 # Include all files in ut/ ending with .cc as tests
@@ -37,5 +43,7 @@ foreach(test ${TESTS})
     )
     add_dependencies(${testname} arduino_mock)
     # Add it as a separate test
-    add_test(${testname} ${testname})
+    add_test(${testname} ${testname} ${GTEST_RUN_FLAGS})
+    # Add coverage report
+    setup_target_for_coverage(NAME ${testname}_coverage EXECUTABLE ${testname} DEPENDENCIES ${testname})
 endforeach(test ${TESTS})

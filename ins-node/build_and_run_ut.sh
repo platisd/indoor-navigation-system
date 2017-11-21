@@ -13,9 +13,9 @@ if [ "$arg" = "--clean" ] || [ "$arg" = "-c" ]; then
 fi
 mkdir -p build
 cd build
-cmake ..
+cmake -DCMAKE_BUILD_TYPE=Debug ..
 make
-ctest -V
+ctest
 
 # Go back to the initial directory when you are done
 cd $caller_dir

@@ -8,6 +8,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wno-sign-compare -Wno-mis
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-overloaded-virtual")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wformat=2 -g")
 
+# Include lcov for coverage reports
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../../CmakeModules)
+include(CodeCoverage)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0 -fprofile-arcs -ftest-coverage")
+
 set(REPOSITORY_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../)
 
 # Download and unpack googletest at configure time
@@ -84,3 +89,8 @@ set(GTEST_RUN_FLAGS --gtest_color=yes --gtest_repeat=20 --gtest_shuffle CACHE ST
 add_test(INS_SERVICE_TEST test_ins_service ${GTEST_RUN_FLAGS})
 add_test(DATA_STORE_TEST test_data_store ${GTEST_RUN_FLAGS})
 add_test(LOCALIZATION_TEST test_localization ${GTEST_RUN_FLAGS})
+
+# Add coverage reports
+setup_target_for_coverage(NAME INS_SERVICE_TEST_coverage EXECUTABLE test_ins_service DEPENDENCIES test_ins_service)
+setup_target_for_coverage(NAME DATA_STORE_TEST_coverage EXECUTABLE test_data_store DEPENDENCIES test_data_store)
+setup_target_for_coverage(NAME LOCALIZATION_TEST_coverage EXECUTABLE test_localization DEPENDENCIES test_localization)

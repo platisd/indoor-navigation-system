@@ -7,3 +7,5 @@
 build/
 .vscode/
 *.db
+coverage.info
+pistache/
