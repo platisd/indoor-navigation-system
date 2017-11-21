@@ -9,6 +9,7 @@ set(SOURCE_FILES
     src/ins_service.cpp
     src/data_store.cpp
     src/localization.cpp
+    src/lib_wrapper.cpp
  )
 
 include_directories(

@@ -50,13 +50,17 @@ link_directories(${CMAKE_FIND_ROOT_PATH}/lib)
 add_executable(test_ins_service
     ${REPOSITORY_ROOT}/include/ins_service.hpp
     ${REPOSITORY_ROOT}/src/ins_service.cpp
-    ${REPOSITORY_ROOT}/src/data_store.cpp  # TODO - replace with mock
-    ${REPOSITORY_ROOT}/src/localization.cpp # TODO - replace  with mock
-    suite_ins_service.cpp
+
 
     #mocks
     mocks/mock_data_store.hpp
     mocks/mock_data_store.cpp
+    mocks/mock_localization.hpp
+    mocks/mock_localization.cpp
+    mocks/mock_lib_wrapper.hpp
+    mocks/mock_lib_wrapper.cpp
+
+    suite_ins_service.cpp
 )
 target_link_libraries(test_ins_service gtest gmock_main pistache.a sqlite3.a dl )
 

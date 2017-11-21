@@ -7,11 +7,9 @@
 
 #include <memory>
 #include <mutex>
-#include <pistache/endpoint.h>
-#include <pistache/http.h>
-#include <pistache/router.h>
 #include <spdlog/spdlog.h>
 
+#include "lib_wrapper.hpp"
 #include "data_store.hpp"
 #include "localization.hpp"
 #include "types.hpp"
@@ -30,8 +28,8 @@ public:
     friend class IndoorNavigationServiceFixture;
 #endif // ENABLE_TESTS
 
-    explicit IndoorNavigationService(Pistache::Address addr)
-        : http_end_point_(std::make_shared<Pistache::Http::Endpoint>(addr))
+    explicit IndoorNavigationService()
+        : http_end_point_(nullptr)
         , data_store_(nullptr)
         , localization_(nullptr)
         , console_(spdlog::get(LOGGER_NAME))
@@ -40,7 +38,7 @@ public:
             console_ = spdlog::stdout_logger_mt(LOGGER_NAME);
     }
 
-    int Init(int thread_count = 2);
+    int Init(Pistache::Address addr, int thread_count = 2);
 
     void Start();
 

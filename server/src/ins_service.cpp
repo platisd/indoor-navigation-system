@@ -8,7 +8,7 @@
 namespace ins_service
 {
 
-int IndoorNavigationService::Init(int thread_count)
+int IndoorNavigationService::Init(Pistache::Address addr, int thread_count)
 {
     console_->debug("+ IndoorNavigationService::Init");
 
@@ -17,9 +17,12 @@ int IndoorNavigationService::Init(int thread_count)
 
     localization_ = std::make_shared<Localization>();
 
+    http_end_point_ = std::make_shared<Pistache::Http::Endpoint>(addr);
     auto opts
         = Pistache::Http::Endpoint::options().threads(thread_count).flags(Pistache::Tcp::Options::InstallSignalHandler);
-    http_end_point_->init(opts);
+
+    HttpEndpointInit(http_end_point_, opts);
+
     SetupRoutes();
 
     console_->debug("- IndoorNavigationService::Init");
@@ -30,9 +33,9 @@ void IndoorNavigationService::Start()
 {
     console_->debug("+ IndoorNavigationService::Start");
 
-    http_end_point_->setHandler(router_.handler());
+    HttpEndpointSetHandler(http_end_point_, router_);
     console_->info("Indoor Navigation Service now running ...");
-    http_end_point_->serve();
+    HttpEndpointServe(http_end_point_);
 
     console_->debug("- IndoorNavigationService::Start");
 }
@@ -42,7 +45,7 @@ void IndoorNavigationService::Shutdown()
     console_->debug("+ IndoorNavigationService::Shutdown");
 
     console_->info("Indoor Navigation Service is shutting down ...");
-    http_end_point_->shutdown();
+    HttpEndpointShutdown(http_end_point_);
     data_store_->Close();
 
     console_->debug("- IndoorNavigationService::Shutdown");
