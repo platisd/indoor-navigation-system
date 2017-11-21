@@ -5,15 +5,17 @@
 #include "data_store.hpp"
 #include "stdio.h"
 
+using namespace ::testing;
+
 namespace ins_service
 {
 
-class DataStoreFixture : public ::testing::Test
+class DataStoreFixture : public Test
 {
 public:
     virtual void SetUp()
     {
-        spdlog::set_level(spdlog::level::debug);
+        //spdlog::set_level(spdlog::level::debug);
     }
 
     sqlite3* GetDatabase(std::shared_ptr<DataStore> ds)
@@ -45,6 +47,10 @@ protected:
     std::shared_ptr<DataStore> data_store_ = std::make_shared<DataStore>();
 };
 
+/**
+ * TEST: Init
+ * EXPECT: Creates new db file.
+ */
 TEST_F(DataStoreFixture, Init_DbNotExisting_WillCreateNewDb)
 {
     data_store_->Init("database_file");
@@ -53,6 +59,10 @@ TEST_F(DataStoreFixture, Init_DbNotExisting_WillCreateNewDb)
     std::remove("database_file");
 }
 
+/*
+ * TEST: Init
+ * EXPECT: Loads existing db
+ */
 TEST_F(DataStoreFixture, Init_DbCreated_WillLoadExistingDb)
 {
     sqlite3* db = GetDatabase(data_store_);
@@ -73,6 +83,10 @@ TEST_F(DataStoreFixture, Init_DbCreated_WillLoadExistingDb)
     std::remove("database_file");
 }
 
+/**
+ * TEST: Close
+ * EXPECT: Close database after initialization
+ */
 TEST_F(DataStoreFixture, Close_DbInitialized_WillCloseDb)
 {
     data_store_->Init("database_file");
@@ -81,6 +95,10 @@ TEST_F(DataStoreFixture, Close_DbInitialized_WillCloseDb)
     EXPECT_EQ(GetDatabase(data_store_), nullptr);
 }
 
+/**
+ * TEST: CreateLocationTable
+ * EXPECT: Builds SQL for creating location table
+ */
 TEST_F(DataStoreFixture, CreateLocationTable_WillFormSqlToCreateLocationTable)
 {
     data_store_->Init("location_db");
@@ -97,6 +115,10 @@ TEST_F(DataStoreFixture, CreateLocationTable_WillFormSqlToCreateLocationTable)
     std::remove("location_db");
 }
 
+/**
+ * TEST: CreateDeviceTable
+ * EXPECT: Builds SQL for creating device table
+ */
 TEST_F(DataStoreFixture, CreateDeviceTable_WillFormSqlToCreateDeviceTable)
 {
     data_store_->Init("db");
@@ -111,6 +133,10 @@ TEST_F(DataStoreFixture, CreateDeviceTable_WillFormSqlToCreateDeviceTable)
     std::remove("db");
 }
 
+/**l
+ * TEST: ClearDeviceTable
+ * EXPECT: Build SQL for clearing device table
+ */
 TEST_F(DataStoreFixture, ClearDeviceTable_WillFormSqlToClearTable)
 {
     data_store_->Init("db");
@@ -123,6 +149,10 @@ TEST_F(DataStoreFixture, ClearDeviceTable_WillFormSqlToClearTable)
     std::remove("db");
 }
 
+/**
+ * TEST: UpdateDeviceLocation
+ * EXPECT: Builds SQL for updating device location
+ */
 TEST_F(DataStoreFixture, UpdateDeviceLocation_WillFormSqlToUpdateDeviceLocation)
 {
     data_store_->Init("db");
@@ -140,6 +170,10 @@ TEST_F(DataStoreFixture, UpdateDeviceLocation_WillFormSqlToUpdateDeviceLocation)
     std::remove("db");
 }
 
+/**
+ * TEST: AssignDeviceToEmployee
+ * EXPECT: Builds SQL for linking a device to and employee
+ */
 TEST_F(DataStoreFixture, AssignDeviceToEmployee_WillFormSqlToLinkDeviceAndEmployee)
 {
     data_store_->Init("db");
@@ -156,6 +190,10 @@ TEST_F(DataStoreFixture, AssignDeviceToEmployee_WillFormSqlToLinkDeviceAndEmploy
     std::remove("db");
 }
 
+/**
+ * TEST: InserRSSIReadings
+ * EXPECT: Builds SQL for inserting rssi data
+ */
 TEST_F(DataStoreFixture, InsertRSSIReadings_WillFormSqlToInsertRSSIReadings)
 {
     data_store_->Init("db");
@@ -173,6 +211,10 @@ TEST_F(DataStoreFixture, InsertRSSIReadings_WillFormSqlToInsertRSSIReadings)
     std::remove("db");
 }
 
+/**
+ * TEST: GetPosition
+ * EXPECT: Gets position data for specified device
+ */
 TEST_F(DataStoreFixture, GetPosition_WillRunSqlToGetDevicePosition)
 {
     data_store_->Init("location.db");
@@ -197,6 +239,10 @@ TEST_F(DataStoreFixture, GetPosition_WillRunSqlToGetDevicePosition)
     std::remove("location.db");
 }
 
+/**
+ * TEST: GetPosition
+ * EXPECT: Get position data for specified employee
+ */
 TEST_F(DataStoreFixture, GetPosition_WillRunSqlToGetEmployeePosition)
 {
     data_store_->Init("db");
@@ -222,6 +268,10 @@ TEST_F(DataStoreFixture, GetPosition_WillRunSqlToGetEmployeePosition)
     std::remove("db");
 }
 
+/**
+ * TEST: Malformed SQL query
+ * EXPECT: Function RunQuery returns false.
+ */
 TEST_F(DataStoreFixture, RunQuery_Fails)
 {
     data_store_->Init("db");
@@ -232,6 +282,10 @@ TEST_F(DataStoreFixture, RunQuery_Fails)
     std::remove("db");
 }
 
+/**
+ * TEST: RunQuery
+ * EXPECT: Run SQL on database
+ */
 TEST_F(DataStoreFixture, RunQuery)
 {
     data_store_->Init("db");
@@ -245,6 +299,10 @@ TEST_F(DataStoreFixture, RunQuery)
     std::remove("db");
 }
 
+/**
+ * TEST: ReadDistinctMacAddrs
+ * EXPECT: Unique mac addresses stored for a particular device
+ */
 TEST_F(DataStoreFixture, ReadDistinctMacAddrs_WillSetUniqueMacAddrsInDeviceTable)
 {
     data_store_->Init("db");
