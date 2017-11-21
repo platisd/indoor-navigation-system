@@ -179,6 +179,7 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
         else
         {
             console_->error("Failed to read from database");
+            sqlite3_finalize(selectStmt);
             return false;
         }
     }
@@ -249,6 +250,7 @@ bool DataStore::ReadDistinctMacAddrs(const std::string& device_id, std::vector<s
         else
         {
             console_->error("Failed to read from database");
+            sqlite3_finalize(selectStmt);
             return false;
         }
     }

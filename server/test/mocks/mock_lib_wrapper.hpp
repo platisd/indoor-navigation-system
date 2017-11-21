@@ -6,8 +6,6 @@
 
 #include "lib_wrapper.hpp"
 
-using namespace Pistache::Http;
-
 namespace ins_service
 {
 
@@ -18,13 +16,13 @@ extern ::testing::NiceMock<MockLibWrapper>* g_mocked_lib_wrapper_;
 class MockLibWrapper
 {
 public:
-    MOCK_METHOD2(HttpEndpointInit, void(std::shared_ptr<Endpoint>, Endpoint::Options));
+    MOCK_METHOD2(HttpEndpointInit, void(std::shared_ptr<Pistache::Http::Endpoint>, Pistache::Http::Endpoint::Options));
 
-    MOCK_METHOD2(HttpEndpointSetHandler, void(std::shared_ptr<Endpoint>, Pistache::Rest::Router&));
+    MOCK_METHOD2(HttpEndpointSetHandler, void(std::shared_ptr<Pistache::Http::Endpoint>, Pistache::Rest::Router&));
 
-    MOCK_METHOD1(HttpEndpointServe, void(std::shared_ptr<Endpoint>));
+    MOCK_METHOD1(HttpEndpointServe, void(std::shared_ptr<Pistache::Http::Endpoint>));
 
-    MOCK_METHOD1(HttpEndpointShutdown, void(std::shared_ptr<Endpoint>));
+    MOCK_METHOD1(HttpEndpointShutdown, void(std::shared_ptr<Pistache::Http::Endpoint>));
 
     ~MockLibWrapper()
     {

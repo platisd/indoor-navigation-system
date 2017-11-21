@@ -66,8 +66,10 @@ private:
     std::mutex                      database_lock_;
     std::shared_ptr<spdlog::logger> console_;
 
-    // For tests only
+// Used for making sql variable passed to RunQuery() readable for UT purpose.
+#ifdef ENABLE_TESTS
     std::string executing_sql_;
+#endif // ENABLE_TESTS
 };
 
 } // namespace ins_service
