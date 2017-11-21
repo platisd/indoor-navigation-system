@@ -1,3 +1,6 @@
+#ifndef INS_SERVER_TEST_MOCKS_DATA_STORE_HPP
+#define INS_SERVER_TEST_MOCKS_DATA_STORE_HPP
+
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -7,16 +10,17 @@ namespace ins_service
 {
 
 class MockDataStore;
+
 extern ::testing::NiceMock<MockDataStore>* g_mocked_data_store_;
 
-class MockDataStore
+class MockDataStore : public DataStore
 {
 public:
-    MOCK_METHOD1(Init, void(std::string&));
+    MOCK_METHOD1(Init, void(const std::string&));
 
     MOCK_METHOD0(Close, void());
 
-    MOCK_METHOD2(UpdateDeviceLocation, bool(std::string&, Position));
+    MOCK_METHOD2(UpdateDeviceLocation, bool(const std::string&, Position));
 
     MOCK_METHOD2(AssignDeviceToEmployee, bool(const std::string&, const std::string&));
 
@@ -34,3 +38,5 @@ public:
     }
 };
 }
+
+#endif //INS_SERVER_TEST_MOCKS_DATA_STORE_HPP
