@@ -89,8 +89,6 @@ The INS server provides a backend RESTful service for INS-node and front-end web
     * `cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..`
     * `make`
     * `sudo make install`
-* Install spdlog
-	* ´sudo apt-get install libspdlog-dev´
 
 ## Build & Run Backend Server
 Ensure all needed libraries are installed.
