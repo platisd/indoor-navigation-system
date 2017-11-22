@@ -1,135 +1,163 @@
-/*
- *  This sketch demonstrates how to scan WiFi networks. 
- *  The API is almost the same as with the WiFi Shield library, 
- *  the most obvious difference being the different file you need to include:
- */
-#include "ESP8266WiFi.h"
-
-typedef struct ctx
-{
-  String MacAddress;
-  byte RssiLevel;
-}ctx_t;
+#include <stdint.h>
+#include <vector>
+#include <utility>
+#include <ESP8266WiFi.h>
+#include "wifi_module.h"
 
 #define device_id 1;
 
-ctx_t contextMsg[6];
-const char* ssid     = "TP-LINK_3351";
-const char* password = "20791375";
+ESP8266WiFiClass wifi;
+const char SERVER_IP[] = "192.168.0.136";
+const int8_t CONNECTION_RETRIES = 3; // The maximum amount of wifi connection attempts
+const uint8_t TRANSMISSION_SIZE = 10;
 
-const char* host = "192.168.0.136";
+const uint8_t TX_PIN = 10;
+const uint8_t RX_PIN = 9;
 
-void setup() {
-  Serial.begin(115200);
-  memset(contextMsg,0,sizeof(ctx_t)*6);
+/**
+   Establishes a connection with the predefined server
+   @return  true for succesfull connection
+            false for failed connection
+*/
+bool connectToServer() {
+  WiFiClient client;
+  const int SERVER_PORT = 8050;
+  return client.connect(SERVER_IP, SERVER_PORT);
+}
 
-  // Set WiFi to station mode and disconnect from an AP if it was previously connected
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
-  delay(100);
+/**
+   Gets the network context (i.e. MAC address and RSSI value) of the specified
+   network item.
+   @param networkItem The network item index of which to fetch the context
+   @return            A tuple of (MAC address, RSSI)
+*/
+std::pair <String, int32_t> getNetworkContext(int8_t networkItem) {
+  std::pair <String, int32_t> context (wifi.BSSIDstr(networkItem), wifi.RSSI(networkItem));
+  return context;
+}
 
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  
-  WiFi.begin(ssid, password);
-  
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+/**
+   Measures the RSSI values for the various access points of the specified SSID
+   and returns them along the MAC address of the respective access point.
+   @return  The MAC addresses with their respective RSSI values
+*/
+std::vector<std::pair <String, int32_t>> getDatapoints() {
+  std::vector<std::pair <String, int32_t>> datapoints;
+  // Scan the surrounding networks and get how many were found
+  auto networksFound = wifi.scanNetworks();
+  for (auto i = 0; i < networksFound; ++i) {
+    if (wifi.SSID(i) == positioningSSID) {
+      datapoints.push_back(getNetworkContext(i));
+    }
   }
 
-  Serial.println("");
-  Serial.println("WiFi connected. Node");  
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  return datapoints;
+}
 
-  Serial.println("Setup done");
+/**
+   Transmits the supplied data (if present) to the server
+   @param  datapoints The MAC addresses and the RSSI values we collected
+   @return            Whether transmission succesfull
+*/
+bool transmitData(std::vector<std::pair <String, int32_t>> datapoints) {
+  // TO-DO: Notify the server that we could not gather any datapoints for
+  // corrective actions to be made before sleeping.
+  if (datapoints.empty()) {
+    return false;
+  }
+  // Establish a TCP connection to the server
+  WiFiClient client;
+  const uint16_t HTTP_PORT = 8050;
+  if (!client.connect(SERVER_IP, HTTP_PORT)) {
+    return false;
+  }
+
+  // Compose a request for the server according to the agreed format:
+  // /set_rssi/:device_id/:mac_addr1/:rssi1/:mac_addr2?/ ... /:mac_addr10?/:rssi10/?
+  String request = "/set_rssi/:";
+  request += device_id;
+  request += "/:";
+  for (auto datapoint : datapoints) {
+    request += datapoint.first; // The MAC address
+    request += "/:";
+    request += datapoint.second; // The RSSI value
+  }
+  request += "/?";
+
+  // Send the TCP request to the rest server
+  client.print(String("PUT ") + request + " HTTP/1.1\r\n" +
+               "SERVER_IP: " + SERVER_IP + "\r\n" +
+               "Connection: close\r\n\r\n");
+
+  // Verify whether the request timed out
+  bool successfulRequest = true;
+  const unsigned long TIMEOUT = millis() + 5000;
+  while (client.available() == 0) {
+    if (millis() > TIMEOUT) {
+      successfulRequest = false;
+      break;
+    }
+  }
+  client.stop();
+  return successfulRequest;
+}
+
+/**
+   Puts the module into deep sleep and signals the power controller to
+   turn its power off.
+*/
+void goToSleep() {
+  digitalWrite(TX_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TX_PIN, LOW);
+  ESP.deepSleep(60 * 1000000UL); // Will sleep forever unless wakeup pin connected to RST
+}
+
+void setup() {
+  // Setup IO pins.
+  pinMode(TX_PIN, OUTPUT);
+  pinMode(RX_PIN, INPUT);
+  digitalWrite(TX_PIN, LOW);
+
+  // Set WiFi to station mode and disconnect from an AP
+  // if it was previously connected.
+  wifi.mode(WIFI_STA);
+  wifi.disconnect();
+  delay(100);
+
+  // Try to connect to the internet.
+  wifi.begin(internetSSID, password);
+  auto attemptsLeft = CONNECTION_RETRIES;
+  while ((wifi.status() != WL_CONNECTED) && (--attemptsLeft > 0)) {
+    delay(500); // Wait a bit before retrying
+  }
+  // If there were problems during connection, go to deep sleep.
+  if (attemptsLeft < 0) {
+    goToSleep();
+  }
 }
 
 void loop() {
-  contextMsg[0].RssiLevel = -50;
-  Serial.println("Start Scanning for APs");
+  // Discover the access points we are interested in to log down their
+  // MAC addresses and RSSI values.
+  auto datapoints = getDatapoints();
 
-  // WiFi.scanNetworks will return the number of networks found
-  int n = WiFi.scanNetworks();
-  Serial.println("Scanning Completed!");
-  if (n == 0)
-    Serial.println("no networks found");
-  else
-  {
-    Serial.print(n);
-    Serial.println(" networks found");
-    for (int i = 0; i < n; ++i)
-    {
-      // Print SSID, MAC address and RSSI for each network found
-      Serial.print(i + 1);
-      Serial.print(": ");
-      Serial.print(WiFi.SSID(i));
-      Serial.print(" : MAC => ");
-      Serial.print(WiFi.BSSIDstr(i));
-      Serial.print(" (");
-      Serial.print(WiFi.RSSI(i));
-      Serial.print(")");
-      Serial.println((WiFi.encryptionType(i) == ENC_TYPE_NONE)?" ":"*");
-      delay(10);
-      if ((contextMsg[0].RssiLevel < WiFi.RSSI(i)))
-      {
-        contextMsg[0].RssiLevel  = WiFi.RSSI(i);
-        contextMsg[0].MacAddress = WiFi.BSSIDstr(i);
-      }
+  // We need to split the data in groups of 10, as this is the maximum amount
+  // we have agreed to send per transmission.
+  uint8_t transmissions = (datapoints.size() / TRANSMISSION_SIZE) + 1;
+  for (auto i = 0; i < transmissions; i++) {
+    // Get the next TRANSMISSION_SIZE elements as a new vector
+    std::vector<std::pair<String, int32_t>> transmissionData(
+                                           datapoints.begin() + (i * TRANSMISSION_SIZE),
+                                           datapoints.end() - ((transmissions - (i + 1)) * TRANSMISSION_SIZE));
+    // Transmit the collected data.
+    bool transmissionWasSuccess = transmitData(datapoints);
+    if (!transmissionWasSuccess) {
+      // TO-DO: Decide what to do depending on transmission failure
+      break;
     }
   }
-  Serial.println("");
-
-  if (1)
-  {
-     Serial.print("Connecting to ");
-  Serial.println(host);
-  
-  // Use WiFiClient class to create TCP connections
-  WiFiClient client;
-  const int httpPort = 8050;
-  if (!client.connect(host, httpPort)) {
-    Serial.println("Rest server connection failed");
-    return;
-  }
-
-    // We now create a PUT to the rest server
-  String req = "/set_rssi/:";  ///set_rssi/:device_id/:mac_addr1/:rssi1/:mac_addr2?/:rssi2?/:mac_addr3?/:rssi3? ... /:mac_addr10?/:rssi10/?
-  req += device_id;
-  req += "/:";
-  req += contextMsg[0].MacAddress;
-  req += "/:";
-  req += contextMsg[0].RssiLevel;
-  req += "/?";
-  
-  Serial.print("Requesting Command: ");
-  Serial.println(req);
-  
-  // Send req to the rest server
-  client.print(String("PUT ") + req + " HTTP/1.1\r\n" +
-               "Host: " + host + "\r\n" + 
-               "Connection: close\r\n\r\n");
-  unsigned long timeout = millis();
-  
-  while (client.available() == 0) {
-    if (millis() - timeout > 5000) {
-      Serial.println(">>> Client Timeout !");
-      client.stop();
-      return;
-    }
-  }
-
-    // Read all the lines of the reply from server and print them to Serial
-  while(client.available()){
-    String line = client.readStringUntil('\r');
-    Serial.print(line);
-  }
-  }
-
-  Serial.println("Closing connections...");
-  //WiFi.disconnect();
-
-  // Wait a bit before scanning again
-  delay(5000);
+  // Release resources and go to sleep
+  wifi.disconnect();
+  goToSleep();
 }
