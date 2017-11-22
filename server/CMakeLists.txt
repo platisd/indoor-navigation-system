@@ -13,7 +13,8 @@ set(SOURCE_FILES
 
 include_directories(
     ${CMAKE_FIND_ROOT_PATH}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/include )
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/external )
 
 link_directories(${CMAKE_FIND_ROOT_PATH}/lib)
 add_executable(ins_server ${SOURCE_FILES})
