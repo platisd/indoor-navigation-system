@@ -27,7 +27,7 @@ install:
 
 # Build the project
 script:
-    # Build INS server
+    - bash server/build.sh
     - bash server/build_and_run_ut.sh
     - bash ins-node/build_and_run_ut.sh
 
