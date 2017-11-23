@@ -4,9 +4,9 @@
 #include <ESP8266WiFi.h>
 #include "wifi_credentials.h"
 
-#define device_id 1;
-
 ESP8266WiFiClass wifi;
+EspClass espPower;
+const uint8_t DEVICE_ID = 1; // The identification for the specific node
 const char SERVER_IP[] = "192.168.0.136";
 const int8_t CONNECTION_RETRIES = 3; // The maximum amount of wifi connection attempts
 const uint8_t TRANSMISSION_SIZE = 10;
@@ -75,7 +75,7 @@ bool transmitData(std::vector<std::pair <String, int32_t>> datapoints) {
   // Compose a request for the server according to the agreed format:
   // /set_rssi/:device_id/:mac_addr1/:rssi1/:mac_addr2?/ ... /:mac_addr10?/:rssi10/?
   String request = "/set_rssi/:";
-  request += device_id;
+  request += DEVICE_ID;
   request += "/:";
   for (auto datapoint : datapoints) {
     request += datapoint.first; // The MAC address
@@ -110,7 +110,7 @@ void goToSleep() {
   digitalWrite(TX_PIN, HIGH);
   delayMicroseconds(10);
   digitalWrite(TX_PIN, LOW);
-  ESP.deepSleep(60 * 1000000UL); // Will sleep forever unless wakeup pin connected to RST
+  espPower.deepSleep(60 * 1000000UL); // Will sleep forever unless wakeup pin connected to RST
 }
 
 void setup() {
