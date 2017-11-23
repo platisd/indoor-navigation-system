@@ -43,9 +43,8 @@ public:
 
     bool AssignDeviceToEmployee(const std::string& device_id, const std::string& employee_id);
 
-    bool InsertRSSIReadings(const std::string&       device_id,
-                            std::vector<std::string> mac_addr_list,
-                            std::vector<double>      rssi_list);
+    bool InsertRSSIReadings(const std::string& device_id,
+                            std::vector<std::pair<std::string, double>> macaddr_rssi_datapoints);
 
     bool GetPosition(const std::string& device_id, QueryT queryby, Position& pos);
 
@@ -60,7 +59,7 @@ private:
 
     static int DbCallback(void* not_used, int argc, char** argv, char** azColName);
 
-    bool ReadDistinctMacAddrs(const std::string& device_id, std::vector<std::string>& mac_addrs);
+    std::vector<std::string> ReadDistinctMacAddrs(const std::string& device_id);
 
     sqlite3*                        database_;
     std::mutex                      database_lock_;

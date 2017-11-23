@@ -15,7 +15,7 @@ class DataStoreFixture : public Test
 public:
     virtual void SetUp()
     {
-        //spdlog::set_level(spdlog::level::debug);
+        // spdlog::set_level(spdlog::level::debug);
     }
 
     sqlite3* GetDatabase(std::shared_ptr<DataStore> ds)
@@ -38,9 +38,9 @@ public:
         return data_store_->RunQuery(sql);
     }
 
-    bool ReadDistinctMacAddrs(const std::string& device_id, std::vector<std::string>& mac_addrs)
+    std::vector<std::string> ReadDistinctMacAddrs(const std::string& device_id)
     {
-        return data_store_->ReadDistinctMacAddrs(device_id, mac_addrs);
+        return data_store_->ReadDistinctMacAddrs(device_id);
     }
 
 protected:
@@ -197,12 +197,14 @@ TEST_F(DataStoreFixture, AssignDeviceToEmployee_WillFormSqlToLinkDeviceAndEmploy
 TEST_F(DataStoreFixture, InsertRSSIReadings_WillFormSqlToInsertRSSIReadings)
 {
     data_store_->Init("db");
-    std::string              device_id        = "4004";
-    std::vector<std::string> mac_address_list = { "ee:44:43:a5:ff:ef", "11:65:d4:fe:ee:ff", "01:23:dd:3e:4c:cc" };
-    std::vector<double>      rssi_list        = { 23.66, 43.2, 99.9 };
+    std::string device_id = "4004";
+    std::vector<std::pair<std::string, double>> data_points;
+    data_points.push_back(std::make_pair<std::string, double>("ee:44:43:a5:ff:ef", 23.66));
+    data_points.push_back(std::make_pair<std::string, double>("11:65:d4:fe:ee:ff", 43.2));
+    data_points.push_back(std::make_pair<std::string, double>("01:23:dd:3e:4c:cc", 99.9));
 
     data_store_->CreateDeviceTable(device_id);
-    EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, mac_address_list, rssi_list));
+    EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, data_points));
     std::string expected_sql = "INSERT INTO dev_" + device_id + " (mac_addr, rssi) VALUES"
                                                                 "('ee:44:43:a5:ff:ef',23.66),('11:65:d4:fe:ee:ff',43.2)"
                                                                 ",('01:23:dd:3e:4c:cc',99.9);";
@@ -306,25 +308,23 @@ TEST_F(DataStoreFixture, RunQuery)
 TEST_F(DataStoreFixture, ReadDistinctMacAddrs_WillSetUniqueMacAddrsInDeviceTable)
 {
     data_store_->Init("db");
-    std::string              device_id = "4004";
-    std::vector<std::string> mac_address_list
-        = { "ee:44:43:a5:ff:ef", "11:65:d4:fe:ee:ff", "01:23:dd:3e:4c:cc", "ee:44:43:a5:ff:ef", "11:65:d4:fe:ee:ff",
-            "01:23:dd:3e:4c:cc", "ee:44:43:a5:ff:ef", "11:65:d4:fe:ee:ff", "01:23:dd:3e:4c:cc", "ee:44:43:a5:ff:ef",
-            "11:65:d4:fe:ee:ff", "01:23:dd:3e:4c:cc", "ee:44:43:a5:ff:ef", "11:65:d4:fe:ee:ff", "01:23:dd:3e:4c:cc" };
-    std::vector<double> rssi_list
-        = { 23.66, 43.2, 99.9, 23.66, 43.2, 99.9, 23.66, 43.2, 99.9, 23.66, 43.2, 99.9, 23.66, 43.2, 99.9 };
+    std::string device_id = "4004";
+    std::vector<std::pair<std::string, double>> data_points;
+    for (int i = 0; i < 5; ++i)
+    {
+        data_points.push_back(std::make_pair<std::string, double>("ee:44:43:a5:ff:ef", 23.66));
+        data_points.push_back(std::make_pair<std::string, double>("11:65:d4:fe:ee:ff", 43.2));
+        data_points.push_back(std::make_pair<std::string, double>("01:23:dd:3e:4c:cc", 99.9));
+    }
 
     data_store_->CreateDeviceTable(device_id);
-    EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, mac_address_list, rssi_list));
+    EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, data_points));
 
-    std::vector<std::string> unique_mac_addrs;
     std::vector<std::string> expected_unique_mac_addrs
         = { "ee:44:43:a5:ff:ef", "11:65:d4:fe:ee:ff", "01:23:dd:3e:4c:cc" };
 
-    ReadDistinctMacAddrs(device_id, unique_mac_addrs);
-
-    EXPECT_EQ(unique_mac_addrs.size(), expected_unique_mac_addrs.size());
-    EXPECT_EQ(unique_mac_addrs, expected_unique_mac_addrs);
+    EXPECT_EQ(ReadDistinctMacAddrs(device_id).size(), expected_unique_mac_addrs.size());
+    EXPECT_EQ(ReadDistinctMacAddrs(device_id), expected_unique_mac_addrs);
 
     data_store_->Close();
     std::remove("db");

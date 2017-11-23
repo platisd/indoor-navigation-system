@@ -109,17 +109,10 @@ bool DataStore::AssignDeviceToEmployee(const std::string& device_id, const std::
     return res;
 }
 
-bool DataStore::InsertRSSIReadings(const std::string&       device_id,
-                                   std::vector<std::string> mac_address_list,
-                                   std::vector<double>      rssi_list)
+bool DataStore::InsertRSSIReadings(const std::string& device_id,
+                                   std::vector<std::pair<std::string, double>> macaddr_rssi_datapoints)
 {
     console_->debug("+ DataStore::InsertRSSIReadings");
-
-    if (mac_address_list.size() != rssi_list.size())
-    {
-        console_->error("Invalid mac address, rssi count");
-        return false;
-    }
 
     // Construct multi-record insert sql
     std::stringstream sql;
@@ -127,10 +120,10 @@ bool DataStore::InsertRSSIReadings(const std::string&       device_id,
     sql << "dev_" << device_id << " (";
     sql << "mac_addr, rssi) ";
     sql << "VALUES";
-    for (int i = 0; i < mac_address_list.size(); ++i)
+    for (int i = 0; i < macaddr_rssi_datapoints.size(); ++i)
     {
-        sql << "('" << mac_address_list[i] << "'," << rssi_list[i] << ")";
-        if (i < (mac_address_list.size() - 1))
+        sql << "('" << macaddr_rssi_datapoints[i].first << "'," << macaddr_rssi_datapoints[i].second << ")";
+        if (i < (macaddr_rssi_datapoints.size() - 1))
         {
             sql << ",";
         }
@@ -154,7 +147,7 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
     if (query_by == QueryT::DEVICE)
         sql = "SELECT pos_x, pos_y, pos_z from location WHERE device_id=" + id;
     else if (query_by == QueryT::EMPLOYEE)
-        sql = "SELECT pos_x, pos_y, pos_z from location WHERE employee_id='" + id+"'";
+        sql = "SELECT pos_x, pos_y, pos_z from location WHERE employee_id='" + id + "'";
     else
     {
         console_->error("Invalid Query. Device or Employee is expected");
@@ -225,12 +218,12 @@ int DataStore::DbCallback(void* not_used, int argc, char** argv, char** azColNam
     return 0;
 }
 
-bool DataStore::ReadDistinctMacAddrs(const std::string& device_id, std::vector<std::string>& mac_addrs)
+std::vector<std::string> DataStore::ReadDistinctMacAddrs(const std::string& device_id)
 {
     console_->debug("+ DataStore::GetRSSIDataStream");
 
-    bool        result = false;
-    std::string sql    = "SELECT DISTINCT mac_addr FROM  dev_" + device_id + ";";
+    std::vector<std::string> mac_addrs;
+    std::string              sql = "SELECT DISTINCT mac_addr FROM  dev_" + device_id + ";";
 
     sqlite3_stmt* selectStmt;
     sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
@@ -241,7 +234,6 @@ bool DataStore::ReadDistinctMacAddrs(const std::string& device_id, std::vector<s
         {
             std::string mac_addr = reinterpret_cast<const char*>(sqlite3_column_text(selectStmt, 0));
             mac_addrs.push_back(mac_addr);
-            result = true;
         }
         else if (state == SQLITE_DONE)
         {
@@ -250,14 +242,13 @@ bool DataStore::ReadDistinctMacAddrs(const std::string& device_id, std::vector<s
         else
         {
             console_->error("Failed to read from database");
-            sqlite3_finalize(selectStmt);
-            return false;
+            break;
         }
     }
     sqlite3_finalize(selectStmt);
 
     console_->debug("- DataStore::GetRSSIDataStream");
-    return result;
+    return mac_addrs;
 }
 
 } // namespace ins_service

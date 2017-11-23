@@ -30,11 +30,10 @@ bool DataStore::AssignDeviceToEmployee(const std::string& dev, const std::string
 }
 
 bool DataStore::InsertRSSIReadings(const std::string&       dev,
-                                   std::vector<std::string> mac_addrs,
-                                   std::vector<double>      rssis)
+                                   std::vector<std::pair<std::string, double>> data_points)
 {
     EXPECT_TRUE(g_mocked_data_store_ != nullptr);
-    return g_mocked_data_store_->InsertRSSIReadings(dev, mac_addrs, rssis);
+    return g_mocked_data_store_->InsertRSSIReadings(dev, data_points);
 }
 
 bool DataStore::GetPosition(const std::string& dev, QueryT query, Position& pos)
@@ -53,6 +52,12 @@ bool DataStore::ClearDeviceTable(const std::string& dev)
 {
     EXPECT_TRUE(g_mocked_data_store_ != nullptr);
     return g_mocked_data_store_->ClearDeviceTable(dev);
+}
+
+std::vector<std::string> DataStore::ReadDistinctMacAddrs(const std::string& dev)
+{
+    EXPECT_TRUE(g_mocked_data_store_ != nullptr);
+    return g_mocked_data_store_->ReadDistinctMacAddrs(dev);
 }
 
 } // ins_servvice

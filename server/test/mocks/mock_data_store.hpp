@@ -24,13 +24,15 @@ public:
 
     MOCK_METHOD2(AssignDeviceToEmployee, bool(const std::string&, const std::string&));
 
-    MOCK_METHOD3(InsertRSSIReadings, bool(const std::string&, std::vector<std::string>, std::vector<double>));
+    MOCK_METHOD2(InsertRSSIReadings, bool(const std::string&, std::vector<std::pair<std::string, double>> data_points));
 
     MOCK_METHOD3(GetPosition, bool(const std::string&, QueryT, Position&));
 
     MOCK_METHOD1(CreateDeviceTable, bool(const std::string&));
 
     MOCK_METHOD1(ClearDeviceTable, bool(const std::string&));
+
+    MOCK_METHOD1(ReadDistinctMacAddrs, std::vector<std::string>(const std::string&));
 
     ~MockDataStore()
     {
@@ -39,4 +41,4 @@ public:
 };
 }
 
-#endif //INS_SERVER_TEST_MOCKS_DATA_STORE_HPP
+#endif // INS_SERVER_TEST_MOCKS_DATA_STORE_HPP
