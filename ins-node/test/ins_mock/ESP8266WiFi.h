@@ -10,7 +10,7 @@ const uint8_t WIFI_STA = 0;
 const uint8_t WL_CONNECTED = 1;
 using String = std::string; // Create an alias for Arduino String
 
-// ESP8266WiFi Mock class
+// ESP8266 Mock class
 class ESP8266Mock {
 public:
     ESP8266Mock();
@@ -47,7 +47,7 @@ void releaseEsp8266Mock() {
 }
 
 // Classes that inject our mock in the production code
-class ESP8266WiFi {
+class ESP8266WiFiClass {
 public:
     String BSSIDstr(int8_t);
     int32_t RSSI(int8_t);
@@ -57,6 +57,10 @@ public:
     void disconnect();
     void begin(const char[], const char[]);
     uint8_t status();
+};
+
+class EspClass {
+public:
     void deepSleep(unsigned long);
 };
 
@@ -68,42 +72,40 @@ public:
     void stop();
 };
 
-extern ESP8266WiFi WiFi, ESP; // Variables used by the sketch
-
 // "Implementation" of classes that inject our mock
-String ESP8266WiFi::BSSIDstr(int8_t index) {
+String ESP8266WiFiClass::BSSIDstr(int8_t index) {
     return esp8266Mock->BSSIDstr(index);
 }
 
-int32_t ESP8266WiFi::RSSI(int8_t index) {
+int32_t ESP8266WiFiClass::RSSI(int8_t index) {
     return esp8266Mock->RSSI(index);
 }
 
-int8_t ESP8266WiFi::scanNetworks() {
+int8_t ESP8266WiFiClass::scanNetworks() {
     return esp8266Mock->scanNetworks();
 }
 
-String ESP8266WiFi::SSID(int8_t index) {
+String ESP8266WiFiClass::SSID(int8_t index) {
     return esp8266Mock->SSID(index);
 }
 
-void ESP8266WiFi::mode(uint8_t wifiMode) {
+void ESP8266WiFiClass::mode(uint8_t wifiMode) {
     return esp8266Mock->mode(wifiMode);
 }
 
-void ESP8266WiFi::disconnect() {
+void ESP8266WiFiClass::disconnect() {
     return esp8266Mock->disconnect();
 }
 
-void ESP8266WiFi::begin(const char ssid[], const char pass[]) {
+void ESP8266WiFiClass::begin(const char ssid[], const char pass[]) {
     return esp8266Mock->begin(ssid, pass);
 }
 
-uint8_t ESP8266WiFi::status() {
+uint8_t ESP8266WiFiClass::status() {
     return esp8266Mock->status();
 }
 
-void ESP8266WiFi::deepSleep(unsigned long time) {
+void EspClass::deepSleep(unsigned long time) {
     return esp8266Mock->deepSleep(time);
 }
 
