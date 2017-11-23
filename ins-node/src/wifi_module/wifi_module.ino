@@ -15,17 +15,6 @@ const uint8_t TX_PIN = 10;
 const uint8_t RX_PIN = 9;
 
 /**
-   Establishes a connection with the predefined server
-   @return  true for succesfull connection
-            false for failed connection
-*/
-bool connectToServer() {
-  WiFiClient client;
-  const int SERVER_PORT = 8050;
-  return client.connect(SERVER_IP, SERVER_PORT);
-}
-
-/**
    Gets the network context (i.e. MAC address and RSSI value) of the specified
    network item.
    @param networkItem The network item index of which to fetch the context
