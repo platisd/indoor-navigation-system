@@ -2,7 +2,7 @@
 #include <vector>
 #include <utility>
 #include <ESP8266WiFi.h>
-#include "wifi_module.h"
+#include "wifi_credentials.h"
 
 #define device_id 1;
 
