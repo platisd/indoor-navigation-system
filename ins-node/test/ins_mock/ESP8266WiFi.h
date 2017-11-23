@@ -24,6 +24,10 @@ public:
     MOCK_METHOD2(begin, void(const char[], const char[]));
     MOCK_METHOD0(status, uint8_t());
     MOCK_METHOD1(deepSleep, void(unsigned long));
+    MOCK_METHOD2(connect, bool(const char[], uint16_t));
+    MOCK_METHOD1(print, void(String));
+    MOCK_METHOD0(available, bool());
+    MOCK_METHOD0(stop, void());
 };
 
 // Methods for instantiating and deleting the mock
@@ -42,7 +46,7 @@ void releaseEsp8266Mock() {
     }
 }
 
-// Class that injects our mock in the production code
+// Classes that inject our mock in the production code
 class ESP8266WiFi {
 public:
     String BSSIDstr(int8_t);
@@ -56,9 +60,17 @@ public:
     void deepSleep(unsigned long);
 };
 
-extern ESP8266WiFi WiFi; // Variables used by the sketch
-extern ESP8266WiFi ESP;
+class WiFiClient {
+public:
+    bool connect(const char[], uint16_t);
+    void print(String);
+    bool available();
+    void stop();
+};
 
+extern ESP8266WiFi WiFi, ESP; // Variables used by the sketch
+
+// "Implementation" of classes that inject our mock
 String ESP8266WiFi::BSSIDstr(int8_t index) {
     return esp8266Mock->BSSIDstr(index);
 }
@@ -93,6 +105,22 @@ uint8_t ESP8266WiFi::status() {
 
 void ESP8266WiFi::deepSleep(unsigned long time) {
     return esp8266Mock->deepSleep(time);
+}
+
+bool WiFiClient::connect(const char ip[], uint16_t port) {
+    return esp8266Mock->connect(ip, port);
+}
+
+void WiFiClient::print(String s) {
+    return esp8266Mock->print(s);
+}
+
+bool WiFiClient::available() {
+    return esp8266Mock->available();
+}
+
+void WiFiClient::stop() {
+    return esp8266Mock->stop();
 }
 
 #endif
