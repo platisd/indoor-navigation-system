@@ -13,8 +13,6 @@ using String = std::string; // Create an alias for Arduino String
 // ESP8266 Mock class
 class ESP8266Mock {
 public:
-    ESP8266Mock();
-    virtual ~ESP8266Mock() = default;
     MOCK_METHOD1(BSSIDstr, String(int8_t));
     MOCK_METHOD1(RSSI, int32_t(int8_t));
     MOCK_METHOD0(scanNetworks, int8_t());
