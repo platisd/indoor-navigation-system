@@ -5,5 +5,7 @@
 *.o
 *.a
 build/
+.vscode/
+*.db
 coverage.info
 pistache/

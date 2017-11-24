@@ -26,8 +26,8 @@ int main(int argc, char* argv[])
     console->info("Cores = {0}", Pistache::hardware_concurrency());
     console->info("Using {0} threads", thread_count);
 
-    ins_service::IndoorNavigationService ins(addr);
-    ins.Init(thread_count);
+    ins_service::IndoorNavigationService ins;
+    ins.Init(addr, thread_count);
     ins.Start();
     ins.Shutdown();
 }

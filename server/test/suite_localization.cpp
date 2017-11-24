@@ -12,6 +12,7 @@ class LocalizationFixture : public ::testing::Test
 public:
     virtual void SetUp()
     {
+        //spdlog::set_level(spdlog::level::debug);
     }
 
 protected:

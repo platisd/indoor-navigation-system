@@ -8,6 +8,7 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <sqlite3.h>
+#include <string>
 #include <vector>
 
 #include "types.hpp"
@@ -40,8 +41,10 @@ public:
 
     bool UpdateDeviceLocation(const std::string& device_id, Position pos);
 
-    bool
-    InsertRSSIReadings(const std::string& device_id, std::vector<std::string> mac_addr_list, std::vector<double> rssi_list);
+    bool AssignDeviceToEmployee(const std::string& device_id, const std::string& employee_id);
+
+    bool InsertRSSIReadings(const std::string& device_id,
+                            std::vector<std::pair<std::string, double>> macaddr_rssi_datapoints);
 
     bool GetPosition(const std::string& device_id, QueryT queryby, Position& pos);
 
@@ -54,11 +57,18 @@ private:
 
     bool RunQuery(const std::string& sql);
 
-    static int DbCallback(void* not_used, int argc, char** argv, char** azColName); // Not used
+    static int DbCallback(void* not_used, int argc, char** argv, char** azColName);
+
+    std::vector<std::string> ReadDistinctMacAddrs(const std::string& device_id);
 
     sqlite3*                        database_;
     std::mutex                      database_lock_;
     std::shared_ptr<spdlog::logger> console_;
+
+// Used for making sql variable passed to RunQuery() readable for UT purpose.
+#ifdef ENABLE_TESTS
+    std::string executing_sql_;
+#endif // ENABLE_TESTS
 };
 
 } // namespace ins_service
