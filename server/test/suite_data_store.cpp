@@ -38,11 +38,6 @@ public:
         return data_store_->RunQuery(sql);
     }
 
-    std::vector<std::string> ReadDistinctMacAddrs(const std::string& device_id)
-    {
-        return data_store_->ReadDistinctMacAddrs(device_id);
-    }
-
 protected:
     std::shared_ptr<DataStore> data_store_ = std::make_shared<DataStore>();
 };
@@ -323,11 +318,102 @@ TEST_F(DataStoreFixture, ReadDistinctMacAddrs_WillSetUniqueMacAddrsInDeviceTable
     std::vector<std::string> expected_unique_mac_addrs
         = { "ee:44:43:a5:ff:ef", "11:65:d4:fe:ee:ff", "01:23:dd:3e:4c:cc" };
 
-    EXPECT_EQ(ReadDistinctMacAddrs(device_id).size(), expected_unique_mac_addrs.size());
-    EXPECT_EQ(ReadDistinctMacAddrs(device_id), expected_unique_mac_addrs);
+    EXPECT_EQ(data_store_->ReadDistinctMacAddrs(device_id).size(), expected_unique_mac_addrs.size());
+    EXPECT_EQ(data_store_->ReadDistinctMacAddrs(device_id), expected_unique_mac_addrs);
 
     data_store_->Close();
     std::remove("db");
 }
 
+/**
+ * TEST: GetRSSISeriesData
+ * EXPECT: List of rssi data (time series) for the specified device and mac_addr
+ */
+
+TEST_F(DataStoreFixture, GetRSSISeriesData_WillReturnRssiList)
+{
+    data_store_->Init("db");
+    std::string device_id = "4004";
+    std::vector<std::pair<std::string, int32_t>> data_points;
+
+    std::string mac_addr1 = "ee:44:43:a5:ff:ef";
+    std::string mac_addr2 = "11:65:d4:fe:ee:ff";
+    std::string mac_addr3 = "01:23:dd:3e:4c:cc";
+
+    for (int32_t i = 0; i < 10; ++i)
+    {
+        data_points.push_back(std::make_pair<std::string, int32_t>(mac_addr1.data(), i * 1));
+        data_points.push_back(std::make_pair<std::string, int32_t>(mac_addr2.data(), i * 2));
+        data_points.push_back(std::make_pair<std::string, int32_t>(mac_addr3.data(), (i * 3) + 100));
+    }
+
+    data_store_->CreateDeviceTable(device_id);
+    EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, data_points));
+
+    std::vector<int32_t> expected_list1, expected_list2, expected_list3;
+    for (int i = 0; i < 10; ++i)
+    {
+        expected_list1.push_back(i * 1);
+        expected_list2.push_back(i * 2);
+        expected_list3.push_back((i * 3) + 100);
+    }
+
+    EXPECT_EQ(expected_list1, data_store_->GetRSSISeriesData(device_id, mac_addr1));
+    EXPECT_EQ(expected_list2, data_store_->GetRSSISeriesData(device_id, mac_addr2));
+    EXPECT_EQ(expected_list3, data_store_->GetRSSISeriesData(device_id, mac_addr3));
+
+    data_store_->Close();
+    std::remove("db");
+}
+
+/**
+ * TEST: GetRSSISeriesData2
+ * EXPECT: A vector of list of rssi data (time series) for the specified device and mac_addresses.
+*  Example:
+*  {
+*     ("ee:44:43:a5:ff:ef", { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }),
+*     ("11:65:d4:fe:ee:ff", { 100, 103, 106, 109, 112, 115, 118, 121, 124, 127 }),
+*     ("01:23:dd:3e:4c:cc", { 0, 2, 4, 6, 8, 10, 12, 14, 16, 18 })
+*  }
+*
+*/
+TEST_F(DataStoreFixture, GetRSSISeriesData_WillReturnRssiListVector)
+{
+    data_store_->Init("db");
+    std::string device_id = "4004";
+    std::vector<std::pair<std::string, int32_t>> data_points;
+
+    std::string mac_addr1 = "ee:44:43:a5:ff:ef";
+    std::string mac_addr2 = "11:65:d4:fe:ee:ff";
+    std::string mac_addr3 = "01:23:dd:3e:4c:cc";
+
+    for (int32_t i = 0; i < 10; ++i)
+    {
+        data_points.push_back(std::make_pair<std::string, int32_t>(mac_addr1.data(), i * 1));
+        data_points.push_back(std::make_pair<std::string, int32_t>(mac_addr2.data(), i * 2));
+        data_points.push_back(std::make_pair<std::string, int32_t>(mac_addr3.data(), (i * 3) + 100));
+    }
+
+    data_store_->CreateDeviceTable(device_id);
+    EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, data_points));
+
+    std::vector<int32_t> expected_list1, expected_list2, expected_list3;
+    for (int i = 0; i < 10; ++i)
+    {
+        expected_list1.push_back(i * 1);
+        expected_list2.push_back(i * 2);
+        expected_list3.push_back((i * 3) + 100);
+    }
+
+    std::vector<MacRssiList> expected_mac_rssi_list{
+        std::make_pair<std::string, std::vector<int32_t>>(mac_addr1.c_str(), std::move(expected_list1)),
+        std::make_pair<std::string, std::vector<int32_t>>(mac_addr2.data(), std::move(expected_list2)),
+        std::make_pair<std::string, std::vector<int32_t>>(mac_addr3.data(), std::move(expected_list3)),
+    };
+
+    EXPECT_EQ(expected_mac_rssi_list, data_store_->GetRSSISeriesData(device_id, { mac_addr1, mac_addr2, mac_addr3 }));
+
+    data_store_->Close();
+    std::remove("db");
+}
 } // namespace !ins_service

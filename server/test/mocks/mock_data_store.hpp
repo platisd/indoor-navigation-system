@@ -34,6 +34,12 @@ public:
 
     MOCK_METHOD1(ReadDistinctMacAddrs, std::vector<std::string>(const std::string&));
 
+    MOCK_METHOD2(GetRSSISeriesData, std::vector<int32_t>(const std::string&, const std::string&));
+
+    MOCK_METHOD2(GetRSSISeriesData, std::vector<MacRssiList>(const std::string&, std::vector<std::string>));
+
+    // MOCK_METHOD2()
+
     ~MockDataStore()
     {
         g_mocked_data_store_ = nullptr;

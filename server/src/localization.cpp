@@ -10,7 +10,7 @@ namespace ins_service
 Position Localization::ProcessRSSIDataSet(const std::string& device_id)
 {
     console_->debug("+ Localization::ProcessRSSIDataSet");
-
+    (void)device_id;
     Position pos{ 3.2, 5, 11 };
     console_->debug("- Localization::ProcessRSSIDataSet");
     return pos;

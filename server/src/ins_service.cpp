@@ -93,7 +93,7 @@ void IndoorNavigationService::SetReceivedSignalStrengths(const Pistache::Rest::R
 
     std::string device_id = request.param(":device_id").as<std::string>();
 
-    std::vector<std::pair<std::string, int32_t>> data_points;
+    std::vector<MacRssi> data_points;
 
     auto data_point = std::make_pair<std::string, int32_t>(request.param(":mac_addr1").as<std::string>(),
                                                          request.param(":rssi1").as<int32_t>());

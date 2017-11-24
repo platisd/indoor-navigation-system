@@ -6,8 +6,6 @@
 #define INS_SERVER_INS_INCLUDE_LOCALIZATION_HPP
 
 #include <spdlog/spdlog.h>
-#include <string>
-#include <vector>
 
 #include "types.hpp"
 

@@ -5,10 +5,17 @@
 #ifndef INS_SERVICE_INS_INCLUDE_TYPES_HPP
 #define INS_SERVICE_INS_INCLUDE_TYPES_HPP
 
+#include <utility>
+#include <string>
+#include <vector>
+
 namespace ins_service
 {
 
 #define LOGGER_NAME "INS-Server"
+
+typedef std::pair<std::string, int32_t> MacRssi;
+typedef std::pair<std::string, std::vector<int32_t>> MacRssiList;
 
 enum QueryT
 {

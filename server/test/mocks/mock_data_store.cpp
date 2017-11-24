@@ -60,4 +60,15 @@ std::vector<std::string> DataStore::ReadDistinctMacAddrs(const std::string& dev)
     return g_mocked_data_store_->ReadDistinctMacAddrs(dev);
 }
 
+std::vector<int32_t> DataStore::GetRSSISeriesData(const std::string& device_id, const std::string& mac_addr)
+{
+    EXPECT_TRUE(g_mocked_data_store_ != nullptr);
+    return g_mocked_data_store_->GetRSSISeriesData(device_id, mac_addr);
+}
+
+std::vector<MacRssiList> DataStore::GetRSSISeriesData(const std::string& device_id, std::vector<std::string> mac_addrs)
+{
+    EXPECT_TRUE(g_mocked_data_store_ != nullptr);
+    return g_mocked_data_store_->GetRSSISeriesData(device_id, mac_addrs);
+}
 } // ins_servvice
