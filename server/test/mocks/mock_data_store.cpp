@@ -30,7 +30,7 @@ bool DataStore::AssignDeviceToEmployee(const std::string& dev, const std::string
 }
 
 bool DataStore::InsertRSSIReadings(const std::string&       dev,
-                                   std::vector<std::pair<std::string, double>> data_points)
+                                   std::vector<std::pair<std::string, int32_t>> data_points)
 {
     EXPECT_TRUE(g_mocked_data_store_ != nullptr);
     return g_mocked_data_store_->InsertRSSIReadings(dev, data_points);

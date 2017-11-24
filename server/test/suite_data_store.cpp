@@ -198,16 +198,16 @@ TEST_F(DataStoreFixture, InsertRSSIReadings_WillFormSqlToInsertRSSIReadings)
 {
     data_store_->Init("db");
     std::string device_id = "4004";
-    std::vector<std::pair<std::string, double>> data_points;
-    data_points.push_back(std::make_pair<std::string, double>("ee:44:43:a5:ff:ef", 23.66));
-    data_points.push_back(std::make_pair<std::string, double>("11:65:d4:fe:ee:ff", 43.2));
-    data_points.push_back(std::make_pair<std::string, double>("01:23:dd:3e:4c:cc", 99.9));
+    std::vector<std::pair<std::string, int32_t>> data_points;
+    data_points.push_back(std::make_pair<std::string, int32_t>("ee:44:43:a5:ff:ef", 23));
+    data_points.push_back(std::make_pair<std::string, int32_t>("11:65:d4:fe:ee:ff", 43));
+    data_points.push_back(std::make_pair<std::string, int32_t>("01:23:dd:3e:4c:cc", 99));
 
     data_store_->CreateDeviceTable(device_id);
     EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, data_points));
     std::string expected_sql = "INSERT INTO dev_" + device_id + " (mac_addr, rssi) VALUES"
-                                                                "('ee:44:43:a5:ff:ef',23.66),('11:65:d4:fe:ee:ff',43.2)"
-                                                                ",('01:23:dd:3e:4c:cc',99.9);";
+                                                                "('ee:44:43:a5:ff:ef',23),('11:65:d4:fe:ee:ff',43)"
+                                                                ",('01:23:dd:3e:4c:cc',99);";
     EXPECT_EQ(expected_sql, GetExecutingSql());
     data_store_->Close();
     std::remove("db");
@@ -309,12 +309,12 @@ TEST_F(DataStoreFixture, ReadDistinctMacAddrs_WillSetUniqueMacAddrsInDeviceTable
 {
     data_store_->Init("db");
     std::string device_id = "4004";
-    std::vector<std::pair<std::string, double>> data_points;
+    std::vector<std::pair<std::string, int32_t>> data_points;
     for (int i = 0; i < 5; ++i)
     {
-        data_points.push_back(std::make_pair<std::string, double>("ee:44:43:a5:ff:ef", 23.66));
-        data_points.push_back(std::make_pair<std::string, double>("11:65:d4:fe:ee:ff", 43.2));
-        data_points.push_back(std::make_pair<std::string, double>("01:23:dd:3e:4c:cc", 99.9));
+        data_points.push_back(std::make_pair<std::string, int32_t>("ee:44:43:a5:ff:ef", 23));
+        data_points.push_back(std::make_pair<std::string, int32_t>("11:65:d4:fe:ee:ff", 43));
+        data_points.push_back(std::make_pair<std::string, int32_t>("01:23:dd:3e:4c:cc", 99));
     }
 
     data_store_->CreateDeviceTable(device_id);

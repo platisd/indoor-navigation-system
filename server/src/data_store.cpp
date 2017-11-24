@@ -110,7 +110,7 @@ bool DataStore::AssignDeviceToEmployee(const std::string& device_id, const std::
 }
 
 bool DataStore::InsertRSSIReadings(const std::string& device_id,
-                                   std::vector<std::pair<std::string, double>> macaddr_rssi_datapoints)
+                                   std::vector<std::pair<std::string, int32_t>> macaddr_rssi_datapoints)
 {
     console_->debug("+ DataStore::InsertRSSIReadings");
 

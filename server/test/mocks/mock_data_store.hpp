@@ -24,7 +24,7 @@ public:
 
     MOCK_METHOD2(AssignDeviceToEmployee, bool(const std::string&, const std::string&));
 
-    MOCK_METHOD2(InsertRSSIReadings, bool(const std::string&, std::vector<std::pair<std::string, double>> data_points));
+    MOCK_METHOD2(InsertRSSIReadings, bool(const std::string&, std::vector<std::pair<std::string, int32_t>> data_points));
 
     MOCK_METHOD3(GetPosition, bool(const std::string&, QueryT, Position&));
 
