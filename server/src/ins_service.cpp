@@ -93,10 +93,10 @@ void IndoorNavigationService::SetReceivedSignalStrengths(const Pistache::Rest::R
 
     std::string device_id = request.param(":device_id").as<std::string>();
 
-    std::vector<std::pair<std::string, double>> data_points;
+    std::vector<MacRssi> data_points;
 
-    auto data_point = std::make_pair<std::string, double>(request.param(":mac_addr1").as<std::string>(),
-                                                         request.param(":rssi1").as<double>());
+    auto data_point = std::make_pair<std::string, int32_t>(request.param(":mac_addr1").as<std::string>(),
+                                                         request.param(":rssi1").as<int32_t>());
 
     data_points.push_back(data_point);
 
@@ -107,8 +107,8 @@ void IndoorNavigationService::SetReceivedSignalStrengths(const Pistache::Rest::R
         rssi_key << ":rssi" << i;
         if (request.hasParam(mac_addr_key.str()) && request.hasParam(rssi_key.str()))
         {
-            data_points.push_back(std::make_pair<std::string, double>(
-                request.param(mac_addr_key.str()).as<std::string>(), request.param(rssi_key.str()).as<double>()));
+            data_points.push_back(std::make_pair<std::string, int32_t>(
+                request.param(mac_addr_key.str()).as<std::string>(), request.param(rssi_key.str()).as<int32_t>()));
         }
         else
         {

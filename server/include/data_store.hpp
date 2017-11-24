@@ -8,8 +8,6 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <sqlite3.h>
-#include <string>
-#include <vector>
 
 #include "types.hpp"
 
@@ -44,13 +42,19 @@ public:
     bool AssignDeviceToEmployee(const std::string& device_id, const std::string& employee_id);
 
     bool InsertRSSIReadings(const std::string& device_id,
-                            std::vector<std::pair<std::string, double>> macaddr_rssi_datapoints);
+                            std::vector<std::pair<std::string, int32_t>> macaddr_rssi_datapoints);
 
     bool GetPosition(const std::string& device_id, QueryT queryby, Position& pos);
 
     bool CreateDeviceTable(const std::string& device_id);
 
     bool ClearDeviceTable(const std::string& device_id);
+
+    std::vector<std::string> ReadDistinctMacAddrs(const std::string& device_id);
+
+    std::vector<int32_t> GetRSSISeriesData(const std::string& device_id, const std::string& mac_addr);
+
+    std::vector<MacRssiList> GetRSSISeriesData(const std::string& device_id, std::vector<std::string> mac_addrs);
 
 private:
     bool CreateLocationTable();
@@ -59,7 +63,6 @@ private:
 
     static int DbCallback(void* not_used, int argc, char** argv, char** azColName);
 
-    std::vector<std::string> ReadDistinctMacAddrs(const std::string& device_id);
 
     sqlite3*                        database_;
     std::mutex                      database_lock_;
