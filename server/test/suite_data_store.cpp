@@ -98,7 +98,7 @@ TEST_F(DataStoreFixture, CreateLocationTable_WillFormSqlToCreateLocationTable)
 {
     data_store_->Init("location_db");
     EXPECT_TRUE(CreateLocationTable());
-    std::string expected_sql = "CREATE TABLE IF NOT EXISTS location(device_id INTEGER PRIMARY KEY,"
+    std::string expected_sql = "CREATE TABLE IF NOT EXISTS locations(device_id INTEGER PRIMARY KEY,"
                                "employee_id TEXT,"
                                "pos_x REAL,"
                                "pos_y REAL,"
@@ -155,10 +155,10 @@ TEST_F(DataStoreFixture, UpdateDeviceLocation_WillFormSqlToUpdateDeviceLocation)
     Position    pos{ 2.0, 4.0, 6.0 };
     CreateLocationTable();
     EXPECT_TRUE(data_store_->UpdateDeviceLocation(device_id, pos));
-    std::string expected_sql = "INSERT OR REPLACE INTO location (device_id, pos_x, pos_y, "
+    std::string expected_sql = "INSERT OR REPLACE INTO locations (device_id, pos_x, pos_y, "
                                "pos_z, employee_id) VALUES ("
                                + device_id + "," + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", "
-                               + std::to_string(pos.z) + ", (SELECT employee_id FROM location WHERE device_id="
+                               + std::to_string(pos.z) + ", (SELECT employee_id FROM locations WHERE device_id="
                                + device_id + "));";
     EXPECT_EQ(expected_sql, GetExecutingSql());
     data_store_->Close();
@@ -176,10 +176,10 @@ TEST_F(DataStoreFixture, AssignDeviceToEmployee_WillFormSqlToLinkDeviceAndEmploy
     std::string employee_id = "abcxyz";
 
     EXPECT_TRUE(data_store_->AssignDeviceToEmployee(device_id, employee_id));
-    std::string expected_sql = "INSERT OR REPLACE INTO location (device_id, employee_id, pos_x, pos_y, pos_z) VALUES ("
-                               + device_id + ",'" + employee_id + "',(SELECT pos_x FROM location WHERE device_id="
-                               + device_id + "),(SELECT pos_y FROM location WHERE device_id=" + device_id
-                               + "),(SELECT pos_z FROM location WHERE device_id=" + device_id + "));";
+    std::string expected_sql = "INSERT OR REPLACE INTO locations (device_id, employee_id, pos_x, pos_y, pos_z) VALUES ("
+                               + device_id + ",'" + employee_id + "',(SELECT pos_x FROM locations WHERE device_id="
+                               + device_id + "),(SELECT pos_y FROM locations WHERE device_id=" + device_id
+                               + "),(SELECT pos_z FROM locations WHERE device_id=" + device_id + "));";
     EXPECT_EQ(expected_sql, GetExecutingSql());
     data_store_->Close();
     std::remove("db");

@@ -22,7 +22,7 @@ void DataStore::Init(const std::string& db_filename)
     console_->info("Opened database successfully");
     if (!CreateLocationTable())
     {
-        console_->error("Cannot create location table");
+        console_->error("Cannot create locations table");
     }
 
     console_->debug("- DataStore::Init");
@@ -39,7 +39,7 @@ bool DataStore::CreateLocationTable()
 {
     console_->debug("+ DataStore::CreateLocationTable");
 
-    std::string sql = "CREATE TABLE IF NOT EXISTS location(device_id INTEGER PRIMARY KEY,"
+    std::string sql = "CREATE TABLE IF NOT EXISTS locations(device_id INTEGER PRIMARY KEY,"
                       "employee_id TEXT,"
                       "pos_x REAL,"
                       "pos_y REAL,"
@@ -49,6 +49,23 @@ bool DataStore::CreateLocationTable()
     bool res = RunQuery(sql);
 
     console_->debug("- DataStore::CreateLocationTable");
+    return res;
+}
+
+bool DataStore::CreateAccessPointTable()
+{
+    console_->debug("+ DataStore::CreateAccessPointTable");
+
+    std::string sql = "CREATE TABLE IF NOT EXISTS access_points("
+                      "mac_addr TEXT PRIMARY KEY,"
+                      "pos_x REAL,"
+                      "pos_y REAL,"
+                      "pos_z REAL);";
+
+    console_->debug(sql);
+    bool res = RunQuery(sql);
+
+    console_->debug("- DataStore::CreateAccessPointTable");
     return res;
 }
 
@@ -82,10 +99,10 @@ bool DataStore::UpdateDeviceLocation(const std::string& device_id, Position pos)
 {
     console_->debug("+ DataStore::UpdateDeviceLocation");
 
-    std::string sql = "INSERT OR REPLACE INTO location (device_id, pos_x, pos_y, "
+    std::string sql = "INSERT OR REPLACE INTO locations (device_id, pos_x, pos_y, "
                       "pos_z, employee_id) VALUES ("
                       + device_id + "," + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", "
-                      + std::to_string(pos.z) + ", (SELECT employee_id FROM location WHERE device_id=" + device_id
+                      + std::to_string(pos.z) + ", (SELECT employee_id FROM locations WHERE device_id=" + device_id
                       + "));";
     console_->debug(sql);
     bool res = RunQuery(sql);
@@ -98,10 +115,10 @@ bool DataStore::AssignDeviceToEmployee(const std::string& device_id, const std::
 {
     console_->debug("+ DataStore::AssignDeviceToEmployee");
 
-    std::string sql = "INSERT OR REPLACE INTO location (device_id, employee_id, pos_x, pos_y, pos_z) VALUES ("
-                      + device_id + ",'" + employee_id + "',(SELECT pos_x FROM location WHERE device_id=" + device_id
-                      + "),(SELECT pos_y FROM location WHERE device_id=" + device_id
-                      + "),(SELECT pos_z FROM location WHERE device_id=" + device_id + "));";
+    std::string sql = "INSERT OR REPLACE INTO locations (device_id, employee_id, pos_x, pos_y, pos_z) VALUES ("
+                      + device_id + ",'" + employee_id + "',(SELECT pos_x FROM locations WHERE device_id=" + device_id
+                      + "),(SELECT pos_y FROM locations WHERE device_id=" + device_id
+                      + "),(SELECT pos_z FROM locations WHERE device_id=" + device_id + "));";
     console_->debug(sql);
     bool res = RunQuery(sql);
 
@@ -144,9 +161,9 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
     std::string sql;
 
     if (query_by == QueryT::DEVICE)
-        sql = "SELECT pos_x, pos_y, pos_z from location WHERE device_id=" + id;
+        sql = "SELECT pos_x, pos_y, pos_z from locations WHERE device_id=" + id;
     else if (query_by == QueryT::EMPLOYEE)
-        sql = "SELECT pos_x, pos_y, pos_z from location WHERE employee_id='" + id + "'";
+        sql = "SELECT pos_x, pos_y, pos_z from locations WHERE employee_id='" + id + "'";
     else
     {
         console_->error("Invalid Query. Device or Employee is expected");

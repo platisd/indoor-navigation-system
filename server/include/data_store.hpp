@@ -59,6 +59,8 @@ public:
 private:
     bool CreateLocationTable();
 
+    bool CreateAccessPointTable();
+
     bool RunQuery(const std::string& sql);
 
     static int DbCallback(void* not_used, int argc, char** argv, char** azColName);
