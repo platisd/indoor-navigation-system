@@ -33,6 +33,11 @@ public:
         return data_store_->CreateLocationTable();
     }
 
+    bool CreateAccessPointTable()
+    {
+        return data_store_->CreateAccessPointTable();
+    }
+
     bool RunQuery(std::string sql)
     {
         return data_store_->RunQuery(sql);
@@ -104,6 +109,25 @@ TEST_F(DataStoreFixture, CreateLocationTable_WillFormSqlToCreateLocationTable)
                                "pos_y REAL,"
                                "pos_z REAL,"
                                "timestamp datatime default current_timestamp);";
+
+    EXPECT_EQ(expected_sql, GetExecutingSql());
+    data_store_->Close();
+    std::remove("location_db");
+}
+
+/**
+ * TEST: CreateAccessPointTable
+ * EXPECT: Builds SQL for creating access_point table
+ */
+TEST_F(DataStoreFixture, CreateLocationTable_WillFormSqlToCreateAccessPointTable)
+{
+    data_store_->Init("location_db");
+    EXPECT_TRUE(CreateAccessPointTable());
+    std::string expected_sql = "CREATE TABLE IF NOT EXISTS access_points("
+                      "mac_addr TEXT PRIMARY KEY,"
+                      "pos_x REAL,"
+                      "pos_y REAL,"
+                      "pos_z REAL);";
 
     EXPECT_EQ(expected_sql, GetExecutingSql());
     data_store_->Close();
