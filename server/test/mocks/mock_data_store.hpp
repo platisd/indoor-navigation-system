@@ -24,7 +24,7 @@ public:
 
     MOCK_METHOD2(AssignDeviceToEmployee, bool(const std::string&, const std::string&));
 
-    MOCK_METHOD2(InsertRSSIReadings, bool(const std::string&, std::vector<std::pair<std::string, int32_t>> data_points));
+    MOCK_METHOD2(InsertRSSIReadings, bool(const std::string&, std::vector<AccessPointRssiPair>));
 
     MOCK_METHOD3(GetPosition, bool(const std::string&, QueryT, Position&));
 
@@ -32,11 +32,11 @@ public:
 
     MOCK_METHOD1(ClearDeviceTable, bool(const std::string&));
 
-    MOCK_METHOD1(ReadDistinctMacAddrs, std::vector<std::string>(const std::string&));
+    MOCK_METHOD1(GetDistinctAccessPoints, std::vector<AccessPoint>(const std::string&));
 
-    MOCK_METHOD2(GetRSSISeriesData, std::vector<int32_t>(const std::string&, const std::string&));
+    MOCK_METHOD2(GetRSSISeriesData, std::vector<int32_t>(const std::string&, AccessPoint));
 
-    MOCK_METHOD2(GetRSSISeriesData, std::vector<MacRssiList>(const std::string&, std::vector<std::string>));
+    MOCK_METHOD2(GetRSSISeriesData, std::vector<AccessPointRssiListPair>(const std::string&, std::vector<AccessPoint>));
 
     // MOCK_METHOD2()
 

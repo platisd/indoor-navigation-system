@@ -93,13 +93,13 @@ void IndoorNavigationService::SetReceivedSignalStrengths(const Pistache::Rest::R
 
     std::string device_id = request.param(":device_id").as<std::string>();
 
-    std::vector<MacRssi> data_points;
+    std::vector<AccessPointRssiPair> accesspoint_rssi_pair_list;
 
-    auto data_point = std::make_pair<std::string, int32_t>(request.param(":mac_addr1").as<std::string>(),
-                                                         request.param(":rssi1").as<int32_t>());
+    //Read and insert first datapoint.
+    AccessPoint access_point(request.param(":mac_addr1").as<std::string>());
+    accesspoint_rssi_pair_list.push_back(std::make_pair(access_point, request.param(":rssi1").as<int32_t>()));
 
-    data_points.push_back(data_point);
-
+    //Read and insert other datapoints.
     for (int i = 2; i <= 10; ++i)
     {
         std::stringstream mac_addr_key, rssi_key;
@@ -107,8 +107,8 @@ void IndoorNavigationService::SetReceivedSignalStrengths(const Pistache::Rest::R
         rssi_key << ":rssi" << i;
         if (request.hasParam(mac_addr_key.str()) && request.hasParam(rssi_key.str()))
         {
-            data_points.push_back(std::make_pair<std::string, int32_t>(
-                request.param(mac_addr_key.str()).as<std::string>(), request.param(rssi_key.str()).as<int32_t>()));
+            AccessPoint ap(request.param(mac_addr_key.str()).as<std::string>());
+            accesspoint_rssi_pair_list.push_back(std::make_pair(ap, request.param(rssi_key.str()).as<int32_t>()));
         }
         else
         {
@@ -122,7 +122,7 @@ void IndoorNavigationService::SetReceivedSignalStrengths(const Pistache::Rest::R
         response.send(Pistache::Http::Code::Internal_Server_Error, "{result:error}");
         return;
     }
-    if (!data_store_->InsertRSSIReadings(device_id, data_points))
+    if (!data_store_->InsertRSSIReadings(device_id, accesspoint_rssi_pair_list))
     {
         response.send(Pistache::Http::Code::Internal_Server_Error, "{result:error}");
         return;
@@ -221,7 +221,7 @@ void IndoorNavigationService::HandleReady(const Pistache::Rest::Request& request
                                           Pistache::Http::ResponseWriter response)
 {
     console_->debug("+ IndoorNavigationService::HandleReady");
-    (void) request;
+    (void)request;
     response.send(Pistache::Http::Code::Ok, "1");
     console_->debug("- IndoorNavigationService::HandleReady");
 }

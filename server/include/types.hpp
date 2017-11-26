@@ -14,8 +14,7 @@ namespace ins_service
 
 #define LOGGER_NAME "INS-Server"
 
-typedef std::pair<std::string, int32_t>              MacRssi;
-typedef std::pair<std::string, std::vector<int32_t>> MacRssiList;
+
 
 enum QueryT
 {
@@ -39,6 +38,18 @@ public:
 class AccessPoint
 {
 public:
+    explicit AccessPoint(std::string id)
+        : mac_addr(id)
+        , pos(Position{ 0, 0, 0 })
+    {
+    }
+
+    AccessPoint(std::string id, Position p)
+        : mac_addr(id)
+        , pos(p)
+    {
+    }
+
     std::string mac_addr;
     Position    pos;
 
@@ -47,6 +58,9 @@ public:
         return this->pos == rhs.pos && this->mac_addr == rhs.mac_addr;
     }
 };
+
+typedef std::pair<AccessPoint, int32_t>              AccessPointRssiPair;
+typedef std::pair<AccessPoint, std::vector<int32_t>> AccessPointRssiListPair;
 
 } // namespace ins_service
 

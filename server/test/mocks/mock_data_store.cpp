@@ -30,16 +30,16 @@ bool DataStore::AssignDeviceToEmployee(const std::string& dev, const std::string
 }
 
 bool DataStore::InsertRSSIReadings(const std::string&       dev,
-                                   std::vector<std::pair<std::string, int32_t>> data_points)
+                                   std::vector<AccessPointRssiPair> accesspoint_rssi_pair)
 {
     EXPECT_TRUE(g_mocked_data_store_ != nullptr);
-    return g_mocked_data_store_->InsertRSSIReadings(dev, data_points);
+    return g_mocked_data_store_->InsertRSSIReadings(dev, accesspoint_rssi_pair);
 }
 
-bool DataStore::GetPosition(const std::string& dev, QueryT query, Position& pos)
+bool DataStore::GetPosition(const std::string& id, QueryT query, Position& pos)
 {
     EXPECT_TRUE(g_mocked_data_store_ != nullptr);
-    return g_mocked_data_store_->GetPosition(dev, query, pos);
+    return g_mocked_data_store_->GetPosition(id, query, pos);
 }
 
 bool DataStore::CreateDeviceTable(const std::string& dev)
@@ -54,21 +54,21 @@ bool DataStore::ClearDeviceTable(const std::string& dev)
     return g_mocked_data_store_->ClearDeviceTable(dev);
 }
 
-std::vector<std::string> DataStore::ReadDistinctMacAddrs(const std::string& dev)
+std::vector<AccessPoint> DataStore::GetDistinctAccessPoints(const std::string& dev)
 {
     EXPECT_TRUE(g_mocked_data_store_ != nullptr);
-    return g_mocked_data_store_->ReadDistinctMacAddrs(dev);
+    return g_mocked_data_store_->GetDistinctAccessPoints(dev);
 }
 
-std::vector<int32_t> DataStore::GetRSSISeriesData(const std::string& device_id, const std::string& mac_addr)
+std::vector<int32_t> DataStore::GetRSSISeriesData(const std::string& device_id, AccessPoint access_point)
 {
     EXPECT_TRUE(g_mocked_data_store_ != nullptr);
-    return g_mocked_data_store_->GetRSSISeriesData(device_id, mac_addr);
+    return g_mocked_data_store_->GetRSSISeriesData(device_id, access_point);
 }
 
-std::vector<MacRssiList> DataStore::GetRSSISeriesData(const std::string& device_id, std::vector<std::string> mac_addrs)
+std::vector<AccessPointRssiListPair> DataStore::GetRSSISeriesData(const std::string& device_id, std::vector<AccessPoint> access_points)
 {
     EXPECT_TRUE(g_mocked_data_store_ != nullptr);
-    return g_mocked_data_store_->GetRSSISeriesData(device_id, mac_addrs);
+    return g_mocked_data_store_->GetRSSISeriesData(device_id, access_points);
 }
 } // ins_servvice

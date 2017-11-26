@@ -41,20 +41,20 @@ public:
 
     bool AssignDeviceToEmployee(const std::string& device_id, const std::string& employee_id);
 
-    bool InsertRSSIReadings(const std::string& device_id,
-                            std::vector<std::pair<std::string, int32_t>> macaddr_rssi_datapoints);
+    bool InsertRSSIReadings(const std::string& device_id, std::vector<AccessPointRssiPair> accesspoint_rssi_pair_list);
 
-    bool GetPosition(const std::string& device_id, QueryT queryby, Position& pos);
+    bool GetPosition(const std::string& id, QueryT queryby, Position& pos);
 
     bool CreateDeviceTable(const std::string& device_id);
 
     bool ClearDeviceTable(const std::string& device_id);
 
-    std::vector<std::string> ReadDistinctMacAddrs(const std::string& device_id);
+    std::vector<AccessPoint> GetDistinctAccessPoints(const std::string& device_id);
 
-    std::vector<int32_t> GetRSSISeriesData(const std::string& device_id, const std::string& mac_addr);
+    std::vector<int32_t> GetRSSISeriesData(const std::string& device_id, AccessPoint access_point);
 
-    std::vector<MacRssiList> GetRSSISeriesData(const std::string& device_id, std::vector<std::string> mac_addrs);
+    std::vector<AccessPointRssiListPair> GetRSSISeriesData(const std::string&       device_id,
+                                                           std::vector<AccessPoint> access_points);
 
 private:
     bool CreateLocationTable();
@@ -64,7 +64,6 @@ private:
     bool RunQuery(const std::string& sql);
 
     static int DbCallback(void* not_used, int argc, char** argv, char** azColName);
-
 
     sqlite3*                        database_;
     std::mutex                      database_lock_;
