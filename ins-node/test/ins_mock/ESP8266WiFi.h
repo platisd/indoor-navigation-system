@@ -7,6 +7,7 @@
 
 // Some stubbed variables and types
 const uint8_t WIFI_STA = 0;
+const uint8_t WL_CONNECT_FAILED = 0;
 const uint8_t WL_CONNECTED = 1;
 using String = std::string; // Create an alias for Arduino String
 
