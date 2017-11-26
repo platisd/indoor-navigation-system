@@ -121,7 +121,7 @@ void setup() {
     delay(500); // Wait a bit before retrying
   }
   // If there were problems during connection, go to deep sleep.
-  if (attemptsLeft < 0) {
+  if (attemptsLeft <= 0) {
     goToSleep();
   }
 }
