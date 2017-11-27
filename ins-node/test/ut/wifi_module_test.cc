@@ -10,12 +10,19 @@ using ::testing::_;
 using ::testing::AtLeast;
 using ::testing::AtMost;
 using ::testing::InSequence;
+using ::testing::Invoke;
 
 class WifiModuleFixture : public ::testing::Test
 {
    public:
     ArduinoMock* arduinoMock;
     ESP8266Mock* esp8266Mock;
+
+    unsigned long incrementByOneSecond()
+    {
+        arduinoMock->addMillisSecs(1);
+        return arduinoMock->getMillis();
+    }
 
     // Run this before the tests
     virtual void SetUp()
@@ -149,6 +156,76 @@ TEST_F(WifiModuleFixture, getDatapoints_whenSSIDMatch_willReturnValid)
         .WillOnce(Return(expectedRSSI[1]));
 
     ASSERT_EQ(getDatapoints(), expectedDatapoints);
+}
+
+TEST_F(WifiModuleFixture, transmitData_whenNoDatapoints_willReturnFalse)
+{
+    std::vector<std::pair<String, int32_t>> datapoints;
+
+    ASSERT_FALSE(transmitData(datapoints));
+}
+
+TEST_F(WifiModuleFixture, transmitData_whenConnectionFails_willReturnFalse)
+{
+    const uint8_t accessPointsFound = 2;
+    std::array<String, accessPointsFound> expectedMAC = {"00-14-22-01-23-45",
+                                                         "01-24-22-AA-23-FF"};
+    std::array<int32_t, accessPointsFound> expectedRSSI = {12, 2};
+
+    std::vector<std::pair<String, int32_t>> datapoints = {
+        std::make_pair(expectedMAC[0], expectedRSSI[0]),
+        std::make_pair(expectedMAC[1], expectedRSSI[1])};
+
+    EXPECT_CALL(*esp8266Mock, connect(_, _))
+        .WillOnce(Return(false));
+
+    ASSERT_FALSE(transmitData(datapoints));
+}
+
+TEST_F(WifiModuleFixture, transmitData_whenConnectionTimeout_willReturnFalse)
+{
+    const uint8_t accessPointsFound = 2;
+    std::array<String, accessPointsFound> expectedMAC = {"00-14-22-01-23-45",
+                                                         "01-24-22-AA-23-FF"};
+    std::array<int32_t, accessPointsFound> expectedRSSI = {12, 2};
+
+    std::vector<std::pair<String, int32_t>> datapoints = {
+        std::make_pair(expectedMAC[0], expectedRSSI[0]),
+        std::make_pair(expectedMAC[1], expectedRSSI[1])};
+
+    EXPECT_CALL(*esp8266Mock, connect(_, _)).WillOnce(Return(true));
+    EXPECT_CALL(*esp8266Mock, stop()); // If we connected we should also stop
+
+    EXPECT_CALL(*esp8266Mock, available()).WillRepeatedly(Return(0));
+
+    // Workaround for millis() not really returning the mock value.
+    // TO-DO: Consider whether arduino-mock should be changed to accomodate this
+    ON_CALL(*arduinoMock, millis())
+        .WillByDefault(Invoke(this, &WifiModuleFixture::incrementByOneSecond));
+
+    ASSERT_FALSE(transmitData(datapoints));
+}
+
+TEST_F(WifiModuleFixture, transmitData_whenConnectionNoTimeout_willReturnTrue)
+{
+    const uint8_t accessPointsFound = 2;
+    std::array<String, accessPointsFound> expectedMAC = {"00-14-22-01-23-45",
+                                                         "01-24-22-AA-23-FF"};
+    std::array<int32_t, accessPointsFound> expectedRSSI = {12, 2};
+
+    std::vector<std::pair<String, int32_t>> datapoints = {
+        std::make_pair(expectedMAC[0], expectedRSSI[0]),
+        std::make_pair(expectedMAC[1], expectedRSSI[1])};
+
+    EXPECT_CALL(*esp8266Mock, connect(_, _))
+        .WillOnce(Return(true));
+    EXPECT_CALL(*esp8266Mock, stop()); // If we connected we should also stop
+
+    EXPECT_CALL(*esp8266Mock, print(_));
+    EXPECT_CALL(*esp8266Mock, available())
+        .WillOnce(Return(1));
+
+    ASSERT_TRUE(transmitData(datapoints));
 }
 
 int main(int argc, char* argv[])
