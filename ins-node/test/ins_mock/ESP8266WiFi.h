@@ -25,7 +25,7 @@ public:
     MOCK_METHOD1(deepSleep, void(unsigned long));
     MOCK_METHOD2(connect, bool(const char[], uint16_t));
     MOCK_METHOD1(print, void(String));
-    MOCK_METHOD0(available, bool());
+    MOCK_METHOD0(available, int());
     MOCK_METHOD0(stop, void());
 };
 
@@ -67,7 +67,7 @@ class WiFiClient {
 public:
     bool connect(const char[], uint16_t);
     void print(String);
-    bool available();
+    int available();
     void stop();
 };
 
@@ -116,7 +116,7 @@ void WiFiClient::print(String s) {
     return esp8266Mock->print(s);
 }
 
-bool WiFiClient::available() {
+int WiFiClient::available() {
     return esp8266Mock->available();
 }
 
