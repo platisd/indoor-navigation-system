@@ -438,7 +438,7 @@ TEST_F(DataStoreFixture, GetRSSISeriesData_WillReturnRssiListVector)
     std::vector<AccessPointRssiListPair> expected_mac_rssi_list{
         std::make_pair(ap1, expected_list1),
         std::make_pair(ap2, expected_list2),
-        std::make_pair(ap3, expected_list1),
+        std::make_pair(ap3, expected_list3),
     };
 
     EXPECT_EQ(expected_mac_rssi_list, data_store_->GetRSSISeriesData(device_id, { ap1, ap2, ap3 }));
