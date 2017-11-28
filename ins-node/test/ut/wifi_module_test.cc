@@ -1,3 +1,4 @@
+#include <math.h>
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 #include "arduino-mock/Arduino.h"
@@ -29,6 +30,7 @@ class WifiModuleFixture : public ::testing::Test
     {
         arduinoMock = arduinoMockInstance();
         esp8266Mock = esp8266MockInstance();
+        currentTransmissionSize = DEFAULT_TRANSMISSION_SIZE;
     }
     // Run this after the tests
     virtual void TearDown()
@@ -139,14 +141,14 @@ TEST_F(WifiModuleFixture, getDatapoints_whenSSIDMatch_willReturnValid)
       std::make_pair(expectedMAC[1], expectedRSSI[1])};
 
   EXPECT_CALL(*esp8266Mock, scanNetworks()).WillOnce(Return(networksFound));
-  {
-    InSequence s;
-    EXPECT_CALL(*esp8266Mock, SSID(_))
-        .Times(networksFound - accessPointsFound)
-        .WillRepeatedly(Return("SomeOtherSSID"));
-    EXPECT_CALL(*esp8266Mock, SSID(_))
-        .Times(accessPointsFound)
-        .WillRepeatedly(Return(positioningSSID));
+    {
+        InSequence s;
+        EXPECT_CALL(*esp8266Mock, SSID(_))
+            .Times(networksFound - accessPointsFound)
+            .WillRepeatedly(Return("SomeOtherSSID"));
+        EXPECT_CALL(*esp8266Mock, SSID(_))
+            .Times(accessPointsFound)
+            .WillRepeatedly(Return(positioningSSID));
     }
     EXPECT_CALL(*esp8266Mock, BSSIDstr(_))
         .WillOnce(Return(expectedMAC[0]))
@@ -226,6 +228,110 @@ TEST_F(WifiModuleFixture, transmitData_whenConnectionNoTimeout_willReturnTrue)
         .WillOnce(Return(1));
 
     ASSERT_TRUE(transmitData(datapoints));
+}
+
+TEST_F(WifiModuleFixture, loop_whenNoDatapointsFound_willNotConnect)
+{
+    // No datapoints were found
+    EXPECT_CALL(*esp8266Mock, scanNetworks()).WillOnce(Return(10));
+    EXPECT_CALL(*esp8266Mock, SSID(_)).WillRepeatedly(Return("SomeOtherSSID"));
+    // No connection or transmission
+    EXPECT_CALL(*esp8266Mock, connect(_, _)).Times(0);
+
+    loop();
+}
+
+TEST_F(WifiModuleFixture, loop_whenDatapointsFound_willTransmit)
+{
+    // Change the current transmission size so to make it easier to test that
+    // the correct number of transmissions will be made.
+    currentTransmissionSize = 1;
+    // Some valid datapoints found
+    const int8_t networksFound = 10;
+    const uint8_t accessPointsFound = 2;
+    const uint8_t numberOfTransmissions = ceil(accessPointsFound / static_cast<double>(currentTransmissionSize));
+
+    std::array<String, accessPointsFound> expectedMAC = {"00-14-22-01-23-45",
+                                                         "01-24-22-AA-23-FF"};
+    std::array<int32_t, accessPointsFound> expectedRSSI = {12, 2};
+
+    std::vector<std::pair<String, int32_t>> expectedDatapoints = {
+        std::make_pair(expectedMAC[0], expectedRSSI[0]),
+        std::make_pair(expectedMAC[1], expectedRSSI[1])};
+
+    EXPECT_CALL(*esp8266Mock, scanNetworks()).WillOnce(Return(networksFound));
+    {
+        InSequence s;
+        EXPECT_CALL(*esp8266Mock, SSID(_))
+            .Times(networksFound - accessPointsFound)
+            .WillRepeatedly(Return("SomeOtherSSID"));
+        EXPECT_CALL(*esp8266Mock, SSID(_))
+            .Times(accessPointsFound)
+            .WillRepeatedly(Return(positioningSSID));
+    }
+    EXPECT_CALL(*esp8266Mock, BSSIDstr(_))
+      .WillOnce(Return(expectedMAC[0]))
+      .WillOnce(Return(expectedMAC[1]));
+    EXPECT_CALL(*esp8266Mock, RSSI(_))
+      .WillOnce(Return(expectedRSSI[0]))
+      .WillOnce(Return(expectedRSSI[1]));
+
+    // Transmit datapoints
+    EXPECT_CALL(*esp8266Mock, connect(_, _))
+      .Times(numberOfTransmissions)
+      .WillRepeatedly(Return(true));
+    EXPECT_CALL(*esp8266Mock, print(_)).Times(numberOfTransmissions);
+    EXPECT_CALL(*esp8266Mock, available())
+      .Times(numberOfTransmissions)
+      .WillRepeatedly(Return(1));
+
+    loop();
+}
+
+TEST_F(WifiModuleFixture, loop_whenTransmissionFails_willStopTransmitting)
+{
+    // Change the transmission size to make it apparent that the transmission
+    // will stop after the first failure.
+    currentTransmissionSize = 1;
+    // Some valid datapoints found
+    const int8_t networksFound = 10;
+    const uint8_t accessPointsFound = 2;
+    std::array<String, accessPointsFound> expectedMAC = {"00-14-22-01-23-45",
+                                                         "01-24-22-AA-23-FF"};
+    std::array<int32_t, accessPointsFound> expectedRSSI = {12, 2};
+
+    std::vector<std::pair<String, int32_t>> expectedDatapoints = {
+        std::make_pair(expectedMAC[0], expectedRSSI[0]),
+        std::make_pair(expectedMAC[1], expectedRSSI[1])};
+
+    EXPECT_CALL(*esp8266Mock, scanNetworks()).WillOnce(Return(networksFound));
+    {
+        InSequence s;
+        EXPECT_CALL(*esp8266Mock, SSID(_))
+            .Times(networksFound - accessPointsFound)
+            .WillRepeatedly(Return("SomeOtherSSID"));
+        EXPECT_CALL(*esp8266Mock, SSID(_))
+            .Times(accessPointsFound)
+            .WillRepeatedly(Return(positioningSSID));
+    }
+    EXPECT_CALL(*esp8266Mock, BSSIDstr(_))
+      .WillOnce(Return(expectedMAC[0]))
+      .WillOnce(Return(expectedMAC[1]));
+    EXPECT_CALL(*esp8266Mock, RSSI(_))
+      .WillOnce(Return(expectedRSSI[0]))
+      .WillOnce(Return(expectedRSSI[1]));
+
+    // Transmit datapoints only once
+    EXPECT_CALL(*esp8266Mock, connect(_, _)).WillOnce(Return(true));
+    EXPECT_CALL(*esp8266Mock, print(_)).Times(1);
+    // Make sure that the transmission will always fail
+    EXPECT_CALL(*esp8266Mock, available()).WillRepeatedly(Return(0));
+    // Workaround for millis() not really returning the mock value.
+    // TO-DO: Consider whether arduino-mock should be changed to accomodate this
+    ON_CALL(*arduinoMock, millis())
+      .WillByDefault(Invoke(this, &WifiModuleFixture::incrementByOneSecond));
+
+    loop();
 }
 
 int main(int argc, char* argv[])
