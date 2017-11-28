@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <math.h>
 #include <vector>
 #include <utility>
 #include <ESP8266WiFi.h>
@@ -8,7 +9,8 @@ ESP8266WiFiClass wifi;
 EspClass espPower;
 const uint8_t DEVICE_ID = 1; // The identification for the specific node
 const int8_t CONNECTION_RETRIES = 3; // The maximum amount of wifi connection attempts
-const uint8_t TRANSMISSION_SIZE = 10;
+const uint8_t DEFAULT_TRANSMISSION_SIZE = 10;
+uint8_t currentTransmissionSize = DEFAULT_TRANSMISSION_SIZE;
 
 const uint8_t TX_PIN = 10;
 const uint8_t RX_PIN = 9;
@@ -133,12 +135,12 @@ void loop() {
 
   // We need to split the data in groups of 10, as this is the maximum amount
   // we have agreed to send per transmission.
-  uint8_t transmissions = (datapoints.size() / TRANSMISSION_SIZE) + 1;
+  uint8_t transmissions = ceil(datapoints.size() / static_cast<double>(currentTransmissionSize));
   for (auto i = 0; i < transmissions; i++) {
-    // Get the next TRANSMISSION_SIZE elements as a new vector
+    // Get the next currentTransmissionSize elements as a new vector
     std::vector<std::pair<String, int32_t>> transmissionData(
-                                           datapoints.begin() + (i * TRANSMISSION_SIZE),
-                                           datapoints.end() - ((transmissions - (i + 1)) * TRANSMISSION_SIZE));
+                                           datapoints.begin() + (i * currentTransmissionSize),
+                                           datapoints.end() - ((transmissions - (i + 1)) * currentTransmissionSize));
     // Transmit the collected data.
     bool transmissionWasSuccess = transmitData(datapoints);
     if (!transmissionWasSuccess) {
