@@ -64,19 +64,23 @@ bool transmitData(std::vector<std::pair <String, int32_t>> datapoints) {
   }
 
   // Compose a request for the server according to the agreed format:
-  // /set_rssi/:device_id/:mac_addr1/:rssi1/:mac_addr2?/ ... /:mac_addr10?/:rssi10/?
+  // /set_rssi/device_id/mac_addr1/rssi1/mac_addr2/ ... /mac_addr10/:rssi10/
   String request = "/set_rssi/:";
   request += DEVICE_ID;
-  request += "/:";
+  request += "/";
   for (auto datapoint : datapoints) {
+    // We don't put everything in the same expression since std::string
+    // (used in testing) is not exactly the same as Arduino String. Therefore
+    // we go with this way of concatinating the string which is compatible with
+    // both implementations.
     request += datapoint.first; // The MAC address
-    request += "/:";
+    request += "/";
     request += datapoint.second; // The RSSI value
+    request += "/";
   }
-  request += "/?";
 
   // Send the TCP request to the rest server
-  client.print(String("PUT ") + request + " HTTP/1.1\r\n" +
+  client.print("PUT " + request + " HTTP/1.1\r\n" +
                "SERVER_IP: " + SERVER_IP + "\r\n" +
                "Connection: close\r\n\r\n");
 
