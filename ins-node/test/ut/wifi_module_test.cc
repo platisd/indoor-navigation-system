@@ -9,7 +9,7 @@
 using ::testing::AtLeast;
 using ::testing::AtMost;
 using ::testing::InSequence;
-using ::testing::Invoke;
+using ::testing::InvokeWithoutArgs;
 using ::testing::Return;
 using ::testing::_;
 
@@ -31,6 +31,10 @@ public:
         arduinoMock             = arduinoMockInstance();
         esp8266Mock             = esp8266MockInstance();
         currentTransmissionSize = DEFAULT_TRANSMISSION_SIZE;
+        // Workaround for millis() not really returning the mock value.
+        // TO-DO: Consider whether arduino-mock should be changed to accomodate this
+        ON_CALL(*arduinoMock, millis())
+            .WillByDefault(InvokeWithoutArgs(this, &WifiModuleFixture::incrementByOneSecond));
     }
     // Run this after the tests
     virtual void TearDown()
@@ -180,10 +184,6 @@ TEST_F(WifiModuleFixture, transmitData_whenConnectionTimeout_willReturnFalse)
 
     EXPECT_CALL(*esp8266Mock, available()).WillRepeatedly(Return(0));
 
-    // Workaround for millis() not really returning the mock value.
-    // TO-DO: Consider whether arduino-mock should be changed to accomodate this
-    ON_CALL(*arduinoMock, millis()).WillByDefault(Invoke(this, &WifiModuleFixture::incrementByOneSecond));
-
     ASSERT_FALSE(transmitData(datapoints));
 }
 
@@ -281,9 +281,6 @@ TEST_F(WifiModuleFixture, loop_whenTransmissionFails_willStopTransmitting)
     EXPECT_CALL(*esp8266Mock, print(_)).Times(1);
     // Make sure that the transmission will always fail
     EXPECT_CALL(*esp8266Mock, available()).WillRepeatedly(Return(0));
-    // Workaround for millis() not really returning the mock value.
-    // TO-DO: Consider whether arduino-mock should be changed to accomodate this
-    ON_CALL(*arduinoMock, millis()).WillByDefault(Invoke(this, &WifiModuleFixture::incrementByOneSecond));
 
     loop();
 }
