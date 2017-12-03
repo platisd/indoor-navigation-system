@@ -57,8 +57,6 @@ bool transmitData(std::vector<std::pair <String, int32_t>> datapoints) {
   }
   // Establish a TCP connection to the server
   WiFiClient client;
-  const uint16_t HTTP_PORT = 8050;
-  const char SERVER_IP[] = "192.168.0.136";
   if (!client.connect(SERVER_IP, HTTP_PORT)) {
     return false;
   }
