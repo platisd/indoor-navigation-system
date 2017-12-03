@@ -8,7 +8,7 @@
 ESP8266WiFiClass wifi;
 EspClass espPower;
 const uint8_t DEVICE_ID = 1; // The identification for the specific node
-const int8_t CONNECTION_RETRIES = 3; // The maximum amount of wifi connection attempts
+const int8_t CONNECTION_RETRIES = 20; // The maximum amount of wifi connection attempts
 const uint8_t DEFAULT_TRANSMISSION_SIZE = 10;
 uint8_t currentTransmissionSize = DEFAULT_TRANSMISSION_SIZE;
 
@@ -65,7 +65,7 @@ bool transmitData(std::vector<std::pair <String, int32_t>> datapoints) {
 
   // Compose a request for the server according to the agreed format:
   // /set_rssi/device_id/mac_addr1/rssi1/mac_addr2/ ... /mac_addr10/:rssi10/
-  String request = "/set_rssi/:";
+  String request = "/set_rssi/";
   request += DEVICE_ID;
   request += "/";
   for (auto datapoint : datapoints) {
@@ -80,9 +80,9 @@ bool transmitData(std::vector<std::pair <String, int32_t>> datapoints) {
   }
 
   // Send the TCP request to the rest server
-  client.print("PUT " + request + " HTTP/1.1\r\n" +
-               "SERVER_IP: " + SERVER_IP + "\r\n" +
-               "Connection: close\r\n\r\n");
+  client.print("POST " + request + " HTTP/1.1\r\n" +
+                 "Host: " + SERVER_IP + "\r\n" +
+                 "Connection: close\r\n\r\n");
 
   // Verify whether the request timed out
   bool successfulRequest = true;
