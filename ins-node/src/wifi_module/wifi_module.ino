@@ -79,8 +79,8 @@ bool transmitData(std::vector<std::pair <String, int32_t>> datapoints) {
 
   // Send the TCP request to the rest server
   client.print("POST " + request + " HTTP/1.1\r\n" +
-                 "Host: " + SERVER_IP + "\r\n" +
-                 "Connection: close\r\n\r\n");
+               "Host: " + SERVER_IP + "\r\n" +
+               "Connection: close\r\n\r\n");
 
   // Verify whether the request timed out
   bool successfulRequest = true;
