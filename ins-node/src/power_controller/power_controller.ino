@@ -34,7 +34,7 @@ enum PowerState {
 
 const uint8_t TX_PIN = PB0;
 const uint8_t RX_PIN = PB1;
-const uint8_t WIFI_MODULE_PIN = PB2; // Controls the power to the Wifi module
+const uint8_t WIFI_MODULE_PIN = PB3; // Controls the power to the Wifi module
 
 WatchDogTimeout currentTimeout = WDT_8sec; // Current watchdog timeout
 
