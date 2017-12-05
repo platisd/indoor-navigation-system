@@ -38,8 +38,6 @@ public:
 
     MOCK_METHOD2(GetRSSISeriesData, std::vector<AccessPointRssiListPair>(const std::string&, std::vector<AccessPoint>));
 
-    // MOCK_METHOD2()
-
     ~MockDataStore()
     {
         g_mocked_data_store_ = nullptr;
