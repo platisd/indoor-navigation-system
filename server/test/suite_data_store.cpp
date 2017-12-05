@@ -33,14 +33,14 @@ public:
         return data_store_->CreateLocationTable();
     }
 
+    bool CreateAccessPointTable()
+    {
+        return data_store_->CreateAccessPointTable();
+    }
+
     bool RunQuery(std::string sql)
     {
         return data_store_->RunQuery(sql);
-    }
-
-    std::vector<std::string> ReadDistinctMacAddrs(const std::string& device_id)
-    {
-        return data_store_->ReadDistinctMacAddrs(device_id);
     }
 
 protected:
@@ -103,12 +103,31 @@ TEST_F(DataStoreFixture, CreateLocationTable_WillFormSqlToCreateLocationTable)
 {
     data_store_->Init("location_db");
     EXPECT_TRUE(CreateLocationTable());
-    std::string expected_sql = "CREATE TABLE IF NOT EXISTS location(device_id INTEGER PRIMARY KEY,"
+    std::string expected_sql = "CREATE TABLE IF NOT EXISTS locations(device_id INTEGER PRIMARY KEY,"
                                "employee_id TEXT,"
                                "pos_x REAL,"
                                "pos_y REAL,"
                                "pos_z REAL,"
                                "timestamp datatime default current_timestamp);";
+
+    EXPECT_EQ(expected_sql, GetExecutingSql());
+    data_store_->Close();
+    std::remove("location_db");
+}
+
+/**
+ * TEST: CreateAccessPointTable
+ * EXPECT: Builds SQL for creating access_point table
+ */
+TEST_F(DataStoreFixture, CreateLocationTable_WillFormSqlToCreateAccessPointTable)
+{
+    data_store_->Init("location_db");
+    EXPECT_TRUE(CreateAccessPointTable());
+    std::string expected_sql = "CREATE TABLE IF NOT EXISTS access_points("
+                               "mac_addr TEXT PRIMARY KEY,"
+                               "pos_x REAL,"
+                               "pos_y REAL,"
+                               "pos_z REAL);";
 
     EXPECT_EQ(expected_sql, GetExecutingSql());
     data_store_->Close();
@@ -160,10 +179,10 @@ TEST_F(DataStoreFixture, UpdateDeviceLocation_WillFormSqlToUpdateDeviceLocation)
     Position    pos{ 2.0, 4.0, 6.0 };
     CreateLocationTable();
     EXPECT_TRUE(data_store_->UpdateDeviceLocation(device_id, pos));
-    std::string expected_sql = "INSERT OR REPLACE INTO location (device_id, pos_x, pos_y, "
+    std::string expected_sql = "INSERT OR REPLACE INTO locations (device_id, pos_x, pos_y, "
                                "pos_z, employee_id) VALUES ("
                                + device_id + "," + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", "
-                               + std::to_string(pos.z) + ", (SELECT employee_id FROM location WHERE device_id="
+                               + std::to_string(pos.z) + ", (SELECT employee_id FROM locations WHERE device_id="
                                + device_id + "));";
     EXPECT_EQ(expected_sql, GetExecutingSql());
     data_store_->Close();
@@ -181,10 +200,10 @@ TEST_F(DataStoreFixture, AssignDeviceToEmployee_WillFormSqlToLinkDeviceAndEmploy
     std::string employee_id = "abcxyz";
 
     EXPECT_TRUE(data_store_->AssignDeviceToEmployee(device_id, employee_id));
-    std::string expected_sql = "INSERT OR REPLACE INTO location (device_id, employee_id, pos_x, pos_y, pos_z) VALUES ("
-                               + device_id + ",'" + employee_id + "',(SELECT pos_x FROM location WHERE device_id="
-                               + device_id + "),(SELECT pos_y FROM location WHERE device_id=" + device_id
-                               + "),(SELECT pos_z FROM location WHERE device_id=" + device_id + "));";
+    std::string expected_sql = "INSERT OR REPLACE INTO locations (device_id, employee_id, pos_x, pos_y, pos_z) VALUES ("
+                               + device_id + ",'" + employee_id + "',(SELECT pos_x FROM locations WHERE device_id="
+                               + device_id + "),(SELECT pos_y FROM locations WHERE device_id=" + device_id
+                               + "),(SELECT pos_z FROM locations WHERE device_id=" + device_id + "));";
     EXPECT_EQ(expected_sql, GetExecutingSql());
     data_store_->Close();
     std::remove("db");
@@ -197,17 +216,20 @@ TEST_F(DataStoreFixture, AssignDeviceToEmployee_WillFormSqlToLinkDeviceAndEmploy
 TEST_F(DataStoreFixture, InsertRSSIReadings_WillFormSqlToInsertRSSIReadings)
 {
     data_store_->Init("db");
-    std::string device_id = "4004";
-    std::vector<std::pair<std::string, double>> data_points;
-    data_points.push_back(std::make_pair<std::string, double>("ee:44:43:a5:ff:ef", 23.66));
-    data_points.push_back(std::make_pair<std::string, double>("11:65:d4:fe:ee:ff", 43.2));
-    data_points.push_back(std::make_pair<std::string, double>("01:23:dd:3e:4c:cc", 99.9));
+    std::string                      device_id = "4004";
+    std::vector<AccessPointRssiPair> data_points;
+    AccessPoint                      ap1("ee:44:43:a5:ff:ef");
+    AccessPoint                      ap2("11:65:d4:fe:ee:ff");
+    AccessPoint                      ap3("01:23:dd:3e:4c:cc");
+    data_points.push_back(std::make_pair(ap1, 23));
+    data_points.push_back(std::make_pair(ap2, 43));
+    data_points.push_back(std::make_pair(ap3, 99));
 
     data_store_->CreateDeviceTable(device_id);
     EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, data_points));
     std::string expected_sql = "INSERT INTO dev_" + device_id + " (mac_addr, rssi) VALUES"
-                                                                "('ee:44:43:a5:ff:ef',23.66),('11:65:d4:fe:ee:ff',43.2)"
-                                                                ",('01:23:dd:3e:4c:cc',99.9);";
+                                                                "('ee:44:43:a5:ff:ef',23),('11:65:d4:fe:ee:ff',43)"
+                                                                ",('01:23:dd:3e:4c:cc',99);";
     EXPECT_EQ(expected_sql, GetExecutingSql());
     data_store_->Close();
     std::remove("db");
@@ -302,32 +324,126 @@ TEST_F(DataStoreFixture, RunQuery)
 }
 
 /**
- * TEST: ReadDistinctMacAddrs
+ * TEST: GetDistinctAccessPoints
  * EXPECT: Unique mac addresses stored for a particular device
  */
-TEST_F(DataStoreFixture, ReadDistinctMacAddrs_WillSetUniqueMacAddrsInDeviceTable)
+TEST_F(DataStoreFixture, GetDistinctAccessPoints_WillSetUniqueMacAddrsInDeviceTable)
 {
     data_store_->Init("db");
-    std::string device_id = "4004";
-    std::vector<std::pair<std::string, double>> data_points;
+    std::string                      device_id = "4004";
+    std::vector<AccessPointRssiPair> data_points;
+    AccessPoint                      ap1("ee:44:43:a5:ff:ef");
+    AccessPoint                      ap2("11:65:d4:fe:ee:ff");
+    AccessPoint                      ap3("01:23:dd:3e:4c:cc");
+
     for (int i = 0; i < 5; ++i)
     {
-        data_points.push_back(std::make_pair<std::string, double>("ee:44:43:a5:ff:ef", 23.66));
-        data_points.push_back(std::make_pair<std::string, double>("11:65:d4:fe:ee:ff", 43.2));
-        data_points.push_back(std::make_pair<std::string, double>("01:23:dd:3e:4c:cc", 99.9));
+        data_points.push_back(std::make_pair(ap1, 23));
+        data_points.push_back(std::make_pair(ap2, 43));
+        data_points.push_back(std::make_pair(ap3, 99));
     }
 
     data_store_->CreateDeviceTable(device_id);
     EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, data_points));
 
-    std::vector<std::string> expected_unique_mac_addrs
-        = { "ee:44:43:a5:ff:ef", "11:65:d4:fe:ee:ff", "01:23:dd:3e:4c:cc" };
+    std::vector<AccessPoint> expected_unique_mac_addrs = { ap1, ap2, ap3 };
 
-    EXPECT_EQ(ReadDistinctMacAddrs(device_id).size(), expected_unique_mac_addrs.size());
-    EXPECT_EQ(ReadDistinctMacAddrs(device_id), expected_unique_mac_addrs);
+    EXPECT_EQ(data_store_->GetDistinctAccessPoints(device_id).size(), expected_unique_mac_addrs.size());
+    EXPECT_EQ(data_store_->GetDistinctAccessPoints(device_id), expected_unique_mac_addrs);
 
     data_store_->Close();
     std::remove("db");
 }
 
+/**
+ * TEST: GetRSSISeriesData
+ * EXPECT: List of rssi data (time series) for the specified device and mac_addr
+ */
+
+TEST_F(DataStoreFixture, GetRSSISeriesData_WillReturnRssiList)
+{
+    data_store_->Init("db");
+    std::string                      device_id = "4004";
+    std::vector<AccessPointRssiPair> data_points;
+
+    AccessPoint ap1("ee:44:43:a5:ff:ef");
+    AccessPoint ap2("11:65:d4:fe:ee:ff");
+    AccessPoint ap3("01:23:dd:3e:4c:cc");
+
+    for (int32_t i = 0; i < 10; ++i)
+    {
+        data_points.push_back(std::make_pair(ap1, i * 1));
+        data_points.push_back(std::make_pair(ap2, i * 2));
+        data_points.push_back(std::make_pair(ap3, (i * 3) + 100));
+    }
+
+    data_store_->CreateDeviceTable(device_id);
+    EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, data_points));
+
+    std::vector<int32_t> expected_list1, expected_list2, expected_list3;
+    for (int i = 0; i < 10; ++i)
+    {
+        expected_list1.push_back(i * 1);
+        expected_list2.push_back(i * 2);
+        expected_list3.push_back((i * 3) + 100);
+    }
+
+    EXPECT_EQ(expected_list1, data_store_->GetRSSISeriesData(device_id, ap1));
+    EXPECT_EQ(expected_list2, data_store_->GetRSSISeriesData(device_id, ap2));
+    EXPECT_EQ(expected_list3, data_store_->GetRSSISeriesData(device_id, ap3));
+
+    data_store_->Close();
+    std::remove("db");
+}
+
+/**
+ * TEST: GetRSSISeriesData2
+ * EXPECT: A vector of list of rssi data (time series) for the specified device and mac_addresses.
+*  Example:
+*  {
+*     (AccessPoint1, { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 }),
+*     (AccessPoint2, { 100, 103, 106, 109, 112, 115, 118, 121, 124, 127 }),
+*     (AccessPoint3, { 0, 2, 4, 6, 8, 10, 12, 14, 16, 18 })
+*  }
+*
+*/
+TEST_F(DataStoreFixture, GetRSSISeriesData_WillReturnRssiListVector)
+{
+    data_store_->Init("db");
+    std::string device_id = "4004";
+    std::vector<AccessPointRssiPair> data_points;
+
+    AccessPoint ap1("ee:44:43:a5:ff:ef");
+    AccessPoint ap2("11:65:d4:fe:ee:ff");
+    AccessPoint ap3("01:23:dd:3e:4c:cc");
+
+    for (int32_t i = 0; i < 10; ++i)
+    {
+        data_points.push_back(std::make_pair(ap1, i * 1));
+        data_points.push_back(std::make_pair(ap2, i * 2));
+        data_points.push_back(std::make_pair(ap3, (i * 3) + 100));
+    }
+
+    data_store_->CreateDeviceTable(device_id);
+    EXPECT_TRUE(data_store_->InsertRSSIReadings(device_id, data_points));
+
+    std::vector<int32_t> expected_list1, expected_list2, expected_list3;
+    for (int i = 0; i < 10; ++i)
+    {
+        expected_list1.push_back(i * 1);
+        expected_list2.push_back(i * 2);
+        expected_list3.push_back((i * 3) + 100);
+    }
+
+    std::vector<AccessPointRssiListPair> expected_mac_rssi_list{
+        std::make_pair(ap1, expected_list1),
+        std::make_pair(ap2, expected_list2),
+        std::make_pair(ap3, expected_list3),
+    };
+
+    EXPECT_EQ(expected_mac_rssi_list, data_store_->GetRSSISeriesData(device_id, { ap1, ap2, ap3 }));
+
+    data_store_->Close();
+    std::remove("db");
+}
 } // namespace !ins_service

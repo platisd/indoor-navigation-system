@@ -22,7 +22,7 @@ void DataStore::Init(const std::string& db_filename)
     console_->info("Opened database successfully");
     if (!CreateLocationTable())
     {
-        console_->error("Cannot create location table");
+        console_->error("Cannot create locations table");
     }
 
     console_->debug("- DataStore::Init");
@@ -39,7 +39,7 @@ bool DataStore::CreateLocationTable()
 {
     console_->debug("+ DataStore::CreateLocationTable");
 
-    std::string sql = "CREATE TABLE IF NOT EXISTS location(device_id INTEGER PRIMARY KEY,"
+    std::string sql = "CREATE TABLE IF NOT EXISTS locations(device_id INTEGER PRIMARY KEY,"
                       "employee_id TEXT,"
                       "pos_x REAL,"
                       "pos_y REAL,"
@@ -49,6 +49,23 @@ bool DataStore::CreateLocationTable()
     bool res = RunQuery(sql);
 
     console_->debug("- DataStore::CreateLocationTable");
+    return res;
+}
+
+bool DataStore::CreateAccessPointTable()
+{
+    console_->debug("+ DataStore::CreateAccessPointTable");
+
+    std::string sql = "CREATE TABLE IF NOT EXISTS access_points("
+                      "mac_addr TEXT PRIMARY KEY,"
+                      "pos_x REAL,"
+                      "pos_y REAL,"
+                      "pos_z REAL);";
+
+    console_->debug(sql);
+    bool res = RunQuery(sql);
+
+    console_->debug("- DataStore::CreateAccessPointTable");
     return res;
 }
 
@@ -82,10 +99,10 @@ bool DataStore::UpdateDeviceLocation(const std::string& device_id, Position pos)
 {
     console_->debug("+ DataStore::UpdateDeviceLocation");
 
-    std::string sql = "INSERT OR REPLACE INTO location (device_id, pos_x, pos_y, "
+    std::string sql = "INSERT OR REPLACE INTO locations (device_id, pos_x, pos_y, "
                       "pos_z, employee_id) VALUES ("
                       + device_id + "," + std::to_string(pos.x) + ", " + std::to_string(pos.y) + ", "
-                      + std::to_string(pos.z) + ", (SELECT employee_id FROM location WHERE device_id=" + device_id
+                      + std::to_string(pos.z) + ", (SELECT employee_id FROM locations WHERE device_id=" + device_id
                       + "));";
     console_->debug(sql);
     bool res = RunQuery(sql);
@@ -98,10 +115,10 @@ bool DataStore::AssignDeviceToEmployee(const std::string& device_id, const std::
 {
     console_->debug("+ DataStore::AssignDeviceToEmployee");
 
-    std::string sql = "INSERT OR REPLACE INTO location (device_id, employee_id, pos_x, pos_y, pos_z) VALUES ("
-                      + device_id + ",'" + employee_id + "',(SELECT pos_x FROM location WHERE device_id=" + device_id
-                      + "),(SELECT pos_y FROM location WHERE device_id=" + device_id
-                      + "),(SELECT pos_z FROM location WHERE device_id=" + device_id + "));";
+    std::string sql = "INSERT OR REPLACE INTO locations (device_id, employee_id, pos_x, pos_y, pos_z) VALUES ("
+                      + device_id + ",'" + employee_id + "',(SELECT pos_x FROM locations WHERE device_id=" + device_id
+                      + "),(SELECT pos_y FROM locations WHERE device_id=" + device_id
+                      + "),(SELECT pos_z FROM locations WHERE device_id=" + device_id + "));";
     console_->debug(sql);
     bool res = RunQuery(sql);
 
@@ -109,8 +126,7 @@ bool DataStore::AssignDeviceToEmployee(const std::string& device_id, const std::
     return res;
 }
 
-bool DataStore::InsertRSSIReadings(const std::string& device_id,
-                                   std::vector<std::pair<std::string, double>> macaddr_rssi_datapoints)
+bool DataStore::InsertRSSIReadings(const std::string& device_id, std::vector<AccessPointRssiPair> accesspoint_rssi_list)
 {
     console_->debug("+ DataStore::InsertRSSIReadings");
 
@@ -120,10 +136,10 @@ bool DataStore::InsertRSSIReadings(const std::string& device_id,
     sql << "dev_" << device_id << " (";
     sql << "mac_addr, rssi) ";
     sql << "VALUES";
-    for (int i = 0; i < macaddr_rssi_datapoints.size(); ++i)
+    for (int i = 0; i < accesspoint_rssi_list.size(); ++i)
     {
-        sql << "('" << macaddr_rssi_datapoints[i].first << "'," << macaddr_rssi_datapoints[i].second << ")";
-        if (i < (macaddr_rssi_datapoints.size() - 1))
+        sql << "('" << accesspoint_rssi_list[i].first.mac_addr << "'," << accesspoint_rssi_list[i].second << ")";
+        if (i < (accesspoint_rssi_list.size() - 1))
         {
             sql << ",";
         }
@@ -145,9 +161,9 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
     std::string sql;
 
     if (query_by == QueryT::DEVICE)
-        sql = "SELECT pos_x, pos_y, pos_z from location WHERE device_id=" + id;
+        sql = "SELECT pos_x, pos_y, pos_z from locations WHERE device_id=" + id;
     else if (query_by == QueryT::EMPLOYEE)
-        sql = "SELECT pos_x, pos_y, pos_z from location WHERE employee_id='" + id + "'";
+        sql = "SELECT pos_x, pos_y, pos_z from locations WHERE employee_id='" + id + "'";
     else
     {
         console_->error("Invalid Query. Device or Employee is expected");
@@ -206,6 +222,7 @@ bool DataStore::RunQuery(const std::string& sql)
 
 int DataStore::DbCallback(void* not_used, int argc, char** argv, char** azColName)
 {
+    (void)not_used;
     auto logger = spdlog::get(LOGGER_NAME);
     if (logger == nullptr)
         logger = spdlog::stdout_logger_mt(LOGGER_NAME);
@@ -218,11 +235,11 @@ int DataStore::DbCallback(void* not_used, int argc, char** argv, char** azColNam
     return 0;
 }
 
-std::vector<std::string> DataStore::ReadDistinctMacAddrs(const std::string& device_id)
+std::vector<AccessPoint> DataStore::GetDistinctAccessPoints(const std::string& device_id)
 {
     console_->debug("+ DataStore::GetRSSIDataStream");
 
-    std::vector<std::string> mac_addrs;
+    std::vector<AccessPoint> access_points;
     std::string              sql = "SELECT DISTINCT mac_addr FROM  dev_" + device_id + ";";
 
     sqlite3_stmt* selectStmt;
@@ -232,8 +249,8 @@ std::vector<std::string> DataStore::ReadDistinctMacAddrs(const std::string& devi
         int state = sqlite3_step(selectStmt);
         if (state == SQLITE_ROW)
         {
-            std::string mac_addr = reinterpret_cast<const char*>(sqlite3_column_text(selectStmt, 0));
-            mac_addrs.push_back(mac_addr);
+            AccessPoint ap(reinterpret_cast<const char*>(sqlite3_column_text(selectStmt, 0)));
+            access_points.push_back(ap);
         }
         else if (state == SQLITE_DONE)
         {
@@ -248,7 +265,53 @@ std::vector<std::string> DataStore::ReadDistinctMacAddrs(const std::string& devi
     sqlite3_finalize(selectStmt);
 
     console_->debug("- DataStore::GetRSSIDataStream");
-    return mac_addrs;
+    return access_points;
+}
+
+std::vector<int32_t> DataStore::GetRSSISeriesData(const std::string& device_id, AccessPoint access_point)
+{
+    console_->debug(" + DataStore::GetRSSISeriesData");
+    std::vector<int32_t> rssi_list;
+    std::string          sql = "SELECT rssi FROM dev_" + device_id + " where mac_addr ='" + access_point.mac_addr + "';";
+    sqlite3_stmt*        selectStmt;
+    sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
+
+    while (1)
+    {
+        int state = sqlite3_step(selectStmt);
+        if (state == SQLITE_ROW)
+        {
+            rssi_list.push_back(sqlite3_column_int(selectStmt, 0));
+        }
+        else if (state == SQLITE_DONE)
+        {
+            break;
+        }
+        else
+        {
+            console_->error("Failed to read from database");
+            break;
+        }
+    }
+    sqlite3_finalize(selectStmt);
+
+    console_->debug(" - DataStore::GetRSSISeriesData");
+    return rssi_list;
+}
+
+std::vector<AccessPointRssiListPair> DataStore::GetRSSISeriesData(const std::string&       dev,
+                                                              std::vector<AccessPoint> access_points)
+{
+    console_->debug(" + DataStore::GetRSSISeriesData");
+
+    std::vector<AccessPointRssiListPair> accesspoint_rssi_list_pair;
+    for (auto const& access_point : access_points)
+    {
+        accesspoint_rssi_list_pair.emplace_back(std::make_pair(access_point, GetRSSISeriesData(dev, access_point)));
+    }
+
+    console_->debug(" - DataStore::GetRSSISeriesData");
+    return accesspoint_rssi_list_pair;
 }
 
 } // namespace ins_service
