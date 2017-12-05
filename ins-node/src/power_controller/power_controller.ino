@@ -156,19 +156,20 @@ bool stayAsleepFor(const unsigned long totalSleepDuration) {
 */
 void notifyWifiShutdown() {
   // Send a short pulse
+  pinMode(TX_PIN, OUTPUT);
   digitalWrite(TX_PIN, HIGH);
   delayMicroseconds(5);
   digitalWrite(TX_PIN, LOW);
+  pinMode(TX_PIN, INPUT);
 }
 
 void setup() {
   // Setup I/O pins
   pinMode(RX_PIN, INPUT);
-  pinMode(TX_PIN, OUTPUT);
+  pinMode(TX_PIN, INPUT); // Set it as an input to avoid strange parasitic voltages
   pinMode(WIFI_MODULE_PIN, OUTPUT);
 
   // Initialize the pin states
-  digitalWrite(TX_PIN, LOW);
   digitalWrite(WIFI_MODULE_PIN, LOW);
 
   setupRXInterrupt();
