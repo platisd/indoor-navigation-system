@@ -14,10 +14,10 @@ INS-node board schematics and layout designed with Eagle CAD.
 ## 2D board renders
 * Top view
 
-![ins board TOP](https://i.imgur.com/wG8dQzv.png)
+![ins board TOP](https://i.imgur.com/K2IM5y2.png)
 * Bottom view
 
-![ins board BOTTOM](https://i.imgur.com/m8yZzHP.png)
+![ins board BOTTOM](https://i.imgur.com/a43914O.png)
 
 
 ## List of materials
@@ -26,6 +26,7 @@ INS-node board schematics and layout designed with Eagle CAD.
 * 3 x AAA battery holders
 * 2 x 2N7000 N-channel MOSFET
 * 2 x 220 Ohm resistors
+* 2 x 4.7 KOhm resistors
 * 0.1 uF capacitor
 * 2 x 5mm LED
 * SPST tactile switch
