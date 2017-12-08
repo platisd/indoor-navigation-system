@@ -53,11 +53,10 @@ TEST_F(PowerControllerFixture, setup_whenSetupIsCalled_willInitializePins)
 {
     // Pins are initialized as inputs or outputs
     EXPECT_CALL(*arduinoMock, pinMode(RX_PIN, INPUT));
-    EXPECT_CALL(*arduinoMock, pinMode(TX_PIN, OUTPUT));
+    EXPECT_CALL(*arduinoMock, pinMode(TX_PIN, INPUT));
     EXPECT_CALL(*arduinoMock, pinMode(WIFI_MODULE_PIN, OUTPUT));
 
     // Output pin initial states are set
-    EXPECT_CALL(*arduinoMock, digitalWrite(TX_PIN, LOW));
     EXPECT_CALL(*arduinoMock, digitalWrite(WIFI_MODULE_PIN, LOW));
 
     setup();
