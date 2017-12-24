@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     final String TAG = "InsMain";
     TextView responseText;
     Button getRequestButton;
-    EditText nodeChooser;
+    EditText employeeSelector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +28,15 @@ public class MainActivity extends AppCompatActivity {
 
         responseText = (TextView) findViewById(R.id.result);
         getRequestButton = (Button) findViewById(R.id.get_button);
-        nodeChooser = (EditText) findViewById(R.id.node_setter);
+        employeeSelector = (EditText) findViewById(R.id.node_setter);
 
         getRequestButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Instantiate the RequestQueue.
                 RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
-                String selectedNode = nodeChooser.getText().toString();
-                String nodeId = selectedNode.length() != 0 ? selectedNode : "1"; // Default nodeId
-                String url ="http://10.0.2.2:5000/node/" + nodeId;
+                String selectedEmployee = employeeSelector.getText().toString();
+                String employeeId = selectedEmployee.length() != 0 ? selectedEmployee : "1"; // Default nodeId
+                String url ="http://10.0.2.2:5000/node/" + employeeId;
 
                 // Request a string response from the provided URL.
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url,

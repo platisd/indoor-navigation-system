@@ -9,3 +9,4 @@ build/
 *.db
 coverage.info
 pistache/
+coverage-reports/
