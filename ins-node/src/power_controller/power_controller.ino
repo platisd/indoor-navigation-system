@@ -166,7 +166,7 @@ void notifyWifiShutdown() {
 void setup() {
   // Setup I/O pins
   pinMode(RX_PIN, INPUT);
-  pinMode(TX_PIN, INPUT); // Set it as an input to avoid strange parasitic voltages
+  pinMode(TX_PIN, OUTPUT); // Set it as an input to avoid strange parasitic voltages
   pinMode(WIFI_MODULE_PIN, OUTPUT);
 
   // Initialize the pin states
