@@ -16,7 +16,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 public class MainActivity extends AppCompatActivity {
-    final String TAG = "InsMain";
+    final String TAG = this.getClass().getSimpleName();
     TextView responseText;
     Button getRequestButton;
     EditText employeeSelector;
