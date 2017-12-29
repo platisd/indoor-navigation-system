@@ -8,6 +8,7 @@ env:
     global:
         - ADB_INSTALL_TIMEOUT=10  # Time out to 10 mins
         - CXX=g++-6
+        - ANDROID_TARGET=android-21
 
 before_cache:
     - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
@@ -24,8 +25,8 @@ android:
     - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
     - platform-tools
     - build-tools-26.0.1
-    - android-21 # Our minimum Android version
-    - sys-img-armeabi-v7a-android-21
+    - $ANDROID_TARGET # Our minimum Android version
+    - sys-img-armeabi-v7a-$ANDROID_TARGET
 
 compiler:
     - g++
@@ -45,7 +46,7 @@ notifications:
 
 before_script:
     - android list targets
-    - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a # Create AVD for given api
+    - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi armeabi-v7a # Create AVD for given api
     - emulator -avd test -no-skin -no-audio -no-window & # Start emulator
     - chmod +x ins-app/gradlew
     - android-wait-for-emulator
