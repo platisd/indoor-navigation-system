@@ -4,7 +4,7 @@ caller_dir=$PWD
 cd "${0%/*}"
 
 # Build and run the various tests
-./gradlew test
+./gradlew test --info
 ./gradlew connectedAndroidTest
 
 # Go back to the initial directory when you are done
