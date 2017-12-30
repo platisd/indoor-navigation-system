@@ -36,14 +36,14 @@ public class MainActivity extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
                 String selectedEmployee = employeeSelector.getText().toString();
                 String employeeId = selectedEmployee.length() != 0 ? selectedEmployee : "1"; // Default nodeId
-                String url ="http://10.0.2.2:5000/node/" + employeeId;
+                String url ="http://10.0.2.2:8050/get_device_pos/" + employeeId; //TO-DO: Change to get_employee_pos
 
                 // Request a string response from the provided URL.
                 StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                responseText.setText("Response is: " + response);
+                                responseText.setText(response);
                             }
                         }, new Response.ErrorListener() {
                     @Override
