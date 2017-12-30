@@ -12,8 +12,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     final String TAG = this.getClass().getSimpleName();
@@ -35,21 +38,29 @@ public class MainActivity extends AppCompatActivity {
                 // Instantiate the RequestQueue.
                 RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
                 String selectedEmployee = employeeSelector.getText().toString();
-                String employeeId = selectedEmployee.length() != 0 ? selectedEmployee : "1"; // Default nodeId
+                String employeeId = selectedEmployee.length() != 0 ? selectedEmployee : "1"; // Default employee id
                 String url ="http://10.0.2.2:8050/get_device_pos/" + employeeId; //TO-DO: Change to get_employee_pos
 
                 // Request a string response from the provided URL.
-                StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                        new Response.Listener<String>() {
+                JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url,
+                        new Response.Listener<JSONObject>() {
                             @Override
-                            public void onResponse(String response) {
-                                responseText.setText(response);
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    String xVal = response.getString("pos_x");
+                                    String yVal = response.getString("pos_y");
+                                    String zVal = response.getString("pos_z");
+                                    responseText.setText("X:" + xVal + " Y:" + yVal + " Z:" + zVal);
+                                } catch (JSONException e) {
+                                    responseText.setText("Error parsing server response!");
+                                    e.printStackTrace();
+                                }
                             }
                         }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, error.toString());
-                        responseText.setText("Error");
+                        responseText.setText("Error, employee not found!");
                     }
                 });
                 // Add the request to the RequestQueue.
