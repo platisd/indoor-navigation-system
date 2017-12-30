@@ -1,7 +1,32 @@
 dist: trusty
 sudo: required
-language:
-    - cpp
+language: android
+
+jdk: oraclejdk8
+
+env:
+    global:
+        - ADB_INSTALL_TIMEOUT=10  # Time out to 10 mins
+        - CXX=g++-6
+        - ANDROID_TARGET=android-21
+
+before_cache:
+    - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
+cache:
+  directories:      # Cache all dirs under .gradle folder
+    - $HOME/.gradle/daemon      # Cache daemon logs
+    - $HOME/.gradle/native      # Cache library downloaded from the gradle dependency
+    - $HOME/.gradle/wrapper     # Cache the gradle
+
+android:
+  components:
+    - tools # to get the new `repository-11.xml`
+    - tools # see https://github.com/travis-ci/travis-ci/issues/6040#issuecomment-219367943)
+    - platform-tools
+    - build-tools-26.0.1
+    - $ANDROID_TARGET # Our minimum Android version
+    - sys-img-armeabi-v7a-$ANDROID_TARGET
 
 compiler:
     - g++
@@ -19,14 +44,27 @@ addons:
 notifications:
     email: false
 
+before_script:
+    - android list targets
+    - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi armeabi-v7a # Create AVD for given api
+    - emulator -avd test -no-skin -no-audio -no-window & # Start emulator
+    - chmod +x ins-app/gradlew
+    - android-wait-for-emulator
+    - adb devices # Display list of devices
+    - adb shell input keyevent 82 &
+
+before_install:
+    - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
+    - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
+
 # Install project dependencies
 install:
-    - "[ $CXX = g++ ] && export CXX=g++-6 || true"
-    - "[ $CXX = clang++ ] && export CXX=clang++-3.8 || true"
     - bash get_dependencies.sh
 
 # Build the project
 script:
+    - bash ins-app/build.sh
+    - bash ins-app/build_and_run_ut.sh
     - bash server/build.sh
     - bash server/build_and_run_ut.sh
     - bash ins-node/build_and_run_ut.sh
@@ -34,4 +72,4 @@ script:
 after_success:
     - bash run_coverage.sh
     # Upload report to codecov
-    - bash <(curl -s https://codecov.io/bash) -f ./coverage.info || echo "Codecov did not collect coverage reports"
+    - bash <(curl -s https://codecov.io/bash) -s coverage-reports || echo "Codecov did not collect coverage reports"

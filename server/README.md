@@ -52,7 +52,7 @@ The INS server provides a backend RESTful service for INS-node and front-end web
   This is for user facing applications interested in fetching employee's position.
   * HTTP Method - `GET`
   * Request Url - `/get_employee_pos/:employee_id`
-  * Response - `employee_id:<id> {pos_x:<val>, pos_y:<val>, pos_z:<val>}`
+  * Response - `{employee_id:<id>, pos_x:<val>, pos_y:<val>, pos_z:<val>}`
 
     #### Example
   * Get position of employee with id = 8923
@@ -64,7 +64,7 @@ The INS server provides a backend RESTful service for INS-node and front-end web
   This is for user facing applications interested in fetching position of an INS-node devicce.
   * HTTP Method - `GET`
   * Request Url - `/get_device_pos/:device_id`
-  * Response - `device_id:<id> {pos_x:<val>, pos_y:<val>, pos_z:<val>}`
+  * Response - `{device_id:<id>, pos_x:<val>, pos_y:<val>, pos_z:<val>}`
 
     #### Example
 
