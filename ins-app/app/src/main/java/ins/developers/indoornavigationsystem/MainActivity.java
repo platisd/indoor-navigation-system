@@ -24,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
     Button getRequestButton;
     EditText employeeSelector;
 
+    private final String serverIp = "http://10.0.2.2";
+    private final String serverPort = ":8050";
+    private final String positionInteface = "/get_device_pos/"; //TO-DO: Change to get_employee_pos
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
                 RequestQueue queue = Volley.newRequestQueue(getApplicationContext());
                 String selectedEmployee = employeeSelector.getText().toString();
                 String employeeId = selectedEmployee.length() != 0 ? selectedEmployee : "1"; // Default employee id
-                String url ="http://10.0.2.2:8050/get_device_pos/" + employeeId; //TO-DO: Change to get_employee_pos
+                String url = serverIp + serverPort + positionInteface + employeeId;
 
                 // Request a string response from the provided URL.
                 JsonObjectRequest stringRequest = new JsonObjectRequest(Request.Method.GET, url,
