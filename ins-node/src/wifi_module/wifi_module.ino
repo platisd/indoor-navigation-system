@@ -2,6 +2,7 @@
 #include <math.h>
 #include <vector>
 #include <utility>
+#include <set>
 #include <ESP8266WiFi.h>
 #include "wifi_credentials.h"
 
@@ -36,7 +37,9 @@ std::vector<std::pair <String, int32_t>> getDatapoints() {
   // Scan the surrounding networks and get how many were found
   auto networksFound = wifi.scanNetworks();
   for (auto i = 0; i < networksFound; ++i) {
-    if (wifi.SSID(i) == positioningSSID) {
+    // Check if some of the networks should be used for positioning
+    bool validNetwork = positioningNetworks.find(wifi.SSID(i)) != positioningNetworks.end();
+    if (validNetwork) {
       datapoints.push_back(getNetworkContext(i));
     }
   }
