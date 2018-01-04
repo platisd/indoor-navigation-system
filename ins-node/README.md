@@ -4,7 +4,7 @@ The INS-node is the device that will allow us to pinpoint the location of our co
 ## Setup your IDE
 Follow the instructions found [here](https://wiki.wemos.cc/tutorials:get_started:get_started_in_arduino#using_git_version) to setup your Arduino IDE and enable it to compile and upload sketches for Wemos Mini D1.
 
-To be able to compile for the ATtiny, please follow the instructions [here](http://highlowtech.org/?p=1695).
+To be able to compile for the ATtiny, please follow the instructions [here](https://github.com/SpenceKonde/ATTinyCore/blob/master/Installation.md).
 
 ## Power Controller :left_right_arrow: WiFi Module interaction
 The Power Controller MCU is in charge of managing when the WiFi module is to be turned on. That being said, the WiFi module occasionally has some saying on what needs to be done.
