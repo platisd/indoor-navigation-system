@@ -141,7 +141,8 @@ TEST_F(WifiModuleFixture, getDatapoints_whenSSIDMatch_willReturnValid)
         EXPECT_CALL(*esp8266Mock, SSID(_))
             .Times(networksFound - accessPointsFound)
             .WillRepeatedly(Return("SomeOtherSSID"));
-        EXPECT_CALL(*esp8266Mock, SSID(_)).Times(accessPointsFound).WillRepeatedly(Return(positioningSSID));
+        // Return one of the SSID's used for positioning
+        EXPECT_CALL(*esp8266Mock, SSID(_)).Times(accessPointsFound).WillRepeatedly(Return(*positioningNetworks.begin()));
     }
     EXPECT_CALL(*esp8266Mock, BSSIDstr(_)).WillOnce(Return(expectedMAC[0])).WillOnce(Return(expectedMAC[1]));
     EXPECT_CALL(*esp8266Mock, RSSI(_)).WillOnce(Return(expectedRSSI[0])).WillOnce(Return(expectedRSSI[1]));
@@ -238,7 +239,8 @@ TEST_F(WifiModuleFixture, loop_whenDatapointsFound_willTransmit)
         EXPECT_CALL(*esp8266Mock, SSID(_))
             .Times(networksFound - accessPointsFound)
             .WillRepeatedly(Return("SomeOtherSSID"));
-        EXPECT_CALL(*esp8266Mock, SSID(_)).Times(accessPointsFound).WillRepeatedly(Return(positioningSSID));
+        // Return one of the SSID's used for positioning
+        EXPECT_CALL(*esp8266Mock, SSID(_)).Times(accessPointsFound).WillRepeatedly(Return(*positioningNetworks.begin()));
     }
     EXPECT_CALL(*esp8266Mock, BSSIDstr(_)).WillOnce(Return(expectedMAC[0])).WillOnce(Return(expectedMAC[1]));
     EXPECT_CALL(*esp8266Mock, RSSI(_)).WillOnce(Return(expectedRSSI[0])).WillOnce(Return(expectedRSSI[1]));
@@ -271,7 +273,8 @@ TEST_F(WifiModuleFixture, loop_whenTransmissionFails_willStopTransmitting)
         EXPECT_CALL(*esp8266Mock, SSID(_))
             .Times(networksFound - accessPointsFound)
             .WillRepeatedly(Return("SomeOtherSSID"));
-        EXPECT_CALL(*esp8266Mock, SSID(_)).Times(accessPointsFound).WillRepeatedly(Return(positioningSSID));
+        // Return one of the SSID's used for positioning
+        EXPECT_CALL(*esp8266Mock, SSID(_)).Times(accessPointsFound).WillRepeatedly(Return(*positioningNetworks.begin()));
     }
     EXPECT_CALL(*esp8266Mock, BSSIDstr(_)).WillOnce(Return(expectedMAC[0])).WillOnce(Return(expectedMAC[1]));
     EXPECT_CALL(*esp8266Mock, RSSI(_)).WillOnce(Return(expectedRSSI[0])).WillOnce(Return(expectedRSSI[1]));

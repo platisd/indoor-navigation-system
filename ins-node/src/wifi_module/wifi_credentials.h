@@ -9,7 +9,7 @@
 
 const char internetSSID[] = "SSID to connect";
 const char password[] = "yourP4sSw0rD";
-String positioningSSID = "SSID for positioning";
+std::set<String> positioningNetworks = {"SSID-a", "SSID-b"};
 const uint16_t HTTP_PORT = 8050; // ins-server port number
 const char SERVER_IP[] = "192.168.0.2"; // ins-server IP address
 
