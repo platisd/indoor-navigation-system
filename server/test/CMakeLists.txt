@@ -85,7 +85,7 @@ add_executable(test_localization
 )
 target_link_libraries(test_localization  gtest gmock_main)
 
-set(GTEST_RUN_FLAGS --gtest_color=yes --gtest_repeat=20 --gtest_shuffle CACHE STRING "Flags passed to GTest")
+set(GTEST_RUN_FLAGS --gtest_color=yes CACHE STRING "Flags passed to GTest")
 add_test(INS_SERVICE_TEST test_ins_service ${GTEST_RUN_FLAGS})
 add_test(DATA_STORE_TEST test_data_store ${GTEST_RUN_FLAGS})
 add_test(LOCALIZATION_TEST test_localization ${GTEST_RUN_FLAGS})
