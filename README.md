@@ -3,7 +3,7 @@
 [WIP] An indoor navigation system that guides you to the desk of your colleagues.
 
 ## What?
-INS is a navigation system that utilizes a fleet of portable embedded devices, which have the ability to provide positioning information about themselves, to guide its user towards the desk of an employee or a colleague. The main scenario begins by searching for an employee on a mobile client. Then the system provides information regarding the whereabouts of the said employee's desk as well as navigational instructions on how to reach it.
+INS is a navigation system that utilizes a fleet of portable embedded devices, which can be located, to guide its user towards the desk of an employee or a colleague. The main scenario begins by searching for an employee on a mobile client. Then the system provides information regarding the whereabouts of the said employee's desk as well as navigational instructions on how to reach it.
 
 The system does not intend to monitor individuals, but merely broadcast their currently designated workspace. The tracking nodes are not meant to be constantly carried along, but placed on the desk where someone is working on and forgotten until their owner changes desk.
 
