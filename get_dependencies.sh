@@ -7,8 +7,8 @@ cd "${0%/*}"
 # Install SQLite3
 sudo apt-get install sqlite3 libsqlite3-dev -y
 # Install Pistache
-git clone https://github.com/oktal/pistache.git
-cd pistache
+git clone https://github.com/oktal/pistache.git pistache_repo
+cd pistache_repo
 mkdir build && cd build
 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 make

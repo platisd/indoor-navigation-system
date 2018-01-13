@@ -8,5 +8,5 @@ build/
 .vscode/
 *.db
 coverage.info
-pistache/
+pistache_repo/
 coverage-reports/

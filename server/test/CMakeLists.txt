@@ -67,7 +67,7 @@ add_executable(test_ins_service
 
     suite_ins_service.cpp
 )
-target_link_libraries(test_ins_service gtest gmock_main pistache.a sqlite3.a dl )
+target_link_libraries(test_ins_service gtest gmock_main sqlite3.a dl )
 
 # test DataStore class
 add_executable(test_data_store
