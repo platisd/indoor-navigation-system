@@ -3,6 +3,14 @@
 //
 
 #include "ins_service.hpp"
+#include <signal.h>
+
+volatile sig_atomic_t is_server_running = 1;
+
+void kill_server(int sig)
+{
+    is_server_running = 0;
+}
 
 int main(int argc, char* argv[])
 {
@@ -28,6 +36,17 @@ int main(int argc, char* argv[])
 
     ins_service::IndoorNavigationService ins;
     ins.Init(addr, thread_count);
+
+    // Register abort & terminate signals respectively
+    signal(SIGINT, kill_server);
+    signal(SIGTERM, kill_server);
+
+    // start server
     ins.Start();
+
+    while (is_server_running)
+        sleep(1);
+
+    // shutdown server
     ins.Shutdown();
 }
