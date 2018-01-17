@@ -3,7 +3,7 @@
 //
 
 #include "ins_service.hpp"
-#include <signal.h>
+#include <csignal>
 
 volatile sig_atomic_t is_server_running = 1;
 
@@ -38,8 +38,8 @@ int main(int argc, char* argv[])
     ins.Init(addr, thread_count);
 
     // Register abort & terminate signals respectively
-    signal(SIGINT, kill_server);
-    signal(SIGTERM, kill_server);
+    std::signal(SIGINT, kill_server);
+    std::signal(SIGTERM, kill_server);
 
     // start server
     ins.Start();
