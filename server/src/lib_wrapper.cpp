@@ -15,11 +15,11 @@ void HttpEndpointSetHandler(std::shared_ptr<Pistache::Http::Endpoint> http_end_p
 
 void HttpEndpointServe(std::shared_ptr<Pistache::Http::Endpoint> http_end_point)
 {
-    http_end_point->serve();
+    http_end_point->serveThreaded();
 }
 
 void HttpEndpointShutdown(std::shared_ptr<Pistache::Http::Endpoint> http_end_point)
 {
     http_end_point->shutdown();
 }
-}
+} //!ins_service
