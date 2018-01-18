@@ -43,6 +43,8 @@ addons:
 
 notifications:
     email: false
+    slack:
+        secure: K8YEjObJ2McjnXPDDoCsNiTSXoYxLDKd4Y6VGUy+4MxrDwo3mD/xYEXaCeySIR7L3mAkR2zWY/eHl6CWucePk/Q4ZN4xfltRDQ+04CgB/6mJsFcdQ+4mtZj3dMAWaCb5i+MwzT6QNdjJ6lV++uZB+g2NXbOHyTNf6hblUzvzeeResVYPP2G8jD1m7PNs7+hxt0lk7eclIuOeWOWp66NDpDKOgddF/EwOI5AeFW/knfUA4bFvQ9aowSMhKSZrZsxHby3D7dlbE3cjK2F1MI2PXRz4tj82hp2hxDivACOIHr+P+v4XdvSNbaeMj6vbgcgUiBqKbkA03t0pH5vcRND1Dm6uznOi4iVMOzCPCkK04eM3NN6xHhQ4OC9MB2P6JIL+0IiXZ7wEx+fQThlgof+KlXiwQTwjZR3THH+HJo4SX3oP2sFyymvl0YV57Oq8CG6o2V229PZn1ZvjOaiFnQseKR5aIRUZ7DTmUyW2LDH3JXdh/IhMSw/1BPqDvdhEtBf1fqvR/limy1NGZg3b3dovDLXti742P6In3PbCMQNCBEom/g7OxP/hC9ckK6xpKwFpB3NyNjWU3gHXzXDMugNlg3n8DgUSPuIBalBEzPhUMZXIqN00eR2lTfphEl2lLZvZaTAuTvQDpfXMl+U1kCVrFlEkL1Hlew9ZnIocSQrOe0o=
 
 before_script:
     - android list targets
