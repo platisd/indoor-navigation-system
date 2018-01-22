@@ -173,7 +173,7 @@ void IndoorNavigationService::GetDevicePosition(const Pistache::Rest::Request& r
 
     std::string device_id = request.param(":device_id").as<std::string>();
 
-    Position pos;
+    Position pos{};
     if (data_store_->GetPosition(device_id, QueryT::DEVICE, pos))
     {
         response.send(Pistache::Http::Code::Ok,
@@ -198,7 +198,7 @@ void IndoorNavigationService::GetEmployeePosition(const Pistache::Rest::Request&
 
     std::string employee_id = request.param(":employee_id").as<std::string>();
 
-    Position pos;
+    Position pos{};
     if (data_store_->GetPosition(employee_id, QueryT::EMPLOYEE, pos))
     {
         response.send(Pistache::Http::Code::Ok,
@@ -229,7 +229,7 @@ void IndoorNavigationService::HandleReady(const Pistache::Rest::Request& request
 void IndoorNavigationService::Auth(const Pistache::Rest::Request& request, Pistache::Http::ResponseWriter response)
 {
     console_->debug("+ IndoorNavigationService::Auth");
-    // TODO
+    // TODO(samueli): 
     PrintCookies(request);
     response.cookies().add(Pistache::Http::Cookie("lang", "en-US"));
     response.send(Pistache::Http::Code::Ok);

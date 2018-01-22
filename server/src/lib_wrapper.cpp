@@ -3,23 +3,23 @@
 namespace ins_service
 {
 
-void HttpEndpointInit(std::shared_ptr<Pistache::Http::Endpoint> http_end_point, Pistache::Http::Endpoint::Options opts)
+void HttpEndpointInit(const std::shared_ptr<Pistache::Http::Endpoint>& http_end_point, Pistache::Http::Endpoint::Options opts)
 {
     http_end_point->init(opts);
 }
 
-void HttpEndpointSetHandler(std::shared_ptr<Pistache::Http::Endpoint> http_end_point, Pistache::Rest::Router& router)
+void HttpEndpointSetHandler(const std::shared_ptr<Pistache::Http::Endpoint>& http_end_point, Pistache::Rest::Router& router)
 {
     http_end_point->setHandler(router.handler());
 }
 
-void HttpEndpointServe(std::shared_ptr<Pistache::Http::Endpoint> http_end_point)
+void HttpEndpointServe(const std::shared_ptr<Pistache::Http::Endpoint>& http_end_point)
 {
     http_end_point->serveThreaded();
 }
 
-void HttpEndpointShutdown(std::shared_ptr<Pistache::Http::Endpoint> http_end_point)
+void HttpEndpointShutdown(const std::shared_ptr<Pistache::Http::Endpoint>& http_end_point)
 {
     http_end_point->shutdown();
 }
-} //!ins_service
+}  // namespace ins_service

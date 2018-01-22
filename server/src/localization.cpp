@@ -16,4 +16,4 @@ Position Localization::ProcessRSSIDataSet(const std::string& device_id)
     return pos;
 }
 
-} // namespace !ins_service
+}  // namespace ins_service

@@ -41,9 +41,9 @@ public:
 
     bool AssignDeviceToEmployee(const std::string& device_id, const std::string& employee_id);
 
-    bool InsertRSSIReadings(const std::string& device_id, std::vector<AccessPointRssiPair> accesspoint_rssi_pair_list);
+    bool InsertRSSIReadings(const std::string& device_id, std::vector<AccessPointRssiPair> accesspoint_rssi_list);
 
-    bool GetPosition(const std::string& id, QueryT queryby, Position& pos);
+    bool GetPosition(const std::string& id, QueryT query_by, Position& pos);
 
     bool CreateDeviceTable(const std::string& device_id);
 
@@ -53,7 +53,7 @@ public:
 
     std::vector<int32_t> GetRSSISeriesData(const std::string& device_id, AccessPoint access_point);
 
-    std::vector<AccessPointRssiListPair> GetRSSISeriesData(const std::string&       device_id,
+    std::vector<AccessPointRssiListPair> GetRSSISeriesData(const std::string&       dev,
                                                            std::vector<AccessPoint> access_points);
 
 private:

@@ -9,6 +9,7 @@ volatile sig_atomic_t is_server_running = 1;
 
 void kill_server(int sig)
 {
+    (void)sig;
     is_server_running = 0;
 }
 
@@ -24,7 +25,9 @@ int main(int argc, char* argv[])
         port = static_cast<uint16_t>(std::stol(argv[1]));
 
         if (argc == 3)
+        {
             thread_count = static_cast<int>(std::stol(argv[2]));
+        }
     }
 
     Pistache::Address addr(Pistache::Ipv4::any(), port);
@@ -44,8 +47,10 @@ int main(int argc, char* argv[])
     // start server
     ins.Start();
 
-    while (is_server_running)
+    while (is_server_running == 1)
+    {
         sleep(1);
+    }
 
     // shutdown server
     ins.Shutdown();

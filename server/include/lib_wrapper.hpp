@@ -8,13 +8,13 @@
 namespace ins_service
 {
 
-void HttpEndpointInit(std::shared_ptr<Pistache::Http::Endpoint> http_end_point, Pistache::Http::Endpoint::Options opts);
+void HttpEndpointInit(const std::shared_ptr<Pistache::Http::Endpoint>& http_end_point, Pistache::Http::Endpoint::Options opts);
 
-void HttpEndpointSetHandler(std::shared_ptr<Pistache::Http::Endpoint> http_end_point, Pistache::Rest::Router& router);
+void HttpEndpointSetHandler(const std::shared_ptr<Pistache::Http::Endpoint>& http_end_point, Pistache::Rest::Router& router);
 
-void HttpEndpointServe(std::shared_ptr<Pistache::Http::Endpoint> http_end_point);
+void HttpEndpointServe(const std::shared_ptr<Pistache::Http::Endpoint>& http_end_point);
 
-void HttpEndpointShutdown(std::shared_ptr<Pistache::Http::Endpoint> http_end_point);
+void HttpEndpointShutdown(const std::shared_ptr<Pistache::Http::Endpoint>& http_end_point);
 }
 
 #endif // !INS_SERVER_INCLUDE_LIB_WRAPPER_HPP

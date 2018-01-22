@@ -26,7 +26,6 @@ void DataStore::Init(const std::string& db_filename)
     }
 
     console_->debug("- DataStore::Init");
-    return;
 }
 
 void DataStore::Close()
@@ -161,17 +160,21 @@ bool DataStore::GetPosition(const std::string& id, QueryT query_by, Position& po
     std::string sql;
 
     if (query_by == QueryT::DEVICE)
+    {
         sql = "SELECT pos_x, pos_y, pos_z from locations WHERE device_id=" + id;
+    }
     else if (query_by == QueryT::EMPLOYEE)
+    {
         sql = "SELECT pos_x, pos_y, pos_z from locations WHERE employee_id='" + id + "'";
+    }
     else
     {
         console_->error("Invalid Query. Device or Employee is expected");
         return false;
     }
     sqlite3_stmt* selectStmt;
-    sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
-    while (1)
+    sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, nullptr);
+    while (true)
     {
         int state = sqlite3_step(selectStmt);
         if (state == SQLITE_ROW)
@@ -206,18 +209,15 @@ bool DataStore::RunQuery(const std::string& sql)
 
     std::lock_guard<std::mutex> guard(database_lock_);
     char*                       error_msg;
-    auto                        result = sqlite3_exec(database_, sql.c_str(), DbCallback, 0, &error_msg);
+    auto                        result = sqlite3_exec(database_, sql.c_str(), DbCallback, nullptr, &error_msg);
     if (result != SQLITE_OK)
     {
         console_->error("SQL error: {0}", error_msg);
         sqlite3_free(error_msg);
         return false;
     }
-    else
-    {
-        console_->info("SQL executed successfully");
-        return true;
-    }
+    console_->info("SQL executed successfully");
+    return true;
 }
 
 int DataStore::DbCallback(void* not_used, int argc, char** argv, char** azColName)
@@ -225,11 +225,13 @@ int DataStore::DbCallback(void* not_used, int argc, char** argv, char** azColNam
     (void)not_used;
     auto logger = spdlog::get(LOGGER_NAME);
     if (logger == nullptr)
+    {
         logger = spdlog::stdout_logger_mt(LOGGER_NAME);
+    }
     logger->debug("+ DataStore::DbCallback");
     for (int i = 0; i < argc; i++)
     {
-        logger->info("{0} = {1}", azColName[i], argv[i] ? argv[i] : "NULL");
+        logger->info("{0} = {1}", azColName[i], argv[i] != nullptr ? argv[i] : "NULL");
     }
     logger->debug("- DataStore::DbCallback");
     return 0;
@@ -243,14 +245,14 @@ std::vector<AccessPoint> DataStore::GetDistinctAccessPoints(const std::string& d
     std::string              sql = "SELECT DISTINCT mac_addr FROM  dev_" + device_id + ";";
 
     sqlite3_stmt* selectStmt;
-    sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
-    while (1)
+    sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, nullptr);
+    while (true)
     {
         int state = sqlite3_step(selectStmt);
         if (state == SQLITE_ROW)
         {
-            AccessPoint ap(reinterpret_cast<const char*>(sqlite3_column_text(selectStmt, 0)));
-            access_points.push_back(ap);
+            std::basic_string <unsigned char> res = sqlite3_column_text(selectStmt, 0);
+            access_points.emplace_back(AccessPoint(std::string(res.begin(), res.end())));
         }
         else if (state == SQLITE_DONE)
         {
@@ -272,11 +274,11 @@ std::vector<int32_t> DataStore::GetRSSISeriesData(const std::string& device_id, 
 {
     console_->debug(" + DataStore::GetRSSISeriesData");
     std::vector<int32_t> rssi_list;
-    std::string          sql = "SELECT rssi FROM dev_" + device_id + " where mac_addr ='" + access_point.mac_addr + "';";
-    sqlite3_stmt*        selectStmt;
-    sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
+    std::string   sql = "SELECT rssi FROM dev_" + device_id + " where mac_addr ='" + access_point.mac_addr + "';";
+    sqlite3_stmt* selectStmt;
+    sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, nullptr);
 
-    while (1)
+    while (true)
     {
         int state = sqlite3_step(selectStmt);
         if (state == SQLITE_ROW)
@@ -300,7 +302,7 @@ std::vector<int32_t> DataStore::GetRSSISeriesData(const std::string& device_id, 
 }
 
 std::vector<AccessPointRssiListPair> DataStore::GetRSSISeriesData(const std::string&       dev,
-                                                              std::vector<AccessPoint> access_points)
+                                                                  std::vector<AccessPoint> access_points)
 {
     console_->debug(" + DataStore::GetRSSISeriesData");
 
