@@ -38,9 +38,8 @@ addons:
       - llvm-toolchain-precise-3.8
     packages:
       - g++-6
-      - clang-4.0
+      - clang-3.8
       - lcov
-      - cmake
 
 notifications:
     email: false
@@ -59,9 +58,12 @@ before_script:
 before_install:
     - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2"
     - echo yes | sdkmanager "extras;m2repository;com;android;support;constraint;constraint-layout-solver;1.0.2"
+    - sudo apt-add-repository "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-4.0 main"
+    - sudo apt-get update -qq
 
 # Install project dependencies
 install:
+    - sudo apt-get install --allow-unauthenticated -qq clang++-4.0
     - bash get_dependencies.sh
 
 # Build the project
