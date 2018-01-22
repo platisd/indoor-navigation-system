@@ -63,7 +63,7 @@ before_install:
 
 # Install project dependencies
 install:
-    - sudo apt-get install --allow-unauthenticated -qq clang++-4.0
+    - sudo apt-get install --allow-unauthenticated -qq clang++-4.0 clang-tidy-4.0
     - bash get_dependencies.sh
 
 # Build the project
