@@ -388,9 +388,9 @@ TEST_F(DataStoreFixture, GetRSSISeriesData_WillReturnRssiList)
         expected_list3.push_back((i * 3) + 100);
     }
 
-    EXPECT_EQ(expected_list1, data_store_->GetRSSISeriesData(device_id, ap1));
-    EXPECT_EQ(expected_list2, data_store_->GetRSSISeriesData(device_id, ap2));
-    EXPECT_EQ(expected_list3, data_store_->GetRSSISeriesData(device_id, ap3));
+    EXPECT_EQ(expected_list1, data_store_->GetRSSISeriesFromDatabase(device_id, ap1));
+    EXPECT_EQ(expected_list2, data_store_->GetRSSISeriesFromDatabase(device_id, ap2));
+    EXPECT_EQ(expected_list3, data_store_->GetRSSISeriesFromDatabase(device_id, ap3));
 
     data_store_->Close();
     std::remove("db");

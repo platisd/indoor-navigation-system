@@ -13,6 +13,11 @@
 #include "data_store.hpp"
 #include "localization.hpp"
 #include "types.hpp"
+extern "C"
+{
+#include <WifiNode.h>
+#include <WifiAccessPointLocalConfig.h>
+}
 
 namespace ins_service
 {

@@ -5,6 +5,9 @@
 #include "ins_service.hpp"
 #include <sstream>
 
+
+extern insNode_t * insNoderoot;
+
 namespace ins_service
 {
 
@@ -22,6 +25,8 @@ int IndoorNavigationService::Init(Pistache::Address addr, int thread_count)
         = Pistache::Http::Endpoint::options().threads(thread_count).flags(Pistache::Tcp::Options::InstallSignalHandler);
 
     HttpEndpointInit(http_end_point_, opts);
+
+    lcfg_initialize("WifiNodeLCFG.xml");
 
     SetupRoutes();
 
@@ -127,6 +132,8 @@ void IndoorNavigationService::SetReceivedSignalStrengths(const Pistache::Rest::R
         response.send(Pistache::Http::Code::Internal_Server_Error, "{result:error}");
         return;
     }
+
+    (void)createInsNodeListDevice((const char *)device_id.c_str());
 
     console_->debug("- IndoorNavigationService::SetReceivedSignalStrengths");
 

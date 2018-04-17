@@ -51,17 +51,17 @@ public:
 
     std::vector<AccessPoint> GetDistinctAccessPoints(const std::string& device_id);
 
-    std::vector<int32_t> GetRSSISeriesData(const std::string& device_id, AccessPoint access_point);
+    std::vector<int32_t> GetRSSISeriesFromDatabase(const std::string& device_id, AccessPoint access_point);
 
     std::vector<AccessPointRssiListPair> GetRSSISeriesData(const std::string&       device_id,
                                                            std::vector<AccessPoint> access_points);
+
+    bool RunQuery(const std::string& sql);
 
 private:
     bool CreateLocationTable();
 
     bool CreateAccessPointTable();
-
-    bool RunQuery(const std::string& sql);
 
     static int DbCallback(void* not_used, int argc, char** argv, char** azColName);
 
