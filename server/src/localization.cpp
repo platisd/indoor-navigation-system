@@ -38,7 +38,7 @@ insNode_t * Localization::FillNodesDataPoints(const char * device_id, std::vecto
 		insNode =  createInsNodeListDevice(device_id); // check to make sure nodeblock exits!!
 	}
 
-	std::string msg = "Number of distinct mac addresses received from device: " + std::string(device_id) + " is: " + std::to_string(mac_rssi_list.size());
+	std::string msg = "Number of distinct mac addresses received from device: " + std::string(device_id) + " is: " + std::to_string(mac_rssi_list.size()) + " with: " +  std::to_string(mac_rssi_list[0].second.size()) + " data points.";
 	console_->debug(msg);
 
 	for (int i = 0; i < mac_rssi_list.size(); ++i)

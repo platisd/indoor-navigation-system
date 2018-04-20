@@ -78,11 +78,14 @@ void computePLProcess(insNode_t * insNodeBlock)
 
 void kalmanProcess(wifiParams_t * insNodeBlockWifi)
 {
-	insNodeBlockWifi->wifiInitParams.kalmanGain          = insNodeBlockWifi->wifiInitParams.initialErrorEstimate / (insNodeBlockWifi->wifiInitParams.initialErrorEstimate + (float)INITIAL_ERROR_MEASUREMENT);
-	insNodeBlockWifi->estReceivedPower      +=  (insNodeBlockWifi->wifiInitParams.kalmanGain * (insNodeBlockWifi->rssisampledata[insNodeBlockWifi->noProcessedSampleData] - insNodeBlockWifi->estReceivedPower));
-	insNodeBlockWifi->wifiInitParams.initialErrorEstimate = (1 - insNodeBlockWifi->wifiInitParams.kalmanGain) * insNodeBlockWifi->wifiInitParams.initialErrorEstimate;
+	if (insNodeBlockWifi->noProcessedSampleData < SAMPLERSSIDATA)
+	{
+		insNodeBlockWifi->wifiInitParams.kalmanGain          = insNodeBlockWifi->wifiInitParams.initialErrorEstimate / (insNodeBlockWifi->wifiInitParams.initialErrorEstimate + (float)INITIAL_ERROR_MEASUREMENT);
+		insNodeBlockWifi->estReceivedPower      +=  (insNodeBlockWifi->wifiInitParams.kalmanGain * (insNodeBlockWifi->rssisampledata[insNodeBlockWifi->noProcessedSampleData] - insNodeBlockWifi->estReceivedPower));
+		insNodeBlockWifi->wifiInitParams.initialErrorEstimate = (1 - insNodeBlockWifi->wifiInitParams.kalmanGain) * insNodeBlockWifi->wifiInitParams.initialErrorEstimate;
 
-	insNodeBlockWifi->noProcessedSampleData++;
+		insNodeBlockWifi->noProcessedSampleData++;
+	}
 }
 
 void rssi2Power(insNode_t * insNodeBlock)
@@ -101,15 +104,14 @@ void power2distance(insNode_t * insNodeBlock)
 {
 	uint32_t j = 0;
 
-	for (wifiParams_t * wifi = insNodeBlock->wifiAccessPointNode; wifi->macAddress ; wifi++ )
+	for (j = 0; j < MAXIMUM_NUMBER_NODES; j++)
 	{
-		wifi->pathLoss.nFactor = (wifi->pathLoss.powerdo - wifi->pathLoss.powerd) / (float)(10 * (log10(wifi->pathLoss.dDistance / wifi->pathLoss.doDistance)));
+		insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor = (insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd) / (float)(10 * (log10(insNodeBlock->wifiAccessPointNode[j].pathLoss.dDistance / insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance)));
 
-		wifi->distance = (wifi->pathLoss.doDistance * powf(  10, ((float)(wifi->pathLoss.powerdo - wifi->estReceivedPower ))/((float) (10 * wifi->pathLoss.nFactor))  )  ); // 10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))
+		insNodeBlock->wifiAccessPointNode[j].distance = (insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance * powf(  10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].estReceivedPower ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))  )  ); // 10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))
 
-		//printf("[%s] wifiMacaddress: %s, wifidistance:: %f  Estimated power: %f, d0: %f , powerdo: %f, powerd: %f, nfactor: %f\n",__func__,insNodeBlock->wifiAccessPointNode[j].macAddress,insNodeBlock->wifiAccessPointNode[j].distance,insNodeBlock->wifiAccessPointNode[j].estReceivedPower,insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd,insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor);
+		printf("[%s] wifiMacaddress: %s, wifidistance:: %f  Estimated power: %f, d0: %f , powerdo: %f, powerd: %f, nfactor: %f\n",__func__,insNodeBlock->wifiAccessPointNode[j].macAddress,insNodeBlock->wifiAccessPointNode[j].distance,insNodeBlock->wifiAccessPointNode[j].estReceivedPower,insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd,insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor);
 	}
-
 }
 
 void orderRSSIAscend(insNode_t * insNodeBlock)
