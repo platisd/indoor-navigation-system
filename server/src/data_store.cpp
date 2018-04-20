@@ -304,7 +304,7 @@ std::vector<int32_t> DataStore::GetRSSISeriesFromDatabase(const std::string& dev
 std::vector<AccessPointRssiListPair> DataStore::GetRSSISeriesData(const std::string&       dev,
                                                               std::vector<AccessPoint> access_points)
 {
-    console_->debug(" + DataStore::GetRSSISeriesData");
+    console_->debug("+ DataStore::GetRSSISeriesData");
 
     std::vector<AccessPointRssiListPair> accesspoint_rssi_list_pair;
     for (auto const& access_point : access_points)
@@ -312,7 +312,7 @@ std::vector<AccessPointRssiListPair> DataStore::GetRSSISeriesData(const std::str
         accesspoint_rssi_list_pair.emplace_back(std::make_pair(access_point, GetRSSISeriesFromDatabase(dev, access_point)));
     }
 
-    console_->debug(" - DataStore::GetRSSISeriesData");
+    console_->debug("- DataStore::GetRSSISeriesData");
     return accesspoint_rssi_list_pair;
 }
 

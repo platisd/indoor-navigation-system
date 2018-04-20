@@ -101,16 +101,15 @@ void power2distance(insNode_t * insNodeBlock)
 {
 	uint32_t j = 0;
 
-	for (j = 0; j < MAXIMUM_NUMBER_NODES; j++)
+	for (wifiParams_t * wifi = insNodeBlock->wifiAccessPointNode; wifi->macAddress ; wifi++ )
 	{
-		insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor = (insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd) / (float)(10 * (log10(insNodeBlock->wifiAccessPointNode[j].pathLoss.dDistance / insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance)));
+		wifi->pathLoss.nFactor = (wifi->pathLoss.powerdo - wifi->pathLoss.powerd) / (float)(10 * (log10(wifi->pathLoss.dDistance / wifi->pathLoss.doDistance)));
 
-		insNodeBlock->wifiAccessPointNode[j].distance = (insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance * powf(  10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].estReceivedPower ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))  )  ); // 10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))
+		wifi->distance = (wifi->pathLoss.doDistance * powf(  10, ((float)(wifi->pathLoss.powerdo - wifi->estReceivedPower ))/((float) (10 * wifi->pathLoss.nFactor))  )  ); // 10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))
 
 		//printf("[%s] wifiMacaddress: %s, wifidistance:: %f  Estimated power: %f, d0: %f , powerdo: %f, powerd: %f, nfactor: %f\n",__func__,insNodeBlock->wifiAccessPointNode[j].macAddress,insNodeBlock->wifiAccessPointNode[j].distance,insNodeBlock->wifiAccessPointNode[j].estReceivedPower,insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd,insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor);
 	}
 
-	//return (insNodeBlock->wifiAccessPointNode[j].distance);  //return distance in meters
 }
 
 void orderRSSIAscend(insNode_t * insNodeBlock)
@@ -244,7 +243,7 @@ uint32_t loadLCFGParams(wifiParams_t * wifiNodeBlock)  // fill macadresses befor
 
 	findMacPath(buffParams,wifiNodeBlock->macAddress);
 
-	if (buff != NULL)
+	if (buff != NULL) //change check
 	{
 		for (k = 0; k < 3 ; k++)
 		{
@@ -306,7 +305,7 @@ void findMacPath(char * buff, const char * macaddress)
 			}
 		}
 	}
-	printf("No path found for wifiNode:: %s",macaddress);
+	printf("[%s] No path found in Local Config for wifiNode:: %s \n",__func__,macaddress);
 	buff = NULL;
 }
 

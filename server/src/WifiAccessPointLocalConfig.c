@@ -1,27 +1,33 @@
 #include <WifiAccessPointLocalConfig.h>
+#include <ctype.h>
 
-static xmlNode * findNode(const char *path)
+void print_element_names(xmlNode * a_node);
+
+static xmlNode * findNode(const char *path) //find xmlnode in memory corresping to arg path
 {
-   xmlNode *curr = firstRootChild;
+   xmlNode *curr = firstRootChild;   //defined during lcfg_init as the first rootnode child
 
-   char *pathName = strstr(path,"/WifiNodes/");
+   char *pathName = strstr(path,"/WifiNodes/");  //needle-hay search for /WifiNodes/ in path. pathName points to first position of path that corresponds to needle, /WifiNodes/
 
-   if(pathName == NULL)
+   if(pathName == NULL) // check to make sure path provided is valid per system's xml
    {
       return NULL;
    }
+
+   //print_element_names(curr->parent);
 
    pathName += strlen("/WifiNodes/");
 
    while((curr != NULL)  && (pathName != NULL))
    {
+
       curr = xmlNextElementSibling(curr);
+
       if (curr)
       {
          size_t len = strlen((const char *)curr->name);
          if(!strncmp(pathName,(const char*)curr->name,len))
          {
-
             curr = curr->children;
             pathName = strstr((const char*)pathName,"/");
             if (pathName)
@@ -33,6 +39,19 @@ static xmlNode * findNode(const char *path)
       }
    }
    return curr;
+}
+
+void print_element_names(xmlNode * a_node)
+{
+    xmlNode *cur_node = NULL;
+
+    for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
+        if (cur_node->type == XML_ELEMENT_NODE) {
+            printf("node type: Element, name: %s\n", cur_node->name);
+        }
+
+        print_element_names(cur_node->children);
+    }
 }
 
 int32_t lcfg_getFloatParameter(const char *path,float *value)
@@ -129,7 +148,6 @@ int32_t lcfg_initialize(const char* lcfg_file)
    long delta;
    static xmlNode *root = NULL;
    static xmlDoc * doc = NULL;
-   int32_t  validationResult = (-1);
 
 #ifdef PRELOAD_TO_MEMORY
    struct stat fstatstruct;
@@ -187,11 +205,9 @@ int32_t lcfg_initialize(const char* lcfg_file)
    if (doc != NULL)
    {
 	   printf("[%s] - %s loaded OK !!! \n", __func__, lcfg_file);
-
-      validationResult = 0; //ValidateXml(doc, lcfg_file);
    }
 
-   if ((NULL == doc) || (0 != validationResult))
+   if ((NULL == doc))
    {
 	   printf("[%s] - %s is NOK, No LCFG used!! \n", __func__, lcfg_file);
 
@@ -202,6 +218,7 @@ int32_t lcfg_initialize(const char* lcfg_file)
    printf("[%s] - loading and indexing took %ld ns\n", __func__, delta);
 
    root = xmlDocGetRootElement(doc);
+   //xmlFreeDoc(doc);
 
    if (root == NULL)
    {
