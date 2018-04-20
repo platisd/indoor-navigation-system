@@ -94,18 +94,24 @@ TEST_F(LocalizationFixture, RoundTripLocalizationTest)
 
 	//CHANNEL/INSNODE/PRACTICAL NOISE
 	float noise_power = 0.01;
+	std::vector<AccessPointRssiPair> accesspoint_rssi_list;
 
 	EXPECT_EQ(data_store_->CreateDeviceTable(dev_name),1);
 
+    AccessPoint wifi1(wifi_node_1_ID);
+    AccessPoint wifi2(wifi_node_2_ID);
+    AccessPoint wifi3(wifi_node_3_ID);
+
     for (uint32_t i = 0; i < 10; i++)
     {
-    	std::string sql = "INSERT INTO dev_" + dev_name + " (mac_addr, rssi) VALUES"
-    			"('"+ std::string(wifi_node_1_ID) +"',"+ std::to_string(nodeReceivedPower_wifi1 + (float)(noise_power*rand()/(float)RAND_MAX))+"),('"+ std::string(wifi_node_2_ID) +"',"+ std::to_string(nodeReceivedPower_wifi2 + (float)(noise_power*rand()/(float)RAND_MAX))+")"
-    			",('"+ std::string(wifi_node_3_ID) +"',"+ std::to_string(nodeReceivedPower_wifi3 + (float)(noise_power*rand()/(float)RAND_MAX))+");";
 
-    	data_store_->RunQuery(sql);
-    	//    auto result = sqlite3_exec(database_, sql.c_str(), DbCallback, 0, &error_msg);
+    	accesspoint_rssi_list.push_back(std::make_pair(wifi1, (int)(nodeReceivedPower_wifi1 + (float)(noise_power*rand()/(float)RAND_MAX)) ));
+    	accesspoint_rssi_list.push_back(std::make_pair(wifi2, (int)(nodeReceivedPower_wifi2 + (float)(noise_power*rand()/(float)RAND_MAX)) ));
+    	accesspoint_rssi_list.push_back(std::make_pair(wifi3, (int)(nodeReceivedPower_wifi3 + (float)(noise_power*rand()/(float)RAND_MAX)) ));
+
     }
+
+	data_store_->InsertRSSIReadings(dev_name, accesspoint_rssi_list);
 
     Position pos = localization_.ProcessRSSIDataSet(dev_name);
     data_store_->UpdateDeviceLocation(dev_name, pos);
