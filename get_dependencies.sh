@@ -13,5 +13,7 @@ mkdir build && cd build
 cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
 make
 sudo make install
+
+sudo apt-get install libxml2-dev
 # Go back to the initial directory when you are done
 cd $caller_dir

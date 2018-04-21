@@ -94,10 +94,7 @@ add_executable(test_localization
     ${REPOSITORY_ROOT}/src/WifiAccessPointLocalConfig.c
     ${REPOSITORY_ROOT}/src/localization.cpp
     suite_localization.cpp
-    
-    #
-    #mocks/mock_data_store.hpp
-    #mocks/mock_data_store.cpp
+
 )
 target_link_libraries(test_localization  gtest gmock_main  pistache.a sqlite3.a dl m ${LIBXML2_LIBRARIES})
 

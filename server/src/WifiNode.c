@@ -78,11 +78,14 @@ void computePLProcess(insNode_t * insNodeBlock)
 
 void kalmanProcess(wifiParams_t * insNodeBlockWifi)
 {
-	insNodeBlockWifi->wifiInitParams.kalmanGain          = insNodeBlockWifi->wifiInitParams.initialErrorEstimate / (insNodeBlockWifi->wifiInitParams.initialErrorEstimate + (float)INITIAL_ERROR_MEASUREMENT);
-	insNodeBlockWifi->estReceivedPower      +=  (insNodeBlockWifi->wifiInitParams.kalmanGain * (insNodeBlockWifi->rssisampledata[insNodeBlockWifi->noProcessedSampleData] - insNodeBlockWifi->estReceivedPower));
-	insNodeBlockWifi->wifiInitParams.initialErrorEstimate = (1 - insNodeBlockWifi->wifiInitParams.kalmanGain) * insNodeBlockWifi->wifiInitParams.initialErrorEstimate;
+	if (insNodeBlockWifi->noProcessedSampleData < SAMPLERSSIDATA)
+	{
+		insNodeBlockWifi->wifiInitParams.kalmanGain          = insNodeBlockWifi->wifiInitParams.initialErrorEstimate / (insNodeBlockWifi->wifiInitParams.initialErrorEstimate + (float)INITIAL_ERROR_MEASUREMENT);
+		insNodeBlockWifi->estReceivedPower      +=  (insNodeBlockWifi->wifiInitParams.kalmanGain * (insNodeBlockWifi->rssisampledata[insNodeBlockWifi->noProcessedSampleData] - insNodeBlockWifi->estReceivedPower));
+		insNodeBlockWifi->wifiInitParams.initialErrorEstimate = (1 - insNodeBlockWifi->wifiInitParams.kalmanGain) * insNodeBlockWifi->wifiInitParams.initialErrorEstimate;
 
-	insNodeBlockWifi->noProcessedSampleData++;
+		insNodeBlockWifi->noProcessedSampleData++;
+	}
 }
 
 void rssi2Power(insNode_t * insNodeBlock)
@@ -107,10 +110,8 @@ void power2distance(insNode_t * insNodeBlock)
 
 		insNodeBlock->wifiAccessPointNode[j].distance = (insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance * powf(  10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].estReceivedPower ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))  )  ); // 10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))
 
-		//printf("[%s] wifiMacaddress: %s, wifidistance:: %f  Estimated power: %f, d0: %f , powerdo: %f, powerd: %f, nfactor: %f\n",__func__,insNodeBlock->wifiAccessPointNode[j].macAddress,insNodeBlock->wifiAccessPointNode[j].distance,insNodeBlock->wifiAccessPointNode[j].estReceivedPower,insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd,insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor);
+		printf("[%s] wifiMacaddress: %s, wifidistance:: %f  Estimated power: %f, d0: %f , powerdo: %f, powerd: %f, nfactor: %f\n",__func__,insNodeBlock->wifiAccessPointNode[j].macAddress,insNodeBlock->wifiAccessPointNode[j].distance,insNodeBlock->wifiAccessPointNode[j].estReceivedPower,insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd,insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor);
 	}
-
-	//return (insNodeBlock->wifiAccessPointNode[j].distance);  //return distance in meters
 }
 
 void orderRSSIAscend(insNode_t * insNodeBlock)
@@ -244,7 +245,7 @@ uint32_t loadLCFGParams(wifiParams_t * wifiNodeBlock)  // fill macadresses befor
 
 	findMacPath(buffParams,wifiNodeBlock->macAddress);
 
-	if (buff != NULL)
+	if (buff != NULL) //change check
 	{
 		for (k = 0; k < 3 ; k++)
 		{
@@ -306,7 +307,7 @@ void findMacPath(char * buff, const char * macaddress)
 			}
 		}
 	}
-	printf("No path found for wifiNode:: %s",macaddress);
+	printf("[%s] No path found in Local Config for wifiNode:: %s \n",__func__,macaddress);
 	buff = NULL;
 }
 
