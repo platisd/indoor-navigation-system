@@ -110,7 +110,7 @@ void power2distance(insNode_t * insNodeBlock)
 
 		insNodeBlock->wifiAccessPointNode[j].distance = (insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance * powf(  10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].estReceivedPower ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))  )  ); // 10, ((float)(insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo - insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd ))/((float) (10 * insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor))
 
-		printf("[%s] wifiMacaddress: %s, wifidistance:: %f  Estimated power: %f, d0: %f , powerdo: %f, powerd: %f, nfactor: %f\n",__func__,insNodeBlock->wifiAccessPointNode[j].macAddress,insNodeBlock->wifiAccessPointNode[j].distance,insNodeBlock->wifiAccessPointNode[j].estReceivedPower,insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd,insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor);
+		//printf("[%s] wifiMacaddress: %s, wifidistance:: %f  Estimated power: %f, d0: %f , powerdo: %f, powerd: %f, nfactor: %f\n",__func__,insNodeBlock->wifiAccessPointNode[j].macAddress,insNodeBlock->wifiAccessPointNode[j].distance,insNodeBlock->wifiAccessPointNode[j].estReceivedPower,insNodeBlock->wifiAccessPointNode[j].pathLoss.doDistance,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerdo,insNodeBlock->wifiAccessPointNode[j].pathLoss.powerd,insNodeBlock->wifiAccessPointNode[j].pathLoss.nFactor);
 	}
 }
 
