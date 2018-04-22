@@ -20,7 +20,7 @@ float * GetCartesianPosition(insNode_t * insNodeBlock)
 	delta = 1000000000*(after.tv_sec - before.tv_sec) + after.tv_nsec - before.tv_nsec;
 	printf("[%s] - RSSI processing and positioning took: %ld ns\n", __func__, delta);
 
-       destroyInsNode(insNodeBlock);
+	destroyInsNode(insNodeBlock);
 
 	return insNodeBlock->nodeCartPosition;
 }
@@ -35,8 +35,8 @@ insNode_t *  createInsNodeListDevice(const char * deviceId)
 	{
 		while ((looper->next != NULL) && (strcmp(deviceId,looper->devName)))
 		{
-				looper = looper->next;
-				count++;
+			looper = looper->next;
+			count++;
 		}
 
 		if (strcmp(deviceId,looper->devName))

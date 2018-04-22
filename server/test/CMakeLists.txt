@@ -47,6 +47,7 @@ include_directories(
     ${REPOSITORY_ROOT}/src
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_FIND_ROOT_PATH}/include
+    ${LIBXML2_INCLUDE_DIR}
 )
 
 link_directories(${CMAKE_FIND_ROOT_PATH}/lib)
@@ -64,7 +65,6 @@ add_executable(test_ins_service
     mocks/mock_localization.cpp
     mocks/mock_lib_wrapper.hpp
     mocks/mock_lib_wrapper.cpp
-    mocks/mock_WifiNode.h
     mocks/mock_WifiAccessPointLocalConfig.h
     mocks/mock_WifiNode.c
     mocks/mock_WifiAccessPointLocalConfig.c

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.2)
 project(ins_server)
 
 set(CMAKE_C)
@@ -22,10 +22,9 @@ set(SOURCE_FILES
 include_directories(
     ${CMAKE_FIND_ROOT_PATH}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/external)
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/external
+    ${LIBXML2_INCLUDE_DIR})
 
-link_directories(${CMAKE_CURRENT_SOURCE_DIR}/libxml2)
 
-link_directories(${CMAKE_FIND_ROOT_PATH}/libxml2)
 add_executable(ins_server ${SOURCE_FILES})
 target_link_libraries(ins_server pistache.a sqlite3.a dl m ${LIBXML2_LIBRARIES})

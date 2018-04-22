@@ -26,7 +26,7 @@ protected:
  * TEST: Localize
  * EXPECT: <x,y,z> of dummy node.
 */
-TEST_F(LocalizationFixture, RoundTripLocalizationTest)
+TEST_F(LocalizationFixture, LocalizationTest_WillReturnCorrectNodePositionFromNoiseyWifiRecievedPower)
 {
 	data_store_->Init("db");
 

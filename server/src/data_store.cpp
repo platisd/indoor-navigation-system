@@ -272,7 +272,7 @@ std::vector<AccessPoint> DataStore::GetDistinctAccessPoints(const std::string& d
 
 std::vector<int32_t> DataStore::GetRSSISeriesFromDatabase(const std::string& device_id, AccessPoint access_point)
 {
-    //console_->debug(" + DataStore::GetRSSISeriesDatabase");
+    console_->debug(" + DataStore::GetRSSISeriesDatabase");
     std::vector<int32_t> rssi_list;
     std::string          sql = "SELECT rssi FROM dev_" + device_id + " where mac_addr ='" + access_point.mac_addr + "';";
     sqlite3_stmt*        selectStmt;
@@ -297,7 +297,7 @@ std::vector<int32_t> DataStore::GetRSSISeriesFromDatabase(const std::string& dev
     }
     sqlite3_finalize(selectStmt);
 
-    //console_->debug(" - DataStore::GetRSSISeriesDatabase");
+    console_->debug(" - DataStore::GetRSSISeriesDatabase");
     return rssi_list;
 }
 
