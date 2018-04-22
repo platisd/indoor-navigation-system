@@ -38,6 +38,8 @@ include_directories("${gtest_SOURCE_DIR}/include"
 add_definitions(-DENABLE_TESTS)
 enable_testing()
 
+find_package (LibXml2)
+
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/test_libs/gmock-gtest
     ${CMAKE_CURRENT_SOURCE_DIR}/mocks/
@@ -80,8 +82,6 @@ add_executable(test_data_store
     suite_data_store.cpp
 )
 target_link_libraries(test_data_store gtest gmock_main sqlite3.a dl )
-
-find_package (LibXml2)
 
 # test Localization class
 add_executable(test_localization
