@@ -1,8 +1,6 @@
 #include <WifiAccessPointLocalConfig.h>
 #include <ctype.h>
 
-void print_element_names(xmlNode * a_node);
-
 static xmlNode * findNode(const char *path) //find xmlnode in memory corresping to arg path
 {
    xmlNode *curr = firstRootChild;   //defined during lcfg_init as the first rootnode child
@@ -13,8 +11,6 @@ static xmlNode * findNode(const char *path) //find xmlnode in memory corresping 
    {
       return NULL;
    }
-
-   //print_element_names(curr->parent);
 
    pathName += strlen("/WifiNodes/");
 
@@ -39,19 +35,6 @@ static xmlNode * findNode(const char *path) //find xmlnode in memory corresping 
       }
    }
    return curr;
-}
-
-void print_element_names(xmlNode * a_node)
-{
-    xmlNode *cur_node = NULL;
-
-    for (cur_node = a_node; cur_node; cur_node = cur_node->next) {
-        if (cur_node->type == XML_ELEMENT_NODE) {
-            printf("node type: Element, name: %s\n", cur_node->name);
-        }
-
-        print_element_names(cur_node->children);
-    }
 }
 
 int32_t lcfg_getFloatParameter(const char *path,float *value)
