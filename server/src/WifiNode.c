@@ -335,7 +335,7 @@ insNode_t * findWifiNode(insNode_t * insNoderoot, const char * deviceId)
 insNode_t * destroyInsNode(insNode_t * insNode)
 {
 	int i;
-	//memset(insNode->devName , '0', sizeof(char)*DEV_NAME);
+
 	for ( i = 0; i < MAXIMUM_NUMBER_NODES; ++i)
 	{
 		insNode->wifiAccessPointNode[i].distance = 0.0f;

@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 project(ins_server)
 
-set(CMAKE_C)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
 
 set(CMAKE_CXX_STANDARD 14)
