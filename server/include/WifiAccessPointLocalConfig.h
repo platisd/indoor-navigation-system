@@ -1,3 +1,12 @@
+/*************************************************************************************************************************
+ * 			FILENAME :- WifiAccessPointLocalConfig.h
+ *
+ * Description :- The module contains functions needed to initialize lcfg and collect leave and node parameter values from the local config xml file.
+ *
+ *
+ * Author : Isaac Alex Sackey
+ * Last edited: - 18th July 2018
+ ************************************************************************************************************************/
 #ifndef WIFI_NODE_ACCESS_POINT_LOCAL_CONFIG_H
 #define WIFI_NODE_ACCESS_POINT_LOCAL_CONFIG_H
 

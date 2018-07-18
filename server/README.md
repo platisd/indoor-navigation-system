@@ -20,10 +20,6 @@ The INS server provides a backend RESTful service for INS-node and front-end web
     `http://localhost:9080/set_rssi/5239/23:43:3d:3e:5e:f5/13/5a:4e:44:ff:5a:6e/40`
     `http://localhost:9080/set_rssi/5239/23:43:3d:3e:5e:f5/11.3/5a:4e:44:ff:5a:6e/44.3`
     `http://localhost:9080/set_rssi/5239/23:43:3d:3e:5e:f5/15.6/5a:4e:44:ff:5a:6e/44.4`
-    
-    http://localhost:9080/set_rssi/5239/23:43:3d:3e:5e:f5/-53/23:43:3d:3e:5e:f6/-52/23:43:3d:3e:5e:f7/-20/23:43:3d:3e:5e:f5/-53/23:43:3d:3e:5e:f6/-52/23:43:3d:3e:5e:f7/-20/23:43:3d:3e:5e:f5/-59/23:43:3d:3e:5e:f6/-51/23:43:3d:3e:5e:f7/-22
-     http://localhost:9080/set_rssi/5239/23:43:3d:3e:5e:f5/-43/23:43:3d:3e:5e:f6/-55/23:43:3d:3e:5e:f7/-18
-      http://localhost:9080/set_rssi/5239/23:43:3d:3e:5e:f5/-59/23:43:3d:3e:5e:f6/-51/23:43:3d:3e:5e:f7/-22
 
 * Trigger position calculation for device.
 
@@ -33,7 +29,7 @@ The INS server provides a backend RESTful service for INS-node and front-end web
   * Response - `{result:success}` or `{result:error}`
 
     #### Example
-  * INS-node with device id 1000 triggers device position computation after sending several RSSI readings.
+  * INS-node with device id 5239 triggers device position computation after sending several RSSI readings.
 
     `http://localhost:9080/resolve_pos/5239`
 

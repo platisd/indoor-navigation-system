@@ -1,3 +1,14 @@
+/*************************************************************************************************************************
+ * 			FILENAME :- WifiNode.c
+ *
+ * Description :- The module contains a group of functions to implement a trilateration algorithm with a simple 1D kalman filter
+ * 					and a three circle problem solver.
+ * 					It is expected that the positions of the wifinodes are already in the local config (.xml file). The main function
+ * 					call here is the GetCartesianPosition() function.
+ *
+ * Author : Isaac Alex Sackey
+ * Last edited: - 18th July 2018
+ ************************************************************************************************************************/
 #include <WifiNode.h>
 #include <WifiAccessPointLocalConfig.h>
 
@@ -10,7 +21,7 @@ float * GetCartesianPosition(insNode_t * insNodeBlock)
 	struct timespec before,after;
 	long delta;
 
-	clock_gettime(CLOCK_MONOTONIC_RAW, &before);
+	clock_gettime(CLOCK_MONOTONIC_RAW, &before);  //compute time taken for the entire trilateration process to occur.
 
 	computePLProcess(insNodeBlock);
 
@@ -31,15 +42,15 @@ insNode_t *  createInsNodeListDevice(const char * deviceId)
 
 	insNode_t * looper = insNoderoot , * insNode = NULL;
 
-	if (looper != 0)
+	if (looper != 0)  //if node does not exist :: first time ins node is reporting its values...
 	{
-		while ((looper->next != NULL) && (strcmp(deviceId,looper->devName)))
+		while ((looper->next != NULL) && (strcmp(deviceId,looper->devName)))  //if the device doesn't exists or we are not at the end of the node list, do...
 		{
 			looper = looper->next;
 			count++;
 		}
 
-		if (strcmp(deviceId,looper->devName))
+		if (strcmp(deviceId,looper->devName))  // if previous loop broke because the device did not exist in the nodelist...
 		{
 			looper->next = insNode = (insNode_t *)calloc(1,sizeof(insNode_t));
 			looper = (insNode_t *)looper->next;
@@ -68,7 +79,7 @@ void computePLProcess(insNode_t * insNodeBlock)
 	{
 		for (i = 0; i < insNodeBlock->wifiAccessPointNode[j].noSampleData; i++)
 		{
-			insNodeBlock->filterProcess(&insNodeBlock->wifiAccessPointNode[j]);
+			insNodeBlock->filterProcess(&insNodeBlock->wifiAccessPointNode[j]); //registered callback function for each wifiNode block.
 		}
 	}
 
@@ -80,9 +91,9 @@ void kalmanProcess(wifiParams_t * insNodeBlockWifi)
 {
 	if (insNodeBlockWifi->noProcessedSampleData < SAMPLERSSIDATA)
 	{
-		insNodeBlockWifi->wifiInitParams.kalmanGain          = insNodeBlockWifi->wifiInitParams.initialErrorEstimate / (insNodeBlockWifi->wifiInitParams.initialErrorEstimate + (float)INITIAL_ERROR_MEASUREMENT);
-		insNodeBlockWifi->estReceivedPower      +=  (insNodeBlockWifi->wifiInitParams.kalmanGain * (insNodeBlockWifi->rssisampledata[insNodeBlockWifi->noProcessedSampleData] - insNodeBlockWifi->estReceivedPower));
-		insNodeBlockWifi->wifiInitParams.initialErrorEstimate = (1 - insNodeBlockWifi->wifiInitParams.kalmanGain) * insNodeBlockWifi->wifiInitParams.initialErrorEstimate;
+		insNodeBlockWifi->wifiInitParams.kalmanGain            = insNodeBlockWifi->wifiInitParams.initialErrorEstimate / (insNodeBlockWifi->wifiInitParams.initialErrorEstimate + (float)INITIAL_ERROR_MEASUREMENT);
+		insNodeBlockWifi->estReceivedPower                    += (insNodeBlockWifi->wifiInitParams.kalmanGain * (insNodeBlockWifi->rssisampledata[insNodeBlockWifi->noProcessedSampleData] - insNodeBlockWifi->estReceivedPower));
+		insNodeBlockWifi->wifiInitParams.initialErrorEstimate  = (1 - insNodeBlockWifi->wifiInitParams.kalmanGain) * insNodeBlockWifi->wifiInitParams.initialErrorEstimate;
 
 		insNodeBlockWifi->noProcessedSampleData++;
 	}
@@ -91,7 +102,6 @@ void kalmanProcess(wifiParams_t * insNodeBlockWifi)
 void rssi2Power(insNode_t * insNodeBlock)
 {
 	float powerShifter = 0.0f; //dBm
-
 	uint32_t j = 0;
 
 	for (j = 0; j < MAXIMUM_NUMBER_NODES; j++)
@@ -144,8 +154,7 @@ void orderRSSIAscend(insNode_t * insNodeBlock)
 
 void trilateration_process(insNode_t * insNodeBlock)
 {
-	orderRSSIAscend(insNodeBlock);
-
+	orderRSSIAscend(insNodeBlock); // re-arrange to take the top 3 closest wifiNodes to use in the trilateration process.
 	if (insNodeBlock != NULL)
 	{
 

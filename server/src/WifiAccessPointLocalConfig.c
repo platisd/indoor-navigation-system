@@ -1,3 +1,13 @@
+/*************************************************************************************************************************
+ * 			FILENAME :- WifiAccessPointLocalConfig.c
+ *
+ * Description :- The module contains functions needed to collect leave and node parameter values from the local config xml file.
+ *
+ *
+ * Author : Isaac Alex Sackey
+ * Last edited: - 18th July 2018
+ ************************************************************************************************************************/
+
 #include <WifiAccessPointLocalConfig.h>
 #include <ctype.h>
 
@@ -37,7 +47,7 @@ static xmlNode * findNode(const char *path) //find xmlnode in memory corresping 
    return curr;
 }
 
-int32_t lcfg_getFloatParameter(const char *path,float *value)
+int32_t lcfg_getFloatParameter(const char *path,float *value) // takes in a string path and returns the floating point relative to that path.
 {
    xmlNode *myNode = findNode(path);
 

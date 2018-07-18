@@ -1,6 +1,11 @@
-//
-// Created by samueli on 2017-10-10.
-//
+/*************************************************************************************************************************
+ * 			FILENAME :- localizaition.cpp
+ *
+ * Description :- This module computes the position vectors of the ins node that is called by providing its
+ * 					mac address as device ID.
+ *
+ * Last edited: - 18th July 2018
+ ************************************************************************************************************************/
 
 #include "localization.hpp"
 #include "data_store.hpp"
@@ -18,12 +23,12 @@ wifiParams_t * Localization::FillNodeDataPoints(wifiParams_t * wifiNodeBlock,
 
 	wifiNodeBlock->noSampleData = mac_rssi_.second.size();
 
-	for (int i = 0; i < mac_rssi_.second.size(); ++i) {
+	for (int i = 0; i < mac_rssi_.second.size(); ++i) {     //copy rssi values into nodelist
 		wifiNodeBlock->rssisampledata[(i % NUMBER_SAMPLES)] =
 				(float) mac_rssi_.second[i];
 	}
 
-	loadLCFGParams(wifiNodeBlock);
+	loadLCFGParams(wifiNodeBlock);  //get the lcfg params into the nodelist.
 
 	return wifiNodeBlock;
 }
@@ -43,7 +48,7 @@ insNode_t * Localization::FillNodesDataPoints(const char * device_id,
 	console_->debug(msg);
 
 	for (int i = 0; i < mac_rssi_list.size(); ++i) {
-		FillNodeDataPoints(&insNode->wifiAccessPointNode[i], mac_rssi_list[i]);
+		FillNodeDataPoints(&insNode->wifiAccessPointNode[i], mac_rssi_list[i]); //Load lcfg values into memory
 	}
 	return insNode;
 }
@@ -62,7 +67,7 @@ Position Localization::ProcessRSSIDataSet(const std::string& device_id) {
 #endif // ENABLE_TESTS
 	console_->debug("+ Localization::ProcessRSSIDataSet");
 
-	std::vector<AccessPoint> distn = data_store_->GetDistinctAccessPoints(
+	std::vector<AccessPoint> distn = data_store_->GetDistinctAccessPoints(  //get all distinct access points and their rssi values.
 			device_id);
 
 	if (distn.size() >= TRILATERAT_NUMBER_NODES) {
