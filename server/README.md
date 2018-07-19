@@ -29,9 +29,9 @@ The INS server provides a backend RESTful service for INS-node and front-end web
   * Response - `{result:success}` or `{result:error}`
 
     #### Example
-  * INS-node with device id 1000 triggers device position computation after sending several RSSI readings.
+  * INS-node with device id 5239 triggers device position computation after sending several RSSI readings.
 
-    `http://localhost:9080/resolve_pos/1000`
+    `http://localhost:9080/resolve_pos/5239`
 
 
 * Clear stored RSSI data for a device.

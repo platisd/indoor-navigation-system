@@ -240,7 +240,7 @@ std::vector<AccessPoint> DataStore::GetDistinctAccessPoints(const std::string& d
     console_->debug("+ DataStore::GetRSSIDataStream");
 
     std::vector<AccessPoint> access_points;
-    std::string              sql = "SELECT DISTINCT mac_addr FROM  dev_" + device_id + ";";
+    std::string              sql = "SELECT DISTINCT mac_addr FROM dev_" + device_id + ";";
 
     sqlite3_stmt* selectStmt;
     sqlite3_prepare(database_, sql.c_str(), static_cast<int>(sql.length() + 1), &selectStmt, NULL);
@@ -251,6 +251,7 @@ std::vector<AccessPoint> DataStore::GetDistinctAccessPoints(const std::string& d
         {
             AccessPoint ap(reinterpret_cast<const char*>(sqlite3_column_text(selectStmt, 0)));
             access_points.push_back(ap);
+
         }
         else if (state == SQLITE_DONE)
         {
@@ -259,6 +260,7 @@ std::vector<AccessPoint> DataStore::GetDistinctAccessPoints(const std::string& d
         else
         {
             console_->error("Failed to read from database");
+
             break;
         }
     }
@@ -268,9 +270,9 @@ std::vector<AccessPoint> DataStore::GetDistinctAccessPoints(const std::string& d
     return access_points;
 }
 
-std::vector<int32_t> DataStore::GetRSSISeriesData(const std::string& device_id, AccessPoint access_point)
+std::vector<int32_t> DataStore::GetRSSISeriesFromDatabase(const std::string& device_id, AccessPoint access_point)
 {
-    console_->debug(" + DataStore::GetRSSISeriesData");
+    console_->debug(" + DataStore::GetRSSISeriesDatabase");
     std::vector<int32_t> rssi_list;
     std::string          sql = "SELECT rssi FROM dev_" + device_id + " where mac_addr ='" + access_point.mac_addr + "';";
     sqlite3_stmt*        selectStmt;
@@ -295,22 +297,22 @@ std::vector<int32_t> DataStore::GetRSSISeriesData(const std::string& device_id, 
     }
     sqlite3_finalize(selectStmt);
 
-    console_->debug(" - DataStore::GetRSSISeriesData");
+    console_->debug(" - DataStore::GetRSSISeriesDatabase");
     return rssi_list;
 }
 
 std::vector<AccessPointRssiListPair> DataStore::GetRSSISeriesData(const std::string&       dev,
                                                               std::vector<AccessPoint> access_points)
 {
-    console_->debug(" + DataStore::GetRSSISeriesData");
+    console_->debug("+ DataStore::GetRSSISeriesData");
 
     std::vector<AccessPointRssiListPair> accesspoint_rssi_list_pair;
     for (auto const& access_point : access_points)
     {
-        accesspoint_rssi_list_pair.emplace_back(std::make_pair(access_point, GetRSSISeriesData(dev, access_point)));
+        accesspoint_rssi_list_pair.emplace_back(std::make_pair(access_point, GetRSSISeriesFromDatabase(dev, access_point)));
     }
 
-    console_->debug(" - DataStore::GetRSSISeriesData");
+    console_->debug("- DataStore::GetRSSISeriesData");
     return accesspoint_rssi_list_pair;
 }
 

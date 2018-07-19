@@ -38,6 +38,8 @@ include_directories("${gtest_SOURCE_DIR}/include"
 add_definitions(-DENABLE_TESTS)
 enable_testing()
 
+find_package (LibXml2)
+
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/test_libs/gmock-gtest
     ${CMAKE_CURRENT_SOURCE_DIR}/mocks/
@@ -47,6 +49,7 @@ include_directories(
     ${REPOSITORY_ROOT}/src
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_FIND_ROOT_PATH}/include
+    ${LIBXML2_INCLUDE_DIR}
 )
 
 link_directories(${CMAKE_FIND_ROOT_PATH}/lib)
@@ -64,6 +67,9 @@ add_executable(test_ins_service
     mocks/mock_localization.cpp
     mocks/mock_lib_wrapper.hpp
     mocks/mock_lib_wrapper.cpp
+    mocks/mock_WifiAccessPointLocalConfig.h
+    mocks/mock_WifiNode.c
+    mocks/mock_WifiAccessPointLocalConfig.c
 
     suite_ins_service.cpp
 )
@@ -79,11 +85,18 @@ target_link_libraries(test_data_store gtest gmock_main sqlite3.a dl )
 
 # test Localization class
 add_executable(test_localization
+    ${REPOSITORY_ROOT}/include/data_store.hpp
+    ${REPOSITORY_ROOT}/src/data_store.cpp
     ${REPOSITORY_ROOT}/include/localization.hpp
+    ${REPOSITORY_ROOT}/include/WifiAccessPointLocalConfig.h
+    ${REPOSITORY_ROOT}/include/WifiNode.h
+    ${REPOSITORY_ROOT}/src/WifiNode.c
+    ${REPOSITORY_ROOT}/src/WifiAccessPointLocalConfig.c
     ${REPOSITORY_ROOT}/src/localization.cpp
     suite_localization.cpp
+
 )
-target_link_libraries(test_localization  gtest gmock_main)
+target_link_libraries(test_localization  gtest gmock_main  pistache.a sqlite3.a dl m ${LIBXML2_LIBRARIES})
 
 set(GTEST_RUN_FLAGS --gtest_color=yes --gtest_repeat=20 --gtest_shuffle CACHE STRING "Flags passed to GTest")
 add_test(INS_SERVICE_TEST test_ins_service ${GTEST_RUN_FLAGS})

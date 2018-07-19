@@ -60,7 +60,7 @@ std::vector<AccessPoint> DataStore::GetDistinctAccessPoints(const std::string& d
     return g_mocked_data_store_->GetDistinctAccessPoints(dev);
 }
 
-std::vector<int32_t> DataStore::GetRSSISeriesData(const std::string& device_id, AccessPoint access_point)
+std::vector<int32_t> DataStore::GetRSSISeriesFromDatabase(const std::string& device_id, AccessPoint access_point)
 {
     EXPECT_TRUE(g_mocked_data_store_ != nullptr);
     return g_mocked_data_store_->GetRSSISeriesData(device_id, access_point);

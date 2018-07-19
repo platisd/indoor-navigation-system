@@ -51,7 +51,7 @@ public:
 
     std::vector<AccessPoint> GetDistinctAccessPoints(const std::string& device_id);
 
-    std::vector<int32_t> GetRSSISeriesData(const std::string& device_id, AccessPoint access_point);
+    std::vector<int32_t> GetRSSISeriesFromDatabase(const std::string& device_id, AccessPoint access_point);
 
     std::vector<AccessPointRssiListPair> GetRSSISeriesData(const std::string&       device_id,
                                                            std::vector<AccessPoint> access_points);

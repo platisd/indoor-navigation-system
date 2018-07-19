@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2007 rel. 3 (http://www.altova.com) by Alex (Mecel AB) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:complexType name="wifiNodeBlock_t">
+		<xs:sequence>
+			<xs:element name="_3DPosition">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="x" type="xs:float" default="0.0"/>
+						<xs:element name="y" type="xs:float" default="0.0"/>
+						<xs:element name="z" type="xs:float" default="0.0"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="arbitraryDistance" type="xs:float" default="5.0"/>
+			<xs:element name="macAddress" type="xs:string" default="ff:ff:ff:ff:ff:ff"/>
+			<xs:element name="powerAtArbitraryDistance" type="xs:float" default="-65.0"/>
+			<xs:element name="powerTransmit" type="xs:float" default="-50.0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="wifiNodeFloors_t">
+		<xs:sequence>
+			<xs:element name="wifiNodeBlock1" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock2" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock3" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock4" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock5" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock6" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock7" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock8" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock9" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock10" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock11" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock12" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock13" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock14" type="wifiNodeBlock_t"/>
+			<xs:element name="wifiNodeBlock15" type="wifiNodeBlock_t"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="wifiNodeBlock">
+		<xs:annotation>
+			<xs:documentation>Wifi node</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="wifiNodeBlock_t"/>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="_3DPosition">
+		<xs:annotation>
+			<xs:documentation>x,y,z position</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="macAddress">
+		<xs:annotation>
+			<xs:documentation>macadress of wifi Node</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="powerTransmit">
+		<xs:annotation>
+			<xs:documentation>Power at 1 meter from wifi Node</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="powerAtArbitraryDistance">
+		<xs:annotation>
+			<xs:documentation>Power at arbitrary distance</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="arbitraryDistance">
+		<xs:annotation>
+			<xs:documentation>Arbitrary distance from wifi Node</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:complexType name="wifi_Floors_t">
+		<xs:sequence>
+			<xs:element name="wifiFloor1" type="wifiNodeFloors_t"/>
+			<xs:element name="wifiFloor2" type="wifiNodeFloors_t"/>
+			<xs:element name="wifiFloor3" type="wifiNodeFloors_t"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:element name="WifiNodes" type="wifi_Floors_t"/>
+</xs:schema>
