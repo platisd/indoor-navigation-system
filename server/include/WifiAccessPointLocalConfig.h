@@ -1,7 +1,7 @@
 /*************************************************************************************************************************
  * 			FILENAME :- WifiAccessPointLocalConfig.h
  *
- * Description :- The module contains functions needed to initialize lcfg and collect leave and node parameter values from the local config xml file.
+ * Description :- The module contains functions needed to initialize lcfg, collect and set leave and node parameter values from the local config xml file.
  *
  *
  * Author : Isaac Alex Sackey
@@ -27,17 +27,20 @@
 /************************************************************************************************************************
  *     GLOBAL VARIABLES
  ************************************************************************************************************************/
-
 static pthread_mutex_t lock;
 static xmlNode *firstRootChild = NULL;
 
+
+/************************************************************************************************************************
+ *     DEFINITION VARIABLES VARIABLES
+ ************************************************************************************************************************/
 #define LCFG_LEAF_STR "/WifiNodes/wifiFloor%d/wifiNodeBlock%d/"
 
 
 /************************************************************************************************************************
  *  Function          := findNode
  *  Description       :=
- *  					 Find a node in the xml lib node list that corresponds to to a particular path.
+ *  					 Find a node in the xml lib node list that corresponds to a particular path.
  *
  *  parameters input(s)  :=
  *  					    path whose node in the node list is not be found.
@@ -49,8 +52,7 @@ static xmlNode * findNode(const char *path);
 /************************************************************************************************************************
  *  Function          := lcfg_getFloatParameter | lcfg_getInt32Parameter
  *  Description       :=
- *  					 Fetch string parameter from the provided path. Do lcfg_freeStringParameter() on input pointer to parameter input after this
- *  					 function.
+ *  					 Fetch float/integer parameter from the provided xml path.
  *
  *  parameters input(s)  :=
  *  					    path whose node in the node list is not be found.
@@ -63,7 +65,7 @@ int32_t lcfg_getInt32Parameter(const char *path, int32_t *value);
 
 
 /************************************************************************************************************************
- *  Function          := lcfg_freeStringParameter
+ *  Function          := lcfg_getStringParameter
  *  Description       :=
  *  					 Fetch string parameter from the provided path. Do lcfg_freeStringParameter() on input pointer to parameter input after this
  *  					 function.
@@ -79,14 +81,17 @@ char * lcfg_getStringParameter(const char *path);
 /************************************************************************************************************************
  *  Function          := lcfg_setStringParameter
  *  Description       :=
- *  					 Set string parameter from the provided path.
+ *  					 Set string parameter provided in input parameter content in the xml nodelist in memory.
+ *  					 Note this does not update the xml file itself.
  *
  *  parameters input(s)  :=
- *  					    path to string.
+ *  					    path :- path to string to be updated.
+ *  					    content :- string content to be updated.
  *  parameters output    :=
- *  					    void.
+ *  					    0 upon success and non zero otherwise.
  ************************************************************************************************************************/
 int32_t lcfg_setStringParameter(const char *path, const char *content);
+
 
 /************************************************************************************************************************
  *  Function          := lcfg_freeStringParameter
@@ -94,17 +99,18 @@ int32_t lcfg_setStringParameter(const char *path, const char *content);
  *  					 Free memory allocated by lcfg_getStringParameter() function.
  *
  *  parameters input(s)  :=
- *  					    path to string.
+ *  					    parameter :- path to string.
  *  parameters output    :=
  *  					    void.
  ************************************************************************************************************************/
 void lcfg_freeStringParameter(char *parameter);
 
 
+
 /************************************************************************************************************************
  *  Function          := lcfg_initialize
  *  Description       :=
- *  					 Load all xml data into RAM.
+ *  					 Load all xml data into a nodelist in RAM memory.
  *
  *  parameters input(s)  :=
  *  					    file containing xml data.
