@@ -24,17 +24,93 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+/************************************************************************************************************************
+ *     GLOBAL VARIABLES
+ ************************************************************************************************************************/
+
 static pthread_mutex_t lock;
 static xmlNode *firstRootChild = NULL;
 
 #define LCFG_LEAF_STR "/WifiNodes/wifiFloor%d/wifiNodeBlock%d/"
 
+
+/************************************************************************************************************************
+ *  Function          := findNode
+ *  Description       :=
+ *  					 Find a node in the xml lib node list that corresponds to to a particular path.
+ *
+ *  parameters input(s)  :=
+ *  					    path whose node in the node list is not be found.
+ *  parameters output    :=
+ *  					    pointer to the corresponding xml Node in the nodelist.
+ ************************************************************************************************************************/
 static xmlNode * findNode(const char *path);
+
+/************************************************************************************************************************
+ *  Function          := lcfg_getFloatParameter | lcfg_getInt32Parameter
+ *  Description       :=
+ *  					 Fetch string parameter from the provided path. Do lcfg_freeStringParameter() on input pointer to parameter input after this
+ *  					 function.
+ *
+ *  parameters input(s)  :=
+ *  					    path whose node in the node list is not be found.
+ *  					    pointer to value to the fetched.
+ *  parameters output    :=
+ *  					    0 on success non zero on failure.
+ ************************************************************************************************************************/
 int32_t lcfg_getFloatParameter(const char *path,float *value);
 int32_t lcfg_getInt32Parameter(const char *path, int32_t *value);
+
+
+/************************************************************************************************************************
+ *  Function          := lcfg_freeStringParameter
+ *  Description       :=
+ *  					 Fetch string parameter from the provided path. Do lcfg_freeStringParameter() on input pointer to parameter input after this
+ *  					 function.
+ *
+ *  parameters input(s)  :=
+ *  					    path to string.
+ *  parameters output    :=
+ *  					    void.
+ ************************************************************************************************************************/
 char * lcfg_getStringParameter(const char *path);
+
+
+/************************************************************************************************************************
+ *  Function          := lcfg_setStringParameter
+ *  Description       :=
+ *  					 Set string parameter from the provided path.
+ *
+ *  parameters input(s)  :=
+ *  					    path to string.
+ *  parameters output    :=
+ *  					    void.
+ ************************************************************************************************************************/
 int32_t lcfg_setStringParameter(const char *path, const char *content);
+
+/************************************************************************************************************************
+ *  Function          := lcfg_freeStringParameter
+ *  Description       :=
+ *  					 Free memory allocated by lcfg_getStringParameter() function.
+ *
+ *  parameters input(s)  :=
+ *  					    path to string.
+ *  parameters output    :=
+ *  					    void.
+ ************************************************************************************************************************/
 void lcfg_freeStringParameter(char *parameter);
+
+
+/************************************************************************************************************************
+ *  Function          := lcfg_initialize
+ *  Description       :=
+ *  					 Load all xml data into RAM.
+ *
+ *  parameters input(s)  :=
+ *  					    file containing xml data.
+ *  parameters output    :=
+ *  					    0 on success nonzero on failure.
+ ************************************************************************************************************************/
 int32_t lcfg_initialize(const char* lcfg_file);
 
 #endif //WIFI_NODE_ACCESS_POINT_LOCAL_CONFIG_H
